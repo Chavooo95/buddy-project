@@ -1,4 +1,6 @@
 parameters:
+    env(MONGODB_URI): ''
+    env(MONGODB_DB): ''
 
 services:
   _defaults:
