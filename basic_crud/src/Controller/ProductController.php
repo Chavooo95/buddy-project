@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Product;
-use App\Repository\ProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ProductServiceFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,33 +11,45 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/products')]
 class ProductController extends AbstractController
 {
+    public function __construct(
+        private ProductServiceFactory $productServiceFactory
+    ) {
+    }
+
     #[Route('', methods: ['GET'])]
-    public function index(ProductRepository $productRepository): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $products = $productRepository->findAll();
-        $data = [];
+        $databaseType = $this->getDatabaseTypeFromRequest($request);
+        $productService = $this->productServiceFactory->getProductService($databaseType);
+        
+        $products = $productService->findAll();
 
-        foreach ($products as $product) {
-            $data[] = $product->toArray();
-        }
-
-        return $this->json($data);
+        return $this->json([
+            'database_type' => $databaseType ?? $this->productServiceFactory->getDatabaseType(),
+            'data' => $products
+        ]);
     }
 
     #[Route('/{id}', methods: ['GET'])]
-    public function show(int $id, ProductRepository $productRepository): JsonResponse
+    public function show(string $id, Request $request): JsonResponse
     {
-        $product = $productRepository->find($id);
+        $databaseType = $this->getDatabaseTypeFromRequest($request);
+        $productService = $this->productServiceFactory->getProductService($databaseType);
+        
+        $product = $productService->find($id);
 
         if (!$product) {
             return $this->json(['message' => 'Product not found'], 404);
         }
 
-        return $this->json($product->toArray());
+        return $this->json([
+            'database_type' => $databaseType ?? $this->productServiceFactory->getDatabaseType(),
+            'data' => $product
+        ]);
     }
 
     #[Route('', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -47,51 +57,67 @@ class ProductController extends AbstractController
             return $this->json(['message' => 'Missing parameters'], 400);
         }
 
-        $product = new Product();
-        $product->setName($data['name']);
-        $product->setPrice((float) $data['price']);
+        $databaseType = $this->getDatabaseTypeFromRequest($request);
+        $productService = $this->productServiceFactory->getProductService($databaseType);
 
-        $entityManager->persist($product);
-        $entityManager->flush();
+        $product = $productService->create($data);
 
-        return $this->json($product->toArray(), 201);
+        return $this->json([
+            'database_type' => $databaseType ?? $this->productServiceFactory->getDatabaseType(),
+            'data' => $product
+        ], 201);
     }
 
     #[Route('/{id}', methods: ['PUT'])]
-    public function update(int $id, Request $request, ProductRepository $productRepository, EntityManagerInterface $entityManager): JsonResponse
+    public function update(string $id, Request $request): JsonResponse
     {
-        $product = $productRepository->find($id);
-
-        if (!$product) {
-            return $this->json(['message' => 'Product not found'], 404);
-        }
+        $databaseType = $this->getDatabaseTypeFromRequest($request);
+        $productService = $this->productServiceFactory->getProductService($databaseType);
 
         $data = json_decode($request->getContent(), true);
 
-        if (isset($data['name'])) {
-            $product->setName($data['name']);
-        }
-        if (isset($data['price'])) {
-            $product->setPrice((float) $data['price']);
-        }
-
-        $entityManager->flush();
-
-        return $this->json($product->toArray());
-    }
-
-    #[Route('/{id}', methods: ['DELETE'])]
-    public function delete(int $id, ProductRepository $productRepository, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $product = $productRepository->find($id);
+        $product = $productService->update($id, $data);
 
         if (!$product) {
             return $this->json(['message' => 'Product not found'], 404);
         }
 
-        $entityManager->remove($product);
-        $entityManager->flush();
+        return $this->json([
+            'database_type' => $databaseType ?? $this->productServiceFactory->getDatabaseType(),
+            'data' => $product
+        ]);
+    }
 
-        return $this->json(['message' => 'Product deleted successfully']);
+    #[Route('/{id}', methods: ['DELETE'])]
+    public function delete(string $id, Request $request): JsonResponse
+    {
+        $databaseType = $this->getDatabaseTypeFromRequest($request);
+        $productService = $this->productServiceFactory->getProductService($databaseType);
+
+        if (!$productService->delete($id)) {
+            return $this->json(['message' => 'Product not found'], 404);
+        }
+
+        return $this->json([
+            'database_type' => $databaseType ?? $this->productServiceFactory->getDatabaseType(),
+            'message' => 'Product deleted successfully'
+        ]);
+    }
+
+    private function getDatabaseTypeFromRequest(Request $request): ?string
+    {
+        // Check for database type in query parameter
+        $dbType = $request->query->get('db_type');
+        if ($dbType) {
+            return $dbType;
+        }
+
+        // Check for database type in header
+        $dbType = $request->headers->get('X-Database-Type');
+        if ($dbType) {
+            return $dbType;
+        }
+
+        return null;
     }
 }
