@@ -1,97 +1,202 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Product;
-use App\Repository\ProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ProductService;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Throwable;
 
+/**
+ * Product Controller
+ * Handles HTTP requests for Product operations
+ */
 #[Route('/api/products')]
 class ProductController extends AbstractController
 {
+    private ProductService $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
+    /**
+     * Get all products
+     */
     #[Route('', methods: ['GET'])]
-    public function index(ProductRepository $productRepository): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $products = $productRepository->findAll();
-        $data = [];
+        try {
+            $search = $request->query->get('search');
+            
+            if ($search) {
+                $products = $this->productService->searchProductsByName($search);
+            } else {
+                $products = $this->productService->getAllProducts();
+            }
 
-        foreach ($products as $product) {
-            $data[] = $product->toArray();
+            $data = [];
+            foreach ($products as $product) {
+                $data[] = $product->toArray();
+            }
+
+            return $this->json([
+                'success' => true,
+                'data' => $data,
+                'count' => count($data)
+            ]);
+        } catch (Throwable $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Error retrieving products',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return $this->json($data);
     }
 
+    /**
+     * Get product by ID
+     */
     #[Route('/{id}', methods: ['GET'])]
-    public function show(int $id, ProductRepository $productRepository): JsonResponse
+    public function show(mixed $id): JsonResponse
     {
-        $product = $productRepository->find($id);
+        try {
+            $product = $this->productService->getProductById($id);
 
-        if (!$product) {
-            return $this->json(['message' => 'Product not found'], 404);
+            if (!$product) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Product not found'
+                ], 404);
+            }
+
+            return $this->json([
+                'success' => true,
+                'data' => $product->toArray()
+            ]);
+        } catch (Throwable $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Error retrieving product',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return $this->json($product->toArray());
     }
 
+    /**
+     * Create new product
+     */
     #[Route('', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function create(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        try {
+            $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['name']) || !isset($data['price'])) {
-            return $this->json(['message' => 'Missing parameters'], 400);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Invalid JSON provided'
+                ], 400);
+            }
+
+            $product = $this->productService->createProduct($data);
+
+            return $this->json([
+                'success' => true,
+                'message' => 'Product created successfully',
+                'data' => $product->toArray()
+            ], 201);
+        } catch (InvalidArgumentException $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'error' => $e->getMessage()
+            ], 400);
+        } catch (Throwable $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Error creating product',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $product = new Product();
-        $product->setName($data['name']);
-        $product->setPrice((float) $data['price']);
-
-        $entityManager->persist($product);
-        $entityManager->flush();
-
-        return $this->json($product->toArray(), 201);
     }
 
+    /**
+     * Update product
+     */
     #[Route('/{id}', methods: ['PUT'])]
-    public function update(int $id, Request $request, ProductRepository $productRepository, EntityManagerInterface $entityManager): JsonResponse
+    public function update(mixed $id, Request $request): JsonResponse
     {
-        $product = $productRepository->find($id);
+        try {
+            $data = json_decode($request->getContent(), true);
 
-        if (!$product) {
-            return $this->json(['message' => 'Product not found'], 404);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Invalid JSON provided'
+                ], 400);
+            }
+
+            $product = $this->productService->updateProduct($id, $data);
+
+            if (!$product) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Product not found'
+                ], 404);
+            }
+
+            return $this->json([
+                'success' => true,
+                'message' => 'Product updated successfully',
+                'data' => $product->toArray()
+            ]);
+        } catch (InvalidArgumentException $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'error' => $e->getMessage()
+            ], 400);
+        } catch (Throwable $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Error updating product',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $data = json_decode($request->getContent(), true);
-
-        if (isset($data['name'])) {
-            $product->setName($data['name']);
-        }
-        if (isset($data['price'])) {
-            $product->setPrice((float) $data['price']);
-        }
-
-        $entityManager->flush();
-
-        return $this->json($product->toArray());
     }
 
+    /**
+     * Delete product
+     */
     #[Route('/{id}', methods: ['DELETE'])]
-    public function delete(int $id, ProductRepository $productRepository, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(mixed $id): JsonResponse
     {
-        $product = $productRepository->find($id);
+        try {
+            $success = $this->productService->deleteProduct($id);
 
-        if (!$product) {
-            return $this->json(['message' => 'Product not found'], 404);
+            if (!$success) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Product not found'
+                ], 404);
+            }
+
+            return $this->json([
+                'success' => true,
+                'message' => 'Product deleted successfully'
+            ]);
+        } catch (Throwable $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Error deleting product',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $entityManager->remove($product);
-        $entityManager->flush();
-
-        return $this->json(['message' => 'Product deleted successfully']);
     }
 }
