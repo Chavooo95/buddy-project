@@ -11,7 +11,12 @@ services:
       - '../src/DependencyInjection/'
       - '../src/Entity/'
       - '../src/Kernel.php'
+      - '../src/DTO/'
 
   App\Controller\:
     resource: '../src/Controller/'
     tags: ['controller.service_arguments']
+
+  # Interface binding
+  App\Interface\ProductRepositoryInterface:
+    alias: App\Repository\ProductRepository

@@ -1,30 +1,34 @@
 <?php
 declare(strict_types=1);
+
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\ProductRepository;
+use DateTimeInterface;
+use DateTime;
 
-#[ORM\Entity(repositoryClass: ProductRepository::class)]
+/**
+ * Product Entity
+ * Configured through XML mapping for both ORM and ODM
+ */
 class Product
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
+    private mixed $id = null;
     private ?string $name = null;
-
-    #[ORM\Column]
     private ?float $price = null;
+    private ?DateTimeInterface $createdAt = null;
+    private ?DateTimeInterface $updatedAt = null;
 
-    public function id(): ?int
+    public function __construct()
+    {
+        $this->createdAt = new DateTime();
+    }
+
+    public function getId(): mixed
     {
         return $this->id;
     }
 
-    public function name(): ?string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -32,11 +36,12 @@ class Product
     public function setName(string $name): static
     {
         $this->name = $name;
+        $this->updateTimestamp();
 
         return $this;
     }
 
-    public function price(): ?float
+    public function getPrice(): ?float
     {
         return $this->price;
     }
@@ -44,6 +49,31 @@ class Product
     public function setPrice(float $price): static
     {
         $this->price = $price;
+        $this->updateTimestamp();
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?DateTimeInterface $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -51,9 +81,16 @@ class Product
     public function toArray(): array
     {
         return [
-            'id' => $this->id(),
-            'name' => $this->name(),
-            'price' => $this->price(),
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'price' => $this->getPrice(),
+            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];
+    }
+
+    private function updateTimestamp(): void
+    {
+        $this->updatedAt = new DateTime();
     }
 }

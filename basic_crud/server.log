@@ -1,0 +1,10 @@
+nohup: ignoring input
+[Thu Jan 15 15:40:06 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Thu Jan 15 15:40:17 2026] 127.0.0.1:57820 Accepted
+[Thu Jan 15 15:40:17 2026] [info] Matched route "app_product_index".
+[Thu Jan 15 15:40:17 2026] [info] User Deprecated: Doctrine\DBAL\Platforms\PostgreSQLPlatform::usesSequenceEmulatedIdentityColumns is deprecated. (PostgreSQLPlatform.php:217 called by ClassMetadataFactory.php:643, https://github.com/doctrine/dbal/pull/5513, package doctrine/dbal)
+[Thu Jan 15 15:40:17 2026] [info] User Deprecated: Context: Loading metadata for class App\Entity\Product
+Problem: Using identity columns emulated with a sequence is deprecated and will not be possible in Doctrine ORM 3.0.
+Solution: Use the SEQUENCE generator strategy instead. (ClassMetadataFactory.php:644 called by ClassMetadataFactory.php:160, https://github.com/doctrine/orm/issues/8850, package doctrine/orm)
+[Thu Jan 15 15:40:17 2026] 127.0.0.1:57820 [500]: GET /api/products
+[Thu Jan 15 15:40:17 2026] 127.0.0.1:57820 Closing
