@@ -1,0 +1,19 @@
+# MongoDB ODM Configuration
+# Copy this to config/packages/doctrine_mongodb.yaml when using MongoDB
+
+doctrine_mongodb:
+  connections:
+    default:
+      server: '%env(resolve:MONGODB_URI)%'
+      options: {}
+  default_database: '%env(resolve:MONGODB_DB)%'
+  document_managers:
+    default:
+      auto_mapping: false
+      mappings:
+        App:
+          is_bundle: false
+          type: xml
+          dir: '%kernel.project_dir%/src/Infrastructure/Repository/Doctrine/Mapping'
+          prefix: 'App\Entity'
+          alias: App
