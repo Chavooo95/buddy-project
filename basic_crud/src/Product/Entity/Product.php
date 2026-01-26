@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Product\Entity;
 
-use DateTimeInterface;
 use DateTime;
+use DateTimeInterface;
+use Symfony\Component\Uid\Ulid;
 
 /**
  * Product Entity
@@ -12,7 +13,8 @@ use DateTime;
  */
 class Product
 {
-    private mixed $id = null;
+    private $id;
+    private string $productId;
     private ?string $name = null;
     private ?float $price = null;
     private ?DateTimeInterface $createdAt = null;
@@ -20,15 +22,21 @@ class Product
 
     public function __construct()
     {
+        $this->productId = (string) new Ulid();
         $this->createdAt = new DateTime();
     }
 
-    public function getId(): mixed
+    public function id(): mixed
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function productId(): string
+    {
+        return $this->productId;
+    }
+
+    public function name(): ?string
     {
         return $this->name;
     }
@@ -41,7 +49,7 @@ class Product
         return $this;
     }
 
-    public function getPrice(): ?float
+    public function price(): ?float
     {
         return $this->price;
     }
@@ -54,7 +62,7 @@ class Product
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeInterface
+    public function createdAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
@@ -66,7 +74,7 @@ class Product
         return $this;
     }
 
-    public function getUpdatedAt(): ?DateTimeInterface
+    public function updatedAt(): ?DateTimeInterface
     {
         return $this->updatedAt;
     }
@@ -81,11 +89,12 @@ class Product
     public function toArray(): array
     {
         return [
-            'id' => $this->getId(),
-            'name' => $this->getName(),
-            'price' => $this->getPrice(),
-            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'id' => $this->id(),
+            'productId' => $this->productId(),
+            'name' => $this->name(),
+            'price' => $this->price(),
+            'createdAt' => $this->createdAt()?->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt()?->format('Y-m-d H:i:s'),
         ];
     }
 

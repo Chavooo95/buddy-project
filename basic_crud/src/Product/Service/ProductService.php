@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Product\Service;
 
-use App\Entity\Product;
-use App\Interface\ProductRepositoryInterface;
+use App\Product\Entity\Product;
+use App\Product\Interface\ProductRepositoryInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use InvalidArgumentException;
 

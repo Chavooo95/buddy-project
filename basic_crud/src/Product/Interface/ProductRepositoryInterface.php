@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Interface;
+namespace App\Product\Interface;
 
-use App\Entity\Product;
+use App\Product\Entity\Product;
 
 /**
  * Product Repository Interface
