@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/basic_crud/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/orm" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/sql-formatter" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/doctrine-bundle" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/common" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/collections" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/persistence" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-php84" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-php85" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/flex" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/cache-contracts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/framework-bundle" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/doctrine-bridge" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/runtime" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/dotenv" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/composer" />
+    </include_path>
+  </component>
+</project>
