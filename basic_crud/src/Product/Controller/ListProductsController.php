@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\Product\Controller;
 
 use App\Product\UseCase\ListProducts;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
 #[Route('/api/products', name: 'product_list', methods: ['GET'])]
-final class ListProductsController extends AbstractController
+final class ListProductsController
 {
     private ListProducts $listProducts;
 
@@ -32,13 +31,13 @@ final class ListProductsController extends AbstractController
                 $data[] = $product->toArray();
             }
 
-            return $this->json([
+            return new JsonResponse([
                 'success' => true,
                 'data' => $data,
                 'count' => count($data),
             ]);
         } catch (Throwable $e) {
-            return $this->json([
+            return new JsonResponse([
                 'success' => false,
                 'message' => 'Error retrieving products',
                 'error' => $e->getMessage(),

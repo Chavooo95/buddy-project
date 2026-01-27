@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="MessDetectorOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCSFixerOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCodeSnifferOptionsConfiguration">
+    <option name="highlightLevel" value="WARNING" />
+    <option name="transferred" value="true" />
+  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/basic_crud/vendor/psr/container" />
@@ -49,6 +59,56 @@
       <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/http-foundation" />
       <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/var-exporter" />
       <path value="$PROJECT_DIR$/basic_crud/vendor/composer" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/uid" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-uuid" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/browser-kit" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/dom-crawler" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/staabm/side-effects-detector" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/friendsofphp/proxy-manager-lts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/mongodb-odm-bundle" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/mongodb-odm" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/jean85/pretty-package-versions" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/mongodb/mongodb" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/laminas/laminas-code" />
     </include_path>
+  </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
+  <component name="PhpStanOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/basic_crud/vendor/autoload.php" />
+    </phpunit_settings>
+  </component>
+  <component name="PsalmOptionsConfiguration">
+    <option name="transferred" value="true" />
   </component>
 </project>

@@ -27,7 +27,8 @@ services:
     # In production, you may want to use a managed database service
     image: mongodb/mongodb-atlas-local:latest
     environment:
-      - MONGODB_INITDB_DATABASE=${MONGODB_DB:-app}
+      - MONGODB_INITDB_DATABASE=${MONGODB_DB:-symfony_app}
+      # For development, we'll use MongoDB without authentication
       # You should definitely set a root username and password in production
       - MONGODB_INITDB_ROOT_USERNAME=${MONGODB_USERNAME:-}
       - MONGODB_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD:-}
