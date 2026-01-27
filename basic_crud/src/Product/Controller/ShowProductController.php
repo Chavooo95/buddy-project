@@ -1,0 +1,46 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Product\Controller;
+
+use App\Product\UseCase\ShowProduct;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
+use Throwable;
+
+#[Route('/api/products/{productId}', name: 'product_show', methods: ['GET'])]
+final class ShowProductController extends AbstractController
+{
+    private ShowProduct $showProduct;
+
+    public function __construct(ShowProduct $showProduct)
+    {
+        $this->showProduct = $showProduct;
+    }
+
+    public function __invoke(string $productId): JsonResponse
+    {
+        try {
+            $product = ($this->showProduct)($productId);
+
+            if (!$product) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Product not found',
+                ], 404);
+            }
+
+            return $this->json([
+                'success' => true,
+                'data' => $product->toArray(),
+            ]);
+        } catch (Throwable $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Error retrieving product',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+}

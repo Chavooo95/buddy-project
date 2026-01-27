@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1a4f66b7-f7a5-47b5-9a38-d5fe44fdb814" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="4156" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "cterrerothn"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "git@github.com:Chavooo95/buddy-project.git",
+    "accountId": "74e0b2db-1326-48af-8ff4-34b343b7e1b2"
+  }
+}]]></component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/bin/php">
+    <include_path>
+      <path value="$PROJECT_DIR$/basic_crud/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/orm" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/sql-formatter" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/doctrine-bundle" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/common" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/collections" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/doctrine/persistence" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-php84" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-php85" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/flex" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/cache-contracts" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/framework-bundle" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/doctrine-bridge" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/runtime" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/dotenv" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/basic_crud/vendor/composer" />
+    </include_path>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="38oFugjAlsWCVESpiNoav1v9ny2" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PS-253.30387.85" />
+        <option value="bundled-php-predefined-a98d8de5180a-0e0d91225499-com.jetbrains.php.sharedIndexes-PS-253.30387.85" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
