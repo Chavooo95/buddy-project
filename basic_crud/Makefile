@@ -70,15 +70,19 @@ logs: ## Show Docker container logs
 	$(DOCKER_COMPOSE) logs -f
 
 # Development commands
-serve: ## Start PHP development server
+serve: ## Start PHP development server (host) on localhost:8000
 	@echo "$(YELLOW)Starting PHP development server on localhost:8000...$(NC)"
 	$(PHP) -S localhost:8000 -t public
 
-stop: ## Stop all running processes (Docker and PHP server)
-	@echo "$(YELLOW)Stopping all processes...$(NC)"
-	@pkill -f "php -S localhost:8000" 2>/dev/null || true
-	$(DOCKER_COMPOSE) down 2>/dev/null || true
-	@echo "$(GREEN)All processes stopped!$(NC)"
+serve-local: ## Start PHP development server (host) on localhost:8001
+	@echo "$(YELLOW)Starting PHP development server on localhost:8001...$(NC)"
+	$(PHP) -S localhost:8001 -t public
+
+dev: setup up ## Start development environment using Docker (no host server)
+	@echo "$(GREEN)Docker environment is up. Open http://localhost:8000$(NC)"
+
+dev-local: setup serve-local ## Start development environment using host PHP server on :8001
+
 
 # Cache management
 cache-clear: ## Clear Symfony cache
@@ -150,8 +154,6 @@ fresh: clean setup db-reset cache-clear ## Fresh installation (clean, setup, res
 
 deploy: install cache-clear cache-warmup ## Deploy application (install, clear cache, warm up)
 	@echo "$(GREEN)Application deployed!$(NC)"
-
-dev: setup up serve ## Start development environment (setup + docker + serve)
 
 # Information
 status: ## Show project status
