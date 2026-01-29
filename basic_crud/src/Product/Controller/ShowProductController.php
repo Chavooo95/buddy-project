@@ -32,7 +32,9 @@ final class ShowProductController
 
             return new JsonResponse([
                 'success' => true,
-                'data' => $product->toArray(),
+                'ULID' => $product->id(),
+                'name' => $product->name(),
+                'price' => $product->price(),
             ]);
         } catch (Throwable $e) {
             return new JsonResponse([

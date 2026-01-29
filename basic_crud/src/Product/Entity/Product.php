@@ -80,17 +80,6 @@ class Product
         return $this;
     }
 
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id(),
-            'name' => $this->name(),
-            'price' => $this->price(),
-            'createdAt' => $this->createdAt()?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updatedAt()?->format('Y-m-d H:i:s'),
-        ];
-    }
-
     private function updateTimestamp(): void
     {
         $this->updatedAt = new DateTime();

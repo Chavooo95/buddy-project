@@ -37,7 +37,9 @@ final class CreateProductController
             return new JsonResponse([
                 'success' => true,
                 'message' => 'Product created successfully',
-                'data' => $product->toArray(),
+                'ULID' => $product->id(),
+                'name' => $product->name(),
+                'price' => $product->price(),
             ], 201);
         } catch (InvalidArgumentException $e) {
             return new JsonResponse([
