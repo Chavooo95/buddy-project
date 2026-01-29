@@ -4,13 +4,12 @@ declare(strict_types=1);
 namespace App\Product\Controller;
 
 use App\Product\UseCase\ShowProduct;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
 #[Route('/api/products/{productId}', name: 'product_show', methods: ['GET'])]
-final class ShowProductController extends AbstractController
+final class ShowProductController
 {
     private ShowProduct $showProduct;
 
@@ -25,18 +24,18 @@ final class ShowProductController extends AbstractController
             $product = ($this->showProduct)($productId);
 
             if (!$product) {
-                return $this->json([
+                return new JsonResponse([
                     'success' => false,
                     'message' => 'Product not found',
                 ], 404);
             }
 
-            return $this->json([
+            return new JsonResponse([
                 'success' => true,
                 'data' => $product->toArray(),
             ]);
         } catch (Throwable $e) {
-            return $this->json([
+            return new JsonResponse([
                 'success' => false,
                 'message' => 'Error retrieving product',
                 'error' => $e->getMessage(),
