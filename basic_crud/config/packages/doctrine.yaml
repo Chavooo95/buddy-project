@@ -1,4 +1,3 @@
-
 doctrine:
   dbal:
     url: '%env(resolve:DATABASE_URL)%'
@@ -13,6 +12,6 @@ doctrine:
       App:
         is_bundle: false
         type: xml
-        dir: '%kernel.project_dir%/src/Infrastructure/Repository/Doctrine/Mapping'
-        prefix: 'App\Entity'
+        dir: '%kernel.project_dir%/src/Product/Infrastructure/Repository/Doctrine/Mapping'
+        prefix: 'App\Product\Entity'
         alias: App

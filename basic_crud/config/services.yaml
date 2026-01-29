@@ -9,14 +9,13 @@ services:
     resource: '../src/'
     exclude:
       - '../src/DependencyInjection/'
-      - '../src/Entity/'
       - '../src/Kernel.php'
       - '../src/DTO/'
 
-  App\Controller\:
-    resource: '../src/Controller/'
+  App\Product\Controller\:
+    resource: '../src/Product/Controller/'
     tags: ['controller.service_arguments']
 
   # Interface binding
-  App\Interface\ProductRepositoryInterface:
-    alias: App\Repository\ProductRepository
+  App\Product\Interface\ProductRepositoryInterface:
+    alias: App\Product\Repository\ProductRepository
