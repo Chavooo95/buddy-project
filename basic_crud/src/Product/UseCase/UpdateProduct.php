@@ -16,9 +16,9 @@ final class UpdateProduct
         $this->repository = $repository;
     }
 
-    public function __invoke(string $productId, array $data): ?Product
+    public function __invoke(string $id, array $data): ?Product
     {
-        $product = $this->repository->findOneBy(['productId' => $productId]);
+        $product = $this->repository->findOneBy(['id' => $id]);
         if (!$product instanceof Product) {
             return null;
         }

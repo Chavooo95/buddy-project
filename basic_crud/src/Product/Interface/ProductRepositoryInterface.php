@@ -21,7 +21,7 @@ interface ProductRepositoryInterface
     /**
      * Find product by ID
      */
-    public function find(mixed $id);
+    public function find(string $id);
 
     /**
      * Find products by criteria

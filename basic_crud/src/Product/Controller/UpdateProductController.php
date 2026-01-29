@@ -5,14 +5,13 @@ namespace App\Product\Controller;
 
 use App\Product\UseCase\UpdateProduct;
 use InvalidArgumentException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-#[Route('/api/products/{productId}', name: 'product_update', methods: ['PUT'])]
-final class UpdateProductController extends AbstractController
+#[Route('/api/products/{id}', name: 'product_update', methods: ['PUT'])]
+final class UpdateProductController
 {
     private UpdateProduct $updateProduct;
 
@@ -21,40 +20,42 @@ final class UpdateProductController extends AbstractController
         $this->updateProduct = $updateProduct;
     }
 
-    public function __invoke(string $productId, Request $request): JsonResponse
+    public function __invoke(string $id, Request $request): JsonResponse
     {
         try {
             $data = json_decode($request->getContent(), true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                return $this->json([
+                return new JsonResponse([
                     'success' => false,
                     'message' => 'Invalid JSON provided',
                 ], 400);
             }
 
-            $product = ($this->updateProduct)($productId, $data);
+            $product = ($this->updateProduct)($id, $data);
 
             if (!$product) {
-                return $this->json([
+                return new JsonResponse([
                     'success' => false,
                     'message' => 'Product not found',
                 ], 404);
             }
 
-            return $this->json([
+            return new JsonResponse([
                 'success' => true,
                 'message' => 'Product updated successfully',
-                'data' => $product->toArray(),
+                'ULID' => $product->id(),
+                'name' => $product->name(),
+                'price' => $product->price(),
             ]);
         } catch (InvalidArgumentException $e) {
-            return $this->json([
+            return new JsonResponse([
                 'success' => false,
                 'message' => 'Validation error',
                 'error' => $e->getMessage(),
             ], 400);
         } catch (Throwable $e) {
-            return $this->json([
+            return new JsonResponse([
                 'success' => false,
                 'message' => 'Error updating product',
                 'error' => $e->getMessage(),

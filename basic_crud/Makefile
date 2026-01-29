@@ -9,8 +9,6 @@ DOCKER_COMPOSE = $(shell \
 		echo docker-compose; \
 	elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then \
 		echo "docker compose"; \
-	else \
-		echo docker-compose; \
 	fi \
 )
 
@@ -116,11 +114,10 @@ db-fixtures: ## Load database fixtures
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 	@echo "$(GREEN)Fixtures loaded!$(NC)"
 
-db-reset: ## Reset database (drop, create, schema update)
-	@echo "$(YELLOW)Resetting database...$(NC)"
-	$(CONSOLE) doctrine:database:drop --force --if-exists
-	$(CONSOLE) doctrine:database:create
-	$(CONSOLE) doctrine:schema:update --force
+db-reset: ## Reset database (SQLite: delete file, then rebuild schema)
+	@echo "$(YELLOW)Resetting database (SQLite)...$(NC)"
+	rm -f var/data_$(ENV).db
+	$(CONSOLE) doctrine:schema:update --force --env=$(ENV)
 	@echo "$(GREEN)Database reset completed!$(NC)"
 
 # Testing
