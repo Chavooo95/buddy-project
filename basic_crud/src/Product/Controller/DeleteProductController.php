@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-#[Route('/api/products/{productId}', name: 'product_delete', methods: ['DELETE'])]
+#[Route('/api/products/{id}', name: 'product_delete', methods: ['DELETE'])]
 final class DeleteProductController
 {
     private DeleteProduct $deleteProduct;
@@ -18,10 +18,10 @@ final class DeleteProductController
         $this->deleteProduct = $deleteProduct;
     }
 
-    public function __invoke(string $productId): JsonResponse
+    public function __invoke(string $id): JsonResponse
     {
         try {
-            $success = ($this->deleteProduct)($productId);
+            $success = ($this->deleteProduct)($id);
 
             if (!$success) {
                 return new JsonResponse([

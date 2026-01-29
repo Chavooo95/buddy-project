@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-#[Route('/api/products/{productId}', name: 'product_update', methods: ['PUT'])]
+#[Route('/api/products/{id}', name: 'product_update', methods: ['PUT'])]
 final class UpdateProductController
 {
     private UpdateProduct $updateProduct;
@@ -20,7 +20,7 @@ final class UpdateProductController
         $this->updateProduct = $updateProduct;
     }
 
-    public function __invoke(string $productId, Request $request): JsonResponse
+    public function __invoke(string $id, Request $request): JsonResponse
     {
         try {
             $data = json_decode($request->getContent(), true);
@@ -32,7 +32,7 @@ final class UpdateProductController
                 ], 400);
             }
 
-            $product = ($this->updateProduct)($productId, $data);
+            $product = ($this->updateProduct)($id, $data);
 
             if (!$product) {
                 return new JsonResponse([

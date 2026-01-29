@@ -39,7 +39,7 @@ class ProductService
     /**
      * Get product by ID
      */
-    public function getProductById(mixed $id): ?Product
+    public function getProductById(string $id): ?Product
     {
         $product = $this->productRepository->find($id);
         return $product instanceof Product ? $product : null;

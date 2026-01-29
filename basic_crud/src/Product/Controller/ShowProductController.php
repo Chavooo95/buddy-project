@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-#[Route('/api/products/{productId}', name: 'product_show', methods: ['GET'])]
+#[Route('/api/products/{id}', name: 'product_show', methods: ['GET'])]
 final class ShowProductController
 {
     private ShowProduct $showProduct;
@@ -18,10 +18,10 @@ final class ShowProductController
         $this->showProduct = $showProduct;
     }
 
-    public function __invoke(string $productId): JsonResponse
+    public function __invoke(string $id): JsonResponse
     {
         try {
-            $product = ($this->showProduct)($productId);
+            $product = ($this->showProduct)($id);
 
             if (!$product) {
                 return new JsonResponse([

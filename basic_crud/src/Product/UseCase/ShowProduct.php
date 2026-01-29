@@ -15,9 +15,9 @@ final class ShowProduct
         $this->repository = $repository;
     }
 
-    public function __invoke(string $productId): ?Product
+    public function __invoke(string $id): ?Product
     {
-        $product = $this->repository->findOneBy(['productId' => $productId]);
+        $product = $this->repository->findOneBy(['id' => $id]);
 
         return $product instanceof Product ? $product : null;
     }

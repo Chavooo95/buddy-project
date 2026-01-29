@@ -26,7 +26,7 @@ final class CreateProductController
             $data = json_decode($request->getContent(), true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                return $this->json([
+                return new JsonResponse([
                     'success' => false,
                     'message' => 'Invalid JSON provided',
                 ], 400);
