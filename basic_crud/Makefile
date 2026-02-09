@@ -3,7 +3,7 @@
 # Variables
 PHP = php
 COMPOSER = composer
-DOCKER_COMPOSE = docker-compose
+
 CONSOLE = $(PHP) bin/console
 
 # Default environment
@@ -41,34 +41,38 @@ setup: install ## Full project setup (install dependencies + environment setup)
 # Docker commands
 build: ## Build Docker containers
 	@echo "$(YELLOW)Building Docker containers...$(NC)"
-	$(DOCKER_COMPOSE) build
+	docker compose build
 	@echo "$(GREEN)Docker containers built!$(NC)"
 
 up: ## Start Docker containers
 	@echo "$(YELLOW)Starting Docker containers...$(NC)"
-	$(DOCKER_COMPOSE) up -d
+	docker compose up -d
 	@echo "$(GREEN)Docker containers started!$(NC)"
 
 down: ## Stop Docker containers
 	@echo "$(YELLOW)Stopping Docker containers...$(NC)"
-	$(DOCKER_COMPOSE) down
+	docker compose down
 	@echo "$(GREEN)Docker containers stopped!$(NC)"
 
 restart: down up ## Restart Docker containers
 
 logs: ## Show Docker container logs
-	$(DOCKER_COMPOSE) logs -f
+	docker compose logs -f
 
 # Development commands
-serve: ## Start PHP development server
+serve: ## Start PHP development server (host) on localhost:8000
 	@echo "$(YELLOW)Starting PHP development server on localhost:8000...$(NC)"
 	$(PHP) -S localhost:8000 -t public
 
-stop: ## Stop all running processes (Docker and PHP server)
-	@echo "$(YELLOW)Stopping all processes...$(NC)"
-	@pkill -f "php -S localhost:8000" 2>/dev/null || true
-	$(DOCKER_COMPOSE) down 2>/dev/null || true
-	@echo "$(GREEN)All processes stopped!$(NC)"
+serve-local: ## Start PHP development server (host) on localhost:8001
+	@echo "$(YELLOW)Starting PHP development server on localhost:8001...$(NC)"
+	$(PHP) -S localhost:8001 -t public
+
+dev: setup up ## Start development environment using Docker (no host server)
+	@echo "$(GREEN)Docker environment is up. Open http://localhost:8000$(NC)"
+
+dev-local: setup serve-local ## Start development environment using host PHP server on :8001
+
 
 # Cache management
 cache-clear: ## Clear Symfony cache
@@ -102,11 +106,10 @@ db-fixtures: ## Load database fixtures
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 	@echo "$(GREEN)Fixtures loaded!$(NC)"
 
-db-reset: ## Reset database (drop, create, schema update)
-	@echo "$(YELLOW)Resetting database...$(NC)"
-	$(CONSOLE) doctrine:database:drop --force --if-exists
-	$(CONSOLE) doctrine:database:create
-	$(CONSOLE) doctrine:schema:update --force
+db-reset: ## Reset database (SQLite: delete file, then rebuild schema)
+	@echo "$(YELLOW)Resetting database (SQLite)...$(NC)"
+	rm -f var/data_$(ENV).db
+	$(CONSOLE) doctrine:schema:update --force --env=$(ENV)
 	@echo "$(GREEN)Database reset completed!$(NC)"
 
 # Testing
@@ -141,15 +144,13 @@ fresh: clean setup db-reset cache-clear ## Fresh installation (clean, setup, res
 deploy: install cache-clear cache-warmup ## Deploy application (install, clear cache, warm up)
 	@echo "$(GREEN)Application deployed!$(NC)"
 
-dev: setup up serve ## Start development environment (setup + docker + serve)
-
 # Information
 status: ## Show project status
 	@echo "$(BLUE)Project Status:$(NC)"
 	@echo "Environment: $(ENV)"
 	@echo "PHP Version: $$($(PHP) -v | head -n 1)"
 	@echo "Composer Version: $$($(COMPOSER) --version)"
-	@echo "Docker Status: $$($(DOCKER_COMPOSE) ps --services 2>/dev/null | wc -l) services"
+	@echo "Docker Status: $$(docker compose ps --services 2>/dev/null | wc -l) services"
 	@if [ -f .env ]; then \
 		echo "Environment file: $(GREEN)Found$(NC)"; \
 	else \
