@@ -15,7 +15,7 @@ final class DeleteProductTest extends TestCase
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())
             ->method('findOneBy')
-            ->with(['productId' => 'x'])
+            ->with(['id' => 'x'])
             ->willReturn(null);
         $repo->expects($this->never())->method('remove');
 
@@ -31,7 +31,7 @@ final class DeleteProductTest extends TestCase
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())
             ->method('findOneBy')
-            ->with(['productId' => '01HZZZZZZZZZZZZZZZZZZZZZZZ'])
+            ->with(['id' => '01HZZZZZZZZZZZZZZZZZZZZZZZ'])
             ->willReturn($product);
         $repo->expects($this->once())->method('remove')->with($product, true);
 
