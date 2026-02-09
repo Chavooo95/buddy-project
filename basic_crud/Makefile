@@ -4,14 +4,6 @@
 PHP = php
 COMPOSER = composer
 
-DOCKER_COMPOSE = $(shell \
-	if command -v docker-compose >/dev/null 2>&1; then \
-		echo docker-compose; \
-	elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then \
-		echo "docker compose"; \
-	fi \
-)
-
 CONSOLE = $(PHP) bin/console
 
 # Default environment
@@ -49,23 +41,23 @@ setup: install ## Full project setup (install dependencies + environment setup)
 # Docker commands
 build: ## Build Docker containers
 	@echo "$(YELLOW)Building Docker containers...$(NC)"
-	$(DOCKER_COMPOSE) build
+	docker compose build
 	@echo "$(GREEN)Docker containers built!$(NC)"
 
 up: ## Start Docker containers
 	@echo "$(YELLOW)Starting Docker containers...$(NC)"
-	$(DOCKER_COMPOSE) up -d
+	docker compose up -d
 	@echo "$(GREEN)Docker containers started!$(NC)"
 
 down: ## Stop Docker containers
 	@echo "$(YELLOW)Stopping Docker containers...$(NC)"
-	$(DOCKER_COMPOSE) down
+	docker compose down
 	@echo "$(GREEN)Docker containers stopped!$(NC)"
 
 restart: down up ## Restart Docker containers
 
 logs: ## Show Docker container logs
-	$(DOCKER_COMPOSE) logs -f
+	docker compose logs -f
 
 # Development commands
 serve: ## Start PHP development server (host) on localhost:8000
@@ -158,7 +150,7 @@ status: ## Show project status
 	@echo "Environment: $(ENV)"
 	@echo "PHP Version: $$($(PHP) -v | head -n 1)"
 	@echo "Composer Version: $$($(COMPOSER) --version)"
-	@echo "Docker Status: $$($(DOCKER_COMPOSE) ps --services 2>/dev/null | wc -l) services"
+	@echo "Docker Status: $$(docker compose ps --services 2>/dev/null | wc -l) services"
 	@if [ -f .env ]; then \
 		echo "Environment file: $(GREEN)Found$(NC)"; \
 	else \

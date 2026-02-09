@@ -25,7 +25,7 @@ class Product
         $this->createdAt = new DateTime();
     }
 
-    public function id(): mixed
+    public function id(): string
     {
         return $this->id;
     }
