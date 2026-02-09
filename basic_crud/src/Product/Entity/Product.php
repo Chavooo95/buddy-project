@@ -13,8 +13,7 @@ use Symfony\Component\Uid\Ulid;
  */
 class Product
 {
-    private $id;
-    private string $productId;
+    private string $id;
     private ?string $name = null;
     private ?float $price = null;
     private ?DateTimeInterface $createdAt = null;
@@ -22,18 +21,13 @@ class Product
 
     public function __construct()
     {
-        $this->productId = (string) new Ulid();
+        $this->id = (string) new Ulid();
         $this->createdAt = new DateTime();
     }
 
-    public function id(): mixed
+    public function id(): string
     {
         return $this->id;
-    }
-
-    public function productId(): string
-    {
-        return $this->productId;
     }
 
     public function name(): ?string
@@ -84,18 +78,6 @@ class Product
         $this->updatedAt = $updatedAt;
 
         return $this;
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id(),
-            'productId' => $this->productId(),
-            'name' => $this->name(),
-            'price' => $this->price(),
-            'createdAt' => $this->createdAt()?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updatedAt()?->format('Y-m-d H:i:s'),
-        ];
     }
 
     private function updateTimestamp(): void

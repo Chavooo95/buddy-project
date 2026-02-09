@@ -16,7 +16,7 @@ final class ShowProductTest extends TestCase
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())
             ->method('findOneBy')
-            ->with(['productId' => 'anything'])
+            ->with(['id' => 'anything'])
             ->willReturn(null);
 
         $uc = new ShowProduct($repo);
@@ -31,7 +31,7 @@ final class ShowProductTest extends TestCase
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())
             ->method('findOneBy')
-            ->with(['productId' => '01HZZZZZZZZZZZZZZZZZZZZZZZ'])
+            ->with(['id' => '01HZZZZZZZZZZZZZZZZZZZZZZZ'])
             ->willReturn($product);
 
         $uc = new ShowProduct($repo);

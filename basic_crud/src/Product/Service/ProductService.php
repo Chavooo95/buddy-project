@@ -39,7 +39,7 @@ class ProductService
     /**
      * Get product by ID
      */
-    public function getProductById(mixed $id): ?Product
+    public function getProductById(string $id): ?Product
     {
         $product = $this->productRepository->find($id);
         return $product instanceof Product ? $product : null;
@@ -64,7 +64,7 @@ class ProductService
     /**
      * Update an existing product
      */
-    public function updateProduct(mixed $id, array $data): ?Product
+    public function updateProduct(string $id, array $data): ?Product
     {
         $product = $this->getProductById($id);
 
@@ -95,7 +95,7 @@ class ProductService
     /**
      * Delete a product
      */
-    public function deleteProduct(mixed $id): bool
+    public function deleteProduct(string $id): bool
     {
         $product = $this->getProductById($id);
 

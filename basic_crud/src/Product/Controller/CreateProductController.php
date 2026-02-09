@@ -5,14 +5,13 @@ namespace App\Product\Controller;
 
 use App\Product\UseCase\CreateProduct;
 use InvalidArgumentException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
 #[Route('/api/products', name: 'product_create', methods: ['POST'])]
-final class CreateProductController extends AbstractController
+final class CreateProductController
 {
     private CreateProduct $createProduct;
 
@@ -27,7 +26,7 @@ final class CreateProductController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                return $this->json([
+                return new JsonResponse([
                     'success' => false,
                     'message' => 'Invalid JSON provided',
                 ], 400);
@@ -35,19 +34,21 @@ final class CreateProductController extends AbstractController
 
             $product = ($this->createProduct)($data);
 
-            return $this->json([
+            return new JsonResponse([
                 'success' => true,
                 'message' => 'Product created successfully',
-                'data' => $product->toArray(),
+                'ULID' => $product->id(),
+                'name' => $product->name(),
+                'price' => $product->price(),
             ], 201);
         } catch (InvalidArgumentException $e) {
-            return $this->json([
+            return new JsonResponse([
                 'success' => false,
                 'message' => 'Validation error',
                 'error' => $e->getMessage(),
             ], 400);
         } catch (Throwable $e) {
-            return $this->json([
+            return new JsonResponse([
                 'success' => false,
                 'message' => 'Error creating product',
                 'error' => $e->getMessage(),
