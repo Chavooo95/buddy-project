@@ -15,25 +15,23 @@ class ProductORMRepository extends ServiceEntityRepository implements ProductRep
         parent::__construct($registry, Product::class);
     }
 
+    public function findAll(): array {
+        return $this->findAll();
+    }
+
     /**
      * Save product entity
      */
-    public function save(Product $entity, bool $flush = false): void
+    public function save(Product $entity): void
     {
         $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        $this->getEntityManager()->flush();
     }
 
-    public function remove(Product $entity, bool $flush = false): void
+    public function remove(Product $entity): void
     {
         $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        $this->getEntityManager()->flush();
     }
 
     public function findByName(string $name): array

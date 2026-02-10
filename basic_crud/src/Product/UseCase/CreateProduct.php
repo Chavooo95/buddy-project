@@ -24,7 +24,7 @@ final class CreateProduct
         $product->setName($data['name']);
         $product->setPrice((float) $data['price']);
 
-        $this->repository->save($product, true);
+        $this->repository->save($product);
 
         return $product;
     }

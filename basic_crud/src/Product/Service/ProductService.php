@@ -26,17 +26,6 @@ class ProductService
     }
 
     /**
-     * Get all products
-     *
-     * @return Product[]
-     */
-    public function getAllProducts(): array
-    {
-        $products = $this->productRepository->findAll();
-        return is_array($products) ? $products : [];
-    }
-
-    /**
      * Get product by ID
      */
     public function getProductById(string $id): ?Product
