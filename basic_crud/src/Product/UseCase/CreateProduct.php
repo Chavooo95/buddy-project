@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Product\UseCase;
 
 use App\Product\Entity\Product;
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
 
 final class CreateProduct
