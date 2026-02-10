@@ -21,7 +21,7 @@ interface ProductRepositoryInterface
     /**
      * Find product by ID
      */
-    public function find(string $id);
+    public function find(string $id): ?Product;
 
     /**
      * Save product
