@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tests\Product\UseCase;
 
 use App\Product\Entity\Product;
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\DeleteProduct;
 use PHPUnit\Framework\TestCase;
 
