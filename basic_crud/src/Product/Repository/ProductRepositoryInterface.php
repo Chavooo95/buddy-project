@@ -16,7 +16,7 @@ interface ProductRepositoryInterface
      *
      * @return Product[]
      */
-    public function findAll();
+    public function findAll(): array;
 
     /**
      * Find product by ID
@@ -26,12 +26,12 @@ interface ProductRepositoryInterface
     /**
      * Save product
      */
-    public function save(Product $entity, bool $flush = false): void;
+    public function save(Product $entity): void;
 
     /**
      * Remove product
      */
-    public function remove(Product $entity, bool $flush = false): void;
+    public function remove(Product $entity): void;
 
     /**
      * Find products by name (partial match)

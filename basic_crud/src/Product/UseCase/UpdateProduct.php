@@ -38,7 +38,7 @@ final class UpdateProduct
             $product->setPrice($price);
         }
 
-        $this->repository->save($product, true);
+        $this->repository->save($product);
 
         return $product;
     }
