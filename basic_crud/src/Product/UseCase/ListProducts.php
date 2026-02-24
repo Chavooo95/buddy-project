@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\UseCase;
 
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 
 final class ListProducts
 {

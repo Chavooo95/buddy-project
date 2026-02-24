@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Product\UseCase;
 
 use App\Product\Entity\Product;
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
 
 final class CreateProduct
@@ -24,7 +24,7 @@ final class CreateProduct
         $product->setName($data['name']);
         $product->setPrice((float) $data['price']);
 
-        $this->repository->save($product, true);
+        $this->repository->save($product);
 
         return $product;
     }

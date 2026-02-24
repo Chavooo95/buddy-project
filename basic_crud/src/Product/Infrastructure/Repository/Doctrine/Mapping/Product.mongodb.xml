@@ -4,7 +4,7 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                         https://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document name="App\Entity\Product" collection="products">
+    <document name="App\Product\Entity\Product" collection="products">
         <id field-name="id" type="id" />
         <field field-name="name" type="string" />
         <field field-name="price" type="float" />
