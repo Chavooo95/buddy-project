@@ -11,32 +11,13 @@ use App\Product\Entity\Product;
  */
 interface ProductRepositoryInterface
 {
-    /**
-     * Find all products
-     *
-     * @return Product[]
-     */
     public function findAll(): array;
 
-    /**
-     * Find product by ID
-     */
     public function find(string $id): ?Product;
 
-    /**
-     * Save product
-     */
     public function save(Product $entity): void;
 
-    /**
-     * Remove product
-     */
     public function remove(Product $entity): void;
 
-    /**
-     * Find products by name (partial match)
-     *
-     * @return Product[]
-     */
     public function findByName(string $name): array;
 }

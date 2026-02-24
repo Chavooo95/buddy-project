@@ -17,7 +17,7 @@ final class CreateProductTest extends TestCase
 
         $repo->expects($this->once())
             ->method('save')
-            ->with($this->isInstanceOf(Product::class), true);
+            ->with($this->isInstanceOf(Product::class));
 
         $uc = new CreateProduct($repo);
 

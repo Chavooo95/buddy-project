@@ -17,5 +17,5 @@ services:
     tags: ['controller.service_arguments']
 
   # Interface binding
-  App\Product\Interface\ProductRepositoryInterface:
-    alias: App\Product\Repository\ProductRepository
+  App\Product\Repository\ProductRepositoryInterface:
+    alias: App\Product\Infrastructure\Repository\ProductODMRepository
