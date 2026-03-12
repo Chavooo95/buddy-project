@@ -56,6 +56,17 @@ class Product
         return $this;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'id'        => $this->id,
+            'name'      => $this->name,
+            'price'     => $this->price,
+            'createdAt' => $this->createdAt?->format(\DateTimeInterface::ATOM),
+            'updatedAt' => $this->updatedAt?->format(\DateTimeInterface::ATOM),
+        ];
+    }
+
     private function updateTimestamp(): void
     {
         $this->updatedAt = new DateTime();

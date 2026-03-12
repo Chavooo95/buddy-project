@@ -6,7 +6,7 @@ namespace App\Product\UseCase;
 use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
 
-final class ShowProduct
+class ShowProduct
 {
     private ProductRepositoryInterface $repository;
 

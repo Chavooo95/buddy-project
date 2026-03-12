@@ -7,7 +7,7 @@ use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
 
-final class UpdateProduct
+class UpdateProduct
 {
     private ProductRepositoryInterface $repository;
 

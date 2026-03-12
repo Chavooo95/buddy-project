@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
 RUN apt-get update && apt-get install -y \
     libpq-dev \
@@ -7,8 +7,8 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Install MongoDB PHP extension
-RUN pecl install mongodb \
+# Install MongoDB PHP extension (1.x - compatible with doctrine/mongodb-odm-bundle ^5)
+RUN pecl install mongodb-1.21.0 \
     && docker-php-ext-enable mongodb
 
 WORKDIR /var/www/html

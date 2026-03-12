@@ -16,6 +16,11 @@ doctrine_mongodb:
                     prefix: 'App\Product\Entity'
                     is_bundle: false
 
+when@test_orm:
+    doctrine_mongodb:
+        auto_generate_proxy_classes: false
+        auto_generate_hydrator_classes: false
+
 when@prod:
     doctrine_mongodb:
         auto_generate_proxy_classes: false

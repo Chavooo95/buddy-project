@@ -18,4 +18,4 @@ services:
 
   # Interface binding
   App\Product\Repository\ProductRepositoryInterface:
-    alias: App\Product\Infrastructure\Repository\ProductODMRepository
+    alias: App\Product\Infrastructure\Repository\ProductORMRepository
