@@ -5,7 +5,7 @@
                         https://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
     <document name="App\Product\Entity\Product" collection="products">
-        <id field-name="id" type="id" />
+        <id field-name="id" type="string" strategy="NONE" />
         <field field-name="name" type="string" />
         <field field-name="price" type="float" />
         <field field-name="createdAt" type="date" />

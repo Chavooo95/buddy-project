@@ -6,11 +6,9 @@ namespace Test\Product\Controller;
 
 use App\Product\Controller\ListProductsController;
 use App\Product\Entity\Product;
-use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ListProducts;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-
 
 class ListProductsControllerTest extends TestCase
 {
@@ -19,8 +17,7 @@ class ListProductsControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $repository = $this->createMock(ProductRepositoryInterface::class);
-        $this->listProducts = new ListProducts($repository);
+        $this->listProducts = $this->createMock(ListProducts::class);
         $this->controller = new ListProductsController($this->listProducts);
     }
 

@@ -14,7 +14,11 @@ class ProductORMRepository implements ProductRepositoryInterface
     ) {}
 
     public function findAll(): array {
-        return $this->entityManager->getRepository(Product::class)->findAll();
+        return $this->entityManager->createQueryBuilder()
+            ->select('p')
+            ->from(Product::class, 'p')
+            ->getQuery()
+            ->getResult();
     }
 
     /**

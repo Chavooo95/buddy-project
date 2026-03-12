@@ -5,12 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a4f66b7-f7a5-47b5-9a38-d5fe44fdb814" name="Changes" comment="Refactor product repository interface and implementation">
+      <change afterPath="$PROJECT_DIR$/basic_crud/.env.test_orm" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basic_crud/tests/Integration/Product/ProductIntegrationTestCase.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basic_crud/tests/Integration/Product/ProductODMIntegrationTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basic_crud/tests/Integration/Product/ProductORMIntegrationTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/.env.dev" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/.env.dev" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/.env.test" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/.env.test" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/config/packages/doctrine_mongodb.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/config/packages/doctrine_mongodb.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/config/packages/framework.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/config/packages/framework.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/config/services.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/docker/php/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/docker/php/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/Entity/Product.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/Entity/Product.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/Infrastructure/Repository/Doctrine/Mapping/Product.mongodb.xml" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/Infrastructure/Repository/Doctrine/Mapping/Product.mongodb.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/Infrastructure/Repository/Doctrine/Mapping/Product.orm.xml" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/Infrastructure/Repository/Doctrine/Mapping/Product.orm.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/Infrastructure/Repository/ProductORMRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/Infrastructure/Repository/ProductORMRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/Repository/ProductRepositoryInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/Repository/ProductRepositoryInterface.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/Service/ProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/Service/ProductService.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/CreateProduct.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/CreateProduct.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/DeleteProduct.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/DeleteProduct.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/ListProducts.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/ListProducts.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/ShowProduct.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/ShowProduct.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/UpdateProduct.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/src/Product/UseCase/UpdateProduct.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/CreateProductControllerTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/CreateProductControllerTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/DeleteProductControllerTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/DeleteProductControllerTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/ListProductsControllerTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/ListProductsControllerTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/ShowProductControllerTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/ShowProductControllerTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/UpdateProductControllerTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/basic_crud/tests/Product/Controller/UpdateProductControllerTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,7 +175,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "repository-clean-up",
+    "git-widget-placeholder": "#5 on repository-clean-up",
     "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -163,6 +185,13 @@
     "run.code.analysis.last.selected.profile": "pProject Default",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mongo",
+      "postgresql",
+      "mysql"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
