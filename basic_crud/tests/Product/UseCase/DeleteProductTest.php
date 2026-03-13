@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tests\Product\UseCase;
 
 use App\Product\Entity\Product;
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\DeleteProduct;
 use PHPUnit\Framework\TestCase;
 
@@ -14,8 +14,8 @@ final class DeleteProductTest extends TestCase
     {
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())
-            ->method('findOneBy')
-            ->with(['id' => 'x'])
+            ->method('find')
+            ->with('x')
             ->willReturn(null);
         $repo->expects($this->never())->method('remove');
 
@@ -30,8 +30,8 @@ final class DeleteProductTest extends TestCase
 
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())
-            ->method('findOneBy')
-            ->with(['id' => '01HZZZZZZZZZZZZZZZZZZZZZZZ'])
+            ->method('find')
+            ->with('01HZZZZZZZZZZZZZZZZZZZZZZZ')
             ->willReturn($product);
         $repo->expects($this->once())->method('remove')->with($product, true);
 

@@ -8,11 +8,18 @@ doctrine_mongodb:
     default_database: '%env(MONGODB_DB)%'
     document_managers:
         default:
-            auto_mapping: true
+            auto_mapping: false
             mappings:
-                App:
-                    dir: '%kernel.project_dir%/src/Document'
-                    prefix: 'App\Document'
+                Product:
+                    type: xml
+                    dir: '%kernel.project_dir%/src/Product/Infrastructure/Repository/Doctrine/Mapping'
+                    prefix: 'App\Product\Entity'
+                    is_bundle: false
+
+when@test_orm:
+    doctrine_mongodb:
+        auto_generate_proxy_classes: false
+        auto_generate_hydrator_classes: false
 
 when@prod:
     doctrine_mongodb:

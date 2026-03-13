@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tests\Product\UseCase;
 
 use App\Product\Entity\Product;
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\CreateProduct;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,7 @@ final class CreateProductTest extends TestCase
 
         $repo->expects($this->once())
             ->method('save')
-            ->with($this->isInstanceOf(Product::class), true);
+            ->with($this->isInstanceOf(Product::class));
 
         $uc = new CreateProduct($repo);
 

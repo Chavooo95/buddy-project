@@ -56,28 +56,15 @@ class Product
         return $this;
     }
 
-    public function createdAt(): ?DateTimeInterface
+    public function toArray(): array
     {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeInterface $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function updatedAt(): ?DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTimeInterface $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
+        return [
+            'id'        => $this->id,
+            'name'      => $this->name,
+            'price'     => $this->price,
+            'createdAt' => $this->createdAt?->format(\DateTimeInterface::ATOM),
+            'updatedAt' => $this->updatedAt?->format(\DateTimeInterface::ATOM),
+        ];
     }
 
     private function updateTimestamp(): void

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tests\Product\UseCase;
 
 use App\Product\Entity\Product;
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\UpdateProduct;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -15,8 +15,8 @@ final class UpdateProductTest extends TestCase
     {
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())
-            ->method('findOneBy')
-            ->with(['id' => 'x'])
+            ->method('find')
+            ->with('x')
             ->willReturn(null);
         $repo->expects($this->never())->method('save');
 
@@ -33,10 +33,10 @@ final class UpdateProductTest extends TestCase
 
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())
-            ->method('findOneBy')
-            ->with(['id' => '01HZZZZZZZZZZZZZZZZZZZZZZZ'])
+            ->method('find')
+            ->with('01HZZZZZZZZZZZZZZZZZZZZZZZ')
             ->willReturn($product);
-        $repo->expects($this->once())->method('save')->with($product, true);
+        $repo->expects($this->once())->method('save')->with($product);
 
         $uc = new UpdateProduct($repo);
 
@@ -50,7 +50,7 @@ final class UpdateProductTest extends TestCase
         $product = $this->createMock(Product::class);
 
         $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())->method('findOneBy')->willReturn($product);
+        $repo->expects($this->once())->method('find')->willReturn($product);
         $repo->expects($this->never())->method('save');
 
         $uc = new UpdateProduct($repo);

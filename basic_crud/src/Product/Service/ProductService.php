@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Product\Service;
 
 use App\Product\Entity\Product;
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use InvalidArgumentException;
 
@@ -19,21 +19,10 @@ class ProductService
 
     public function __construct(
         ProductRepositoryInterface $productRepository,
-        ManagerRegistry $managerRegistry
+        ManagerRegistry            $managerRegistry
     ) {
         $this->productRepository = $productRepository;
         $this->managerRegistry = $managerRegistry;
-    }
-
-    /**
-     * Get all products
-     * 
-     * @return Product[]
-     */
-    public function getAllProducts(): array
-    {
-        $products = $this->productRepository->findAll();
-        return is_array($products) ? $products : [];
     }
 
     /**
@@ -113,30 +102,6 @@ class ProductService
     public function searchProductsByName(string $name): array
     {
         return $this->productRepository->findByName($name);
-    }
-
-    /**
-     * Get products by price range
-     */
-    public function getProductsByPriceRange(float $minPrice, float $maxPrice): array
-    {
-        if ($minPrice < 0 || $maxPrice < 0) {
-            throw new InvalidArgumentException('Price range values cannot be negative');
-        }
-
-        if ($minPrice > $maxPrice) {
-            throw new InvalidArgumentException('Minimum price cannot be greater than maximum price');
-        }
-
-        return $this->productRepository->findByPriceRange($minPrice, $maxPrice);
-    }
-
-    /**
-     * Get products created after a specific date
-     */
-    public function getProductsCreatedAfter(\DateTimeInterface $date): array
-    {
-        return $this->productRepository->findCreatedAfter($date);
     }
 
     /**

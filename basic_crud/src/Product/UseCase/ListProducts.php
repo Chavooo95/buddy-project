@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Product\UseCase;
 
-use App\Product\Interface\ProductRepositoryInterface;
+use App\Product\Repository\ProductRepositoryInterface;
 
-final class ListProducts
+class ListProducts
 {
     private ProductRepositoryInterface $repository;
 
@@ -15,6 +15,7 @@ final class ListProducts
     }
 
     /**
+     * @param string|null $search
      * @return array
      */
     public function __invoke(?string $search = null): array
@@ -23,8 +24,6 @@ final class ListProducts
             return $this->repository->findByName($search);
         }
 
-        $products = $this->repository->findAll();
-
-        return is_array($products) ? $products : [];
+        return $this->repository->findAll();
     }
 }
