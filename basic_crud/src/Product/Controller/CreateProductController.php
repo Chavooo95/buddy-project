@@ -34,13 +34,16 @@ final class CreateProductController
 
             $product = ($this->createProduct)($data);
 
-            return new JsonResponse([
+            $response = new JsonResponse(status: 201);
+            $response->setEncodingOptions($response->getEncodingOptions() | \JSON_PRESERVE_ZERO_FRACTION);
+            $response->setData([
                 'success' => true,
                 'message' => 'Product created successfully',
                 'ULID' => $product->id(),
                 'name' => $product->name(),
                 'price' => $product->price(),
-            ], 201);
+            ]);
+            return $response;
         } catch (InvalidArgumentException $e) {
             return new JsonResponse([
                 'success' => false,
