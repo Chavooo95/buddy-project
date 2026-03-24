@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Test\Integration\Product\Repository;
 
-use App\Kernel;
 use App\Product\Infrastructure\Repository\ProductORMRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -63,5 +62,35 @@ final class ProductORMRepositoryTest extends KernelTestCase
         $found = $this->subject->find('non-existent-id');
 
         $this->assertNull($found);
+    }
+
+    public function test_it_returns_all_products(): void
+    {
+        $products = [
+            (new ProductBuilder())->build(),
+            (new ProductBuilder())->build(),
+        ];
+        foreach ($products as $product) {
+            $this->subject->save($product);
+        }
+        $found = $this->subject->findAll();
+        $this->assertCount(2, $found);
+    }
+
+    public function test_it_deletes_a_product(): void
+    {
+        $product = (new ProductBuilder())->build();
+        $this->subject->save($product);
+        $this->subject->remove($product);
+        $found = $this->subject->find($product->id());
+        $this->assertNull($found);
+    }
+
+    public function test_it_finds_a_product_by_name(): void
+    {
+        $product = (new ProductBuilder())->withName('Keyboard')->build();
+        $this->subject->save($product);
+        $found = $this->subject->findByName('Keyboard');
+        $this->assertNotNull($found);
     }
 }

@@ -12,6 +12,10 @@ when@test:
   framework:
     test: true
 
+when@test_odm:
+  framework:
+    test: true
+
 when@test_orm:
   framework:
     test: true
