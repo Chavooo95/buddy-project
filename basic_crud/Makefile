@@ -98,7 +98,7 @@ db-migrate: ## Run database migrations
 
 db-schema-update: ## Update database schema (force)
 	@echo "$(YELLOW)Updating database schema...$(NC)"
-	$(CONSOLE) doctrine:schema:update --force
+	docker compose exec php bin/console doctrine:schema:update --force --complete
 	@echo "$(GREEN)Schema updated!$(NC)"
 
 db-fixtures: ## Load database fixtures
@@ -113,9 +113,15 @@ db-reset: ## Reset database (SQLite: delete file, then rebuild schema)
 	@echo "$(GREEN)Database reset completed!$(NC)"
 
 # Testing
+test-db-setup: ## Create and migrate the test database (PostgreSQL)
+	@echo "$(YELLOW)Setting up test database...$(NC)"
+	docker compose exec php php bin/console doctrine:database:create --if-not-exists --env=test
+	docker compose exec php php bin/console doctrine:schema:update --force --env=test
+	@echo "$(GREEN)Test database ready!$(NC)"
+
 test: ## Run tests
 	@echo "$(YELLOW)Running tests...$(NC)"
-	$(PHP) bin/phpunit
+	docker compose exec php ./vendor/bin/phpunit
 	@echo "$(GREEN)Tests completed!$(NC)"
 
 # Cleanup
