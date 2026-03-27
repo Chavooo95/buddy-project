@@ -19,3 +19,13 @@ services:
   # Interface binding
   App\Product\Repository\ProductRepositoryInterface:
     alias: App\Product\Infrastructure\Repository\ProductORMRepository
+
+when@test:
+  services:
+    Test\Data\Product\Infrastructure\Repository\:
+      resource: '../tests/Data/Product/Infrastructure/Repository/'
+      autowire: true
+      autoconfigure: true
+
+    App\Product\Repository\ProductRepositoryInterface:
+      alias: Test\Data\Product\Infrastructure\Repository\InMemoryProductRepository
