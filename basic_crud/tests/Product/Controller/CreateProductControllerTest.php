@@ -43,6 +43,7 @@ class CreateProductControllerTest extends TestCase
         $this->assertEquals(201, $response->getStatusCode());
         $data = json_decode($response->getContent(), true);
         $this->assertTrue($data['success']);
+        $this->assertEquals('01HXK5Z3V8N7MJCP2E4G1QRST6', $data['ulid']);
         $this->assertEquals('New Product', $data['name']);
     }
 

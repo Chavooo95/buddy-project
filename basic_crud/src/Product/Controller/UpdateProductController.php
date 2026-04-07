@@ -44,7 +44,7 @@ final class UpdateProductController
             return new JsonResponse([
                 'success' => true,
                 'message' => 'Product updated successfully',
-                'ULID' => $product->id(),
+                'ulid' => $product->id(),
                 'name' => $product->name(),
                 'price' => $product->price(),
             ]);

@@ -39,7 +39,7 @@ final class CreateProductController
             $response->setData([
                 'success' => true,
                 'message' => 'Product created successfully',
-                'ULID' => $product->id(),
+                'ulid' => $product->id(),
                 'name' => $product->name(),
                 'price' => $product->price(),
             ]);

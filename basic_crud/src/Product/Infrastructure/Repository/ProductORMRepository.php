@@ -41,6 +41,17 @@ class ProductORMRepository implements ProductRepositoryInterface
         return $this->entityManager->createQueryBuilder()
             ->select('p')
             ->from(Product::class, 'p')
+            ->andWhere('p.name = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByPartialName(string $name): array
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select('p')
+            ->from(Product::class, 'p')
             ->andWhere('p.name LIKE :name')
             ->setParameter('name', '%' . $name . '%')
             ->orderBy('p.name', 'ASC')

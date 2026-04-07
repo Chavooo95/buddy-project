@@ -38,4 +38,12 @@ final class InMemoryProductRepository implements ProductRepositoryInterface
             fn(Product $product) => $product->name() === $name
         ));
     }
+
+    public function findByPartialName(string $name): array
+    {
+        return array_values(array_filter(
+            $this->products,
+            fn(Product $product) => str_contains($product->name(), $name)
+        ));
+    }
 }

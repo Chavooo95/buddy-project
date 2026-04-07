@@ -29,7 +29,7 @@ final class CreateProductControllerTest extends WebTestCase
         $this->assertEquals('Product created successfully', $data['message']);
         $this->assertEquals('Test Product', $data['name']);
         $this->assertEquals(29.99, $data['price']);
-        $this->assertNotEmpty($data['ULID']);
+        $this->assertNotEmpty($data['ulid']);
     }
 
     public function test_it_returns_400_on_missing_name(): void
