@@ -17,7 +17,7 @@ final class ListProductsTest extends TestCase
 
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->once())->method('findAll')->willReturn([$p1, $p2]);
-        $repo->expects($this->never())->method('findByName');
+        $repo->expects($this->never())->method('findByPartialName');
 
         $uc = new ListProducts($repo);
 
@@ -33,7 +33,7 @@ final class ListProductsTest extends TestCase
 
         $repo = $this->createMock(ProductRepositoryInterface::class);
         $repo->expects($this->never())->method('findAll');
-        $repo->expects($this->once())->method('findByName')->with('Test')->willReturn([$p1]);
+        $repo->expects($this->once())->method('findByPartialName')->with('Test')->willReturn([$p1]);
 
         $uc = new ListProducts($repo);
 

@@ -52,12 +52,30 @@ final class ProductODMRepositoryTest extends KernelTestCase
         $this->assertNull($found);
     }
 
-    public function test_it_finds_a_product_by_name(): void
+    public function test_it_finds_a_product_by_partial_name(): void
+    {
+        $product = (new ProductBuilder())->withName('Keyboard')->build();
+        $this->subject->save($product);
+        $found = $this->subject->findByPartialName('Key');
+        $this->assertCount(1, $found);
+        $this->assertSame($product->id(), $found[0]->id());
+    }
+
+    public function test_it_finds_a_product_by_exact_name(): void
     {
         $product = (new ProductBuilder())->withName('Keyboard')->build();
         $this->subject->save($product);
         $found = $this->subject->findByName('Keyboard');
-        $this->assertNotNull($found);
+        $this->assertCount(1, $found);
+        $this->assertSame($product->id(), $found[0]->id());
+    }
+
+    public function test_find_by_name_does_not_match_partial_name(): void
+    {
+        $product = (new ProductBuilder())->withName('Keyboard')->build();
+        $this->subject->save($product);
+        $found = $this->subject->findByName('Key');
+        $this->assertCount(0, $found);
     }
 
     public function test_it_returns_all_products(): void

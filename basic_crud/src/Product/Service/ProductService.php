@@ -101,7 +101,7 @@ class ProductService
      */
     public function searchProductsByName(string $name): array
     {
-        return $this->productRepository->findByName($name);
+        return $this->productRepository->findByPartialName($name);
     }
 
     /**

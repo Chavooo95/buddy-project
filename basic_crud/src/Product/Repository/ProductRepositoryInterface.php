@@ -20,4 +20,6 @@ interface ProductRepositoryInterface
     public function remove(Product $entity): void;
 
     public function findByName(string $name): array;
+
+    public function findByPartialName(string $name): array;
 }
