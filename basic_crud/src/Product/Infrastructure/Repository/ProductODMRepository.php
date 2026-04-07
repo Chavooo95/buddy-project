@@ -47,6 +47,16 @@ class ProductODMRepository implements ProductRepositoryInterface
     public function findByName(string $name): array
     {
         return $this->documentManager->createQueryBuilder(Product::class)
+            ->field('name')->equals($name)
+            ->sort('name', 'ASC')
+            ->getQuery()
+            ->execute()
+            ->toArray();
+    }
+
+    public function findByPartialName(string $name): array
+    {
+        return $this->documentManager->createQueryBuilder(Product::class)
             ->field('name')->equals(new \MongoDB\BSON\Regex($name, 'i'))
             ->sort('name', 'ASC')
             ->getQuery()

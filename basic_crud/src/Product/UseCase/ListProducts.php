@@ -21,7 +21,7 @@ class ListProducts
     public function __invoke(?string $search = null): array
     {
         if ($search !== null && trim($search) !== '') {
-            return $this->repository->findByName($search);
+            return $this->repository->findByPartialName($search);
         }
 
         return $this->repository->findAll();

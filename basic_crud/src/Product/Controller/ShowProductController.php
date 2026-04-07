@@ -32,7 +32,7 @@ final class ShowProductController
 
             return new JsonResponse([
                 'success' => true,
-                'ULID' => $product->id(),
+                'ulid' => $product->id(),
                 'name' => $product->name(),
                 'price' => $product->price(),
             ]);
