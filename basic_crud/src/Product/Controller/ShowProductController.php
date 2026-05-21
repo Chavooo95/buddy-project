@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
-use App\Product\UseCase\ShowProduct;
+use App\Product\UseCase\ProductShower;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
@@ -11,9 +11,9 @@ use Throwable;
 #[Route('/api/products/{id}', name: 'product_show', methods: ['GET'])]
 final class ShowProductController
 {
-    private ShowProduct $showProduct;
+    private ProductShower $showProduct;
 
-    public function __construct(ShowProduct $showProduct)
+    public function __construct(ProductShower $showProduct)
     {
         $this->showProduct = $showProduct;
     }

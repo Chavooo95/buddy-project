@@ -4,35 +4,31 @@ declare(strict_types=1);
 
 namespace Test\E2E\Product;
 
+use App\Product\Repository\ProductRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Test\Data\Product\Domain\ProductBuilder;
 
 final class ShowProductControllerTest extends WebTestCase
 {
-   public function test_it_shows_a_product(): void
+    public function test_it_shows_a_product(): void
     {
         $client = static::createClient();
-        $client->disableReboot();
+        $container = static::getContainer();
+        $repository = $container->get(ProductRepositoryInterface::class);
+        $product = (new ProductBuilder())->build();
 
-        $client->request(
-            'POST',
-            '/api/products',
-            [], [], ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['name' => 'Test Product', 'price' => 29.99])
-        );
+        $repository->save($product);
 
-        $created = json_decode($client->getResponse()->getContent(), true);
-        $ulid = $created['ulid'];
-
-        $client->request('GET', '/api/products/' . $ulid);
+        $client->request('GET', '/api/products/' . $product->id());
 
         $this->assertResponseStatusCodeSame(200);
 
         $data = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertTrue($data['success']);
-        $this->assertEquals($ulid, $data['ulid']);
-        $this->assertEquals('Test Product', $data['name']);
-        $this->assertEquals(29.99, $data['price']);
+        $this->assertEquals($product->id(), $data['ulid']);
+        $this->assertEquals($product->name(), $data['name']);
+        $this->assertEquals($product->price(), $data['price']);
     }
 
     public function test_it_returns_404_when_product_not_found(): void

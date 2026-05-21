@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
-use App\Product\UseCase\UpdateProduct;
+use App\Product\UseCase\ProductUpdater;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,9 +13,9 @@ use Throwable;
 #[Route('/api/products/{id}', name: 'product_update', methods: ['PUT'])]
 final class UpdateProductController
 {
-    private UpdateProduct $updateProduct;
+    private ProductUpdater $updateProduct;
 
-    public function __construct(UpdateProduct $updateProduct)
+    public function __construct(ProductUpdater $updateProduct)
     {
         $this->updateProduct = $updateProduct;
     }

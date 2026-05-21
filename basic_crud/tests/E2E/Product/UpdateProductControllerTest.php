@@ -4,28 +4,24 @@ declare(strict_types=1);
 
 namespace Test\E2E\Product;
 
+use App\Product\Repository\ProductRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Test\Data\Product\Domain\ProductBuilder;
 
 final class UpdateProductControllerTest extends WebTestCase
 {
     public function test_it_updates_a_product(): void
     {
         $client = static::createClient();
-        $client->disableReboot();
+        $container = static::getContainer();
+        $repository = $container->get(ProductRepositoryInterface::class);
+        $product = (new ProductBuilder())->withName('Old Name')->withPrice(10.00)->build();
 
-        $client->request(
-            'POST',
-            '/api/products',
-            [], [], ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['name' => 'Old Name', 'price' => 10.00])
-        );
-
-        $created = json_decode($client->getResponse()->getContent(), true);
-        $ulid = $created['ulid'];
+        $repository->save($product);
 
         $client->request(
             'PUT',
-            '/api/products/' . $ulid,
+            '/api/products/' . $product->id(),
             [], [], ['CONTENT_TYPE' => 'application/json'],
             json_encode(['name' => 'New Name', 'price' => 99.99])
         );
@@ -36,7 +32,7 @@ final class UpdateProductControllerTest extends WebTestCase
 
         $this->assertTrue($data['success']);
         $this->assertEquals('Product updated successfully', $data['message']);
-        $this->assertEquals($ulid, $data['ulid']);
+        $this->assertEquals($product->id(), $data['ulid']);
         $this->assertEquals('New Name', $data['name']);
         $this->assertEquals(99.99, $data['price']);
     }
