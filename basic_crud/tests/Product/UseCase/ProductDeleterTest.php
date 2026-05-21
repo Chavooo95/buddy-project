@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Product\UseCase;
+namespace Test\Product\UseCase;
 
 use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
-use App\Product\UseCase\DeleteProduct;
+use App\Product\UseCase\ProductDeleter;
 use PHPUnit\Framework\TestCase;
 
-final class DeleteProductTest extends TestCase
+final class ProductDeleterTest extends TestCase
 {
     public function testReturnsFalseWhenNotFound(): void
     {
@@ -19,7 +19,7 @@ final class DeleteProductTest extends TestCase
             ->willReturn(null);
         $repo->expects($this->never())->method('remove');
 
-        $uc = new DeleteProduct($repo);
+        $uc = new ProductDeleter($repo);
 
         $this->assertFalse($uc('x'));
     }
@@ -35,7 +35,7 @@ final class DeleteProductTest extends TestCase
             ->willReturn($product);
         $repo->expects($this->once())->method('remove')->with($product, true);
 
-        $uc = new DeleteProduct($repo);
+        $uc = new ProductDeleter($repo);
 
         $this->assertTrue($uc('01HZZZZZZZZZZZZZZZZZZZZZZZ'));
     }

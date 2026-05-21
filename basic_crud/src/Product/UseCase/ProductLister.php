@@ -5,7 +5,7 @@ namespace App\Product\UseCase;
 
 use App\Product\Repository\ProductRepositoryInterface;
 
-class ListProducts
+class ProductLister
 {
     private ProductRepositoryInterface $repository;
 

@@ -7,7 +7,7 @@ use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
 
-class CreateProduct
+class ProductCreator
 {
     private ProductRepositoryInterface $repository;
 
@@ -23,6 +23,9 @@ class CreateProduct
         $product = new Product();
         $product->setName($data['name']);
         $product->setPrice((float) $data['price']);
+
+        // $product2 = new Product();
+        // $product2->setName('zapato');
 
         $this->repository->save($product);
 

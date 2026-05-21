@@ -4,27 +4,25 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
-use App\Product\UseCase\ProductLister;
+use App\Product\UseCase\ProductByNameFinder;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-#[Route('/api/products', name: 'product_list', methods: ['GET'])]
-final class ListProductsController
+#[Route('/api/products/name/{name}', name: 'product_find_by_name', methods: ['GET'])]
+final class FindProductsByNameController
 {
-    private ProductLister $listProducts;
+    private ProductByNameFinder $findProductsByName;
 
-    public function __construct(ProductLister $listProducts)
+    public function __construct(ProductByNameFinder $findProductsByName)
     {
-        $this->listProducts = $listProducts;
+        $this->findProductsByName = $findProductsByName;
     }
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(string $name): JsonResponse
     {
         try {
-            $search = $request->query->get('search');
-            $products = ($this->listProducts)($search);
+            $products = ($this->findProductsByName)($name);
 
             $data = [];
             foreach ($products as $product) {

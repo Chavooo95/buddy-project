@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
-use App\Product\UseCase\DeleteProduct;
+use App\Product\UseCase\ProductDeleter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
@@ -11,9 +11,9 @@ use Throwable;
 #[Route('/api/products/{id}', name: 'product_delete', methods: ['DELETE'])]
 final class DeleteProductController
 {
-    private DeleteProduct $deleteProduct;
+    private ProductDeleter $deleteProduct;
 
-    public function __construct(DeleteProduct $deleteProduct)
+    public function __construct(ProductDeleter $deleteProduct)
     {
         $this->deleteProduct = $deleteProduct;
     }
