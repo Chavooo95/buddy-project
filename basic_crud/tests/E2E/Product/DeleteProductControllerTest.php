@@ -4,26 +4,22 @@ declare(strict_types=1);
 
 namespace Test\E2E\Product;
 
+use App\Product\Repository\ProductRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Test\Data\Product\Domain\ProductBuilder;
 
 final class DeleteProductControllerTest extends WebTestCase
 {
     public function test_it_deletes_a_product(): void
     {
         $client = static::createClient();
-        $client->disableReboot();
+        $container = static::getContainer();
+        $repository = $container->get(ProductRepositoryInterface::class);
+        $product = (new ProductBuilder())->build();
 
-        $client->request(
-            'POST',
-            '/api/products',
-            [], [], ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['name' => 'Test Product', 'price' => 29.99])
-        );
+        $repository->save($product);
 
-        $created = json_decode($client->getResponse()->getContent(), true);
-        $ulid = $created['ulid'];
-
-        $client->request('DELETE', '/api/products/' . $ulid);
+        $client->request('DELETE', '/api/products/' . $product->id());
 
         $this->assertResponseStatusCodeSame(200);
 

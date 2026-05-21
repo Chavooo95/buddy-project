@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
-use App\Product\UseCase\CreateProduct;
+use App\Product\UseCase\ProductCreator;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,9 +13,9 @@ use Throwable;
 #[Route('/api/products', name: 'product_create', methods: ['POST'])]
 final class CreateProductController
 {
-    private CreateProduct $createProduct;
+    private ProductCreator $createProduct;
 
-    public function __construct(CreateProduct $createProduct)
+    public function __construct(ProductCreator $createProduct)
     {
         $this->createProduct = $createProduct;
     }

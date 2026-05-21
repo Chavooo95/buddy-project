@@ -5,10 +5,10 @@ namespace App\Tests\Product\UseCase;
 
 use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
-use App\Product\UseCase\ListProducts;
+use App\Product\UseCase\ProductLister;
 use PHPUnit\Framework\TestCase;
 
-final class ListProductsTest extends TestCase
+final class ProductListerTest extends TestCase
 {
     public function testListsAllProductsWhenNoSearchProvided(): void
     {
@@ -19,7 +19,7 @@ final class ListProductsTest extends TestCase
         $repo->expects($this->once())->method('findAll')->willReturn([$p1, $p2]);
         $repo->expects($this->never())->method('findByPartialName');
 
-        $uc = new ListProducts($repo);
+        $uc = new ProductLister($repo);
 
         $result = $uc(null);
 
@@ -35,7 +35,7 @@ final class ListProductsTest extends TestCase
         $repo->expects($this->never())->method('findAll');
         $repo->expects($this->once())->method('findByPartialName')->with('Test')->willReturn([$p1]);
 
-        $uc = new ListProducts($repo);
+        $uc = new ProductLister($repo);
 
         $result = $uc('Test');
 
