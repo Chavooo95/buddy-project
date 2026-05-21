@@ -124,6 +124,11 @@ test: ## Run tests
 	docker compose exec php ./vendor/bin/phpunit
 	@echo "$(GREEN)Tests completed!$(NC)"
 
+test-filter: ## Run tests
+	@echo "$(YELLOW)Running tests...$(NC)"
+	docker compose exec php ./vendor/bin/phpunit --filter "$(f)"
+	@echo "$(GREEN)Tests completed!$(NC)"
+
 # Cleanup
 clean: ## Clean cache, logs and temporary files
 	@echo "$(YELLOW)Cleaning project...$(NC)"

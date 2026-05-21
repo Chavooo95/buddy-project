@@ -6,7 +6,7 @@ namespace App\Product\UseCase;
 use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
 
-class DeleteProduct
+class ProductShower
 {
     private ProductRepositoryInterface $repository;
 
@@ -15,15 +15,10 @@ class DeleteProduct
         $this->repository = $repository;
     }
 
-    public function __invoke(string $id): bool
+    public function __invoke(string $id): ?Product
     {
         $product = $this->repository->find($id);
-        if (!$product instanceof Product) {
-            return false;
-        }
 
-        $this->repository->remove($product, true);
-
-        return true;
+        return $product instanceof Product ? $product : null;
     }
 }

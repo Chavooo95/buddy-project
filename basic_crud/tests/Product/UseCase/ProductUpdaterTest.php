@@ -5,11 +5,11 @@ namespace App\Tests\Product\UseCase;
 
 use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
-use App\Product\UseCase\UpdateProduct;
+use App\Product\UseCase\ProductUpdater;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-final class UpdateProductTest extends TestCase
+final class ProductUpdaterTest extends TestCase
 {
     public function testReturnsNullWhenProductNotFound(): void
     {
@@ -20,7 +20,7 @@ final class UpdateProductTest extends TestCase
             ->willReturn(null);
         $repo->expects($this->never())->method('save');
 
-        $uc = new UpdateProduct($repo);
+        $uc = new ProductUpdater($repo);
 
         $this->assertNull($uc('x', ['name' => 'New']));
     }
@@ -38,7 +38,7 @@ final class UpdateProductTest extends TestCase
             ->willReturn($product);
         $repo->expects($this->once())->method('save')->with($product);
 
-        $uc = new UpdateProduct($repo);
+        $uc = new ProductUpdater($repo);
 
         $result = $uc('01HZZZZZZZZZZZZZZZZZZZZZZZ', ['name' => 'New Name', 'price' => 99.99]);
 
@@ -53,7 +53,7 @@ final class UpdateProductTest extends TestCase
         $repo->expects($this->once())->method('find')->willReturn($product);
         $repo->expects($this->never())->method('save');
 
-        $uc = new UpdateProduct($repo);
+        $uc = new ProductUpdater($repo);
 
         $this->expectException(InvalidArgumentException::class);
         $uc('01HZZZZZZZZZZZZZZZZZZZZZZZ', ['name' => '   ']);
