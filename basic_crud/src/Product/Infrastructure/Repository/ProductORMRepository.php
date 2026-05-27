@@ -38,7 +38,15 @@ class ProductORMRepository implements ProductRepositoryInterface
 
     public function findByName(string $name): array
     {
-        return $this->entityManager->createQueryBuilder()
+        return $this->entityManager->createQueryBuilder('p')
+            ->andWhere('p.name LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->orderBy('p.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        /*
+         *return $this->entityManager->createQueryBuilder()
             ->select('p')
             ->from(Product::class, 'p')
             ->andWhere('p.name LIKE :name')
@@ -46,6 +54,7 @@ class ProductORMRepository implements ProductRepositoryInterface
             ->orderBy('p.name', 'ASC')
             ->getQuery()
             ->getResult();
+         */
     }
 
     public function find(string $id): ?Product
