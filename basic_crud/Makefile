@@ -25,8 +25,13 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "$(BLUE)%-20s$(NC) %s\n", $$1, $$2}'
 
 # Installation and Setup
-install: ## Install PHP dependencies with Composer
-	@echo "$(YELLOW)Installing dependencies...$(NC)"
+install: build ## Install PHP dependencies inside the project's php container (no host PHP / ext-mongodb required)
+	@echo "$(YELLOW)Installing dependencies (in container)...$(NC)"
+	docker compose run --rm --no-deps php composer install
+	@echo "$(GREEN)Dependencies installed successfully!$(NC)"
+
+install-host: ## Install PHP dependencies using host composer (requires PHP >=8.3 and ext-mongodb)
+	@echo "$(YELLOW)Installing dependencies (host composer)...$(NC)"
 	$(COMPOSER) install
 	@echo "$(GREEN)Dependencies installed successfully!$(NC)"
 
