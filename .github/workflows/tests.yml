@@ -76,6 +76,9 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
+      - name: Create .env (required by Symfony Dotenv bootEnv)
+        run: cp .env.dev .env
+
       - name: Create test schema (Postgres + Mongo)
         run: |
           php bin/console doctrine:database:create --if-not-exists --env=test
