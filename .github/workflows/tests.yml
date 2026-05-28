@@ -1,0 +1,83 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  phpunit:
+    name: PHPUnit (unit + integration + e2e)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: basic_crud
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: app_db_test
+          POSTGRES_USER: app_user
+          POSTGRES_PASSWORD: app_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok' | grep -q 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: "postgresql://app_user:app_password@127.0.0.1:5432/app_db_test?serverVersion=15&charset=utf8"
+      MONGODB_URI: "mongodb://127.0.0.1:27017"
+      MONGODB_DB: app_db_test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: ctype, iconv, pdo_pgsql, mongodb
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-publish
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: basic_crud/vendor
+          key: composer-${{ runner.os }}-php8.3-${{ hashFiles('basic_crud/composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-php8.3-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Create test schema (Postgres + Mongo)
+        run: |
+          php bin/console doctrine:database:create --if-not-exists --env=test
+          php bin/console doctrine:schema:update --force --complete --env=test
+          php bin/console doctrine:mongodb:schema:create --env=test
+
+      - name: Run PHPUnit
+        run: ./vendor/bin/phpunit
