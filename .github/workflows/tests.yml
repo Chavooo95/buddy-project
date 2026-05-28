@@ -56,7 +56,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: ctype, iconv, pdo_pgsql, mongodb
+          # mongodb is pinned to 1.21.0 because composer.lock requires ext-mongodb ^1.x;
+          # setup-php's default would install 2.x which is incompatible. Matches the
+          # version pecl-installed by basic_crud/docker/php/Dockerfile.
+          extensions: ctype, iconv, pdo_pgsql, mongodb-1.21.0
           coverage: none
           tools: composer:v2
 
