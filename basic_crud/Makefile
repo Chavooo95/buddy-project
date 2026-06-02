@@ -150,7 +150,7 @@ cs-fix: ## Fix code style with PHP-CS-Fixer
 
 analyze: ## Run static analysis
 	@echo "$(YELLOW)Running static analysis...$(NC)"
-	$(PHP) vendor/bin/phpstan analyse src
+	docker compose exec php  ./vendor/bin/phpstan analyse src
 	@echo "$(GREEN)Static analysis completed!$(NC)"
 
 # Complete workflow commands

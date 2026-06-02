@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Product\UseCase;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
 
@@ -15,36 +16,29 @@ class ProductCreator
     {
         $this->repository = $repository;
     }
-
+    /** @param array{name: string, price: float} $data */
     public function __invoke(array $data): Product
     {
-        $this->validate($data);
-
-        $product = new Product();
-        $product->setName($data['name']);
-        $product->setPrice((float) $data['price']);
-
-        // $product2 = new Product();
-        // $product2->setName('zapato');
-
-        $this->repository->save($product);
-
-        return $product;
-    }
-
-    private function validate(array $data): void
-    {
-        if (!isset($data['name']) || trim((string) $data['name']) === '') {
+        if (!isset($data['name'])) {
             throw new InvalidArgumentException('Product name is required');
         }
-
         if (!isset($data['price'])) {
             throw new InvalidArgumentException('Product price is required');
         }
 
-        $price = (float) $data['price'];
+        $name = new ProductName($data['name']);
+
+        $price = $data['price'];
         if ($price < 0) {
             throw new InvalidArgumentException('Product price cannot be negative');
         }
+
+        $product = new Product();
+        $product->setName($name->value);
+        $product->setPrice($price);
+
+        $this->repository->save($product);
+
+        return $product;
     }
 }
