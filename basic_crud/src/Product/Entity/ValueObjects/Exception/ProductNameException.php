@@ -7,6 +7,11 @@ use InvalidArgumentException;
 
 final class ProductNameException extends InvalidArgumentException
 {
+    private function __construct(string $message)
+    {
+        return parent::__construct($message);
+    }
+
     public static function empty(): self
     {
         return new self('Product name cannot be empty');
