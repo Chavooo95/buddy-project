@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace App\Product\UseCase;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductName;
+use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
-use InvalidArgumentException;
 
 class ProductUpdater
 {
@@ -24,18 +25,11 @@ class ProductUpdater
         }
 
         if (array_key_exists('name', $data)) {
-            if (trim((string) $data['name']) === '') {
-                throw new InvalidArgumentException('Product name cannot be empty');
-            }
-            $product->setName((string) $data['name']);
+            $product->setName(new ProductName((string) $data['name']));
         }
 
         if (array_key_exists('price', $data)) {
-            $price = (float) $data['price'];
-            if ($price < 0) {
-                throw new InvalidArgumentException('Product price cannot be negative');
-            }
-            $product->setPrice($price);
+            $product->setPrice(new ProductPrice((float) $data['price']));
         }
 
         $this->repository->save($product);

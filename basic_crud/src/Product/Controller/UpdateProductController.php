@@ -45,8 +45,8 @@ final class UpdateProductController
                 'success' => true,
                 'message' => 'Product updated successfully',
                 'ulid' => $product->id(),
-                'name' => $product->name(),
-                'price' => $product->price(),
+                'name' => $product->name()?->value,
+                'price' => $product->price()?->value,
             ]);
         } catch (InvalidArgumentException $e) {
             return new JsonResponse([

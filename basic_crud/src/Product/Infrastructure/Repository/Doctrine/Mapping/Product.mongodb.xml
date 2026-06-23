@@ -6,8 +6,8 @@
 
     <document name="App\Product\Entity\Product" collection="products">
         <id field-name="id" type="string" strategy="NONE" />
-        <field field-name="name" type="string" />
-        <field field-name="price" type="float" />
+        <field field-name="name" type="product_name" />
+        <field field-name="price" type="product_price" />
         <field field-name="createdAt" type="date" />
         <field field-name="updatedAt" type="date" />
     </document>

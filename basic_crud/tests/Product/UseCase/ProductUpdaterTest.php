@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Product\UseCase;
+namespace Test\Product\UseCase;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductName;
+use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ProductUpdater;
 use InvalidArgumentException;
@@ -11,51 +13,57 @@ use PHPUnit\Framework\TestCase;
 
 final class ProductUpdaterTest extends TestCase
 {
-    public function testReturnsNullWhenProductNotFound(): void
+    public function test_it_returns_null_when_the_product_is_not_found(): void
     {
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())
             ->method('find')
             ->with('x')
             ->willReturn(null);
-        $repo->expects($this->never())->method('save');
+        $repository->expects($this->never())->method('save');
 
-        $uc = new ProductUpdater($repo);
+        $useCase = new ProductUpdater($repository);
 
-        $this->assertNull($uc('x', ['name' => 'New']));
+        $this->assertNull($useCase('x', ['name' => 'New']));
     }
 
-    public function testUpdatesAndSavesWhenFound(): void
+    public function test_it_updates_and_saves_the_product_when_found(): void
     {
         $product = $this->createMock(Product::class);
-        $product->expects($this->once())->method('setName')->with('New Name')->willReturnSelf();
-        $product->expects($this->once())->method('setPrice')->with(99.99)->willReturnSelf();
+        $product->expects($this->once())
+            ->method('setName')
+            ->with(new ProductName('New Name'))
+            ->willReturnSelf();
+        $product->expects($this->once())
+            ->method('setPrice')
+            ->with(new ProductPrice(99.99))
+            ->willReturnSelf();
 
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())
             ->method('find')
             ->with('01HZZZZZZZZZZZZZZZZZZZZZZZ')
             ->willReturn($product);
-        $repo->expects($this->once())->method('save')->with($product);
+        $repository->expects($this->once())->method('save')->with($product);
 
-        $uc = new ProductUpdater($repo);
+        $useCase = new ProductUpdater($repository);
 
-        $result = $uc('01HZZZZZZZZZZZZZZZZZZZZZZZ', ['name' => 'New Name', 'price' => 99.99]);
+        $result = $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', ['name' => 'New Name', 'price' => 99.99]);
 
         $this->assertSame($product, $result);
     }
 
-    public function testRejectsEmptyName(): void
+    public function test_it_rejects_an_empty_name(): void
     {
-        $product = $this->createMock(Product::class);
+        $product = $this->createStub(Product::class);
 
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())->method('find')->willReturn($product);
-        $repo->expects($this->never())->method('save');
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())->method('find')->willReturn($product);
+        $repository->expects($this->never())->method('save');
 
-        $uc = new ProductUpdater($repo);
+        $useCase = new ProductUpdater($repository);
 
         $this->expectException(InvalidArgumentException::class);
-        $uc('01HZZZZZZZZZZZZZZZZZZZZZZZ', ['name' => '   ']);
+        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', ['name' => '   ']);
     }
 }

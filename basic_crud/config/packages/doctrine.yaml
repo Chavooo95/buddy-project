@@ -1,6 +1,9 @@
 doctrine:
   dbal:
     url: '%env(resolve:DATABASE_URL)%'
+    types:
+      product_name: App\Product\Infrastructure\Repository\Doctrine\Type\Orm\ProductNameType
+      product_price: App\Product\Infrastructure\Repository\Doctrine\Type\Orm\ProductPriceType
   orm:
     auto_generate_proxy_classes: true
     enable_lazy_ghost_objects: true

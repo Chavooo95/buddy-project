@@ -35,7 +35,7 @@ final class InMemoryProductRepository implements ProductRepositoryInterface
     {
         return array_values(array_filter(
             $this->products,
-            fn(Product $product) => $product->name() === $name
+            fn(Product $product) => $product->name()?->value === $name
         ));
     }
 
@@ -43,7 +43,7 @@ final class InMemoryProductRepository implements ProductRepositoryInterface
     {
         return array_values(array_filter(
             $this->products,
-            fn(Product $product) => str_contains($product->name(), $name)
+            fn(Product $product) => str_contains($product->name()?->value ?? '', $name)
         ));
     }
 }

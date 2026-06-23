@@ -27,8 +27,8 @@ final class ShowProductControllerTest extends WebTestCase
 
         $this->assertTrue($data['success']);
         $this->assertEquals($product->id(), $data['ulid']);
-        $this->assertEquals($product->name(), $data['name']);
-        $this->assertEquals($product->price(), $data['price']);
+        $this->assertEquals($product->name()->value, $data['name']);
+        $this->assertEquals($product->price()->value, $data['price']);
     }
 
     public function test_it_returns_404_when_product_not_found(): void

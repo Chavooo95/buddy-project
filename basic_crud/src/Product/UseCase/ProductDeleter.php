@@ -22,7 +22,7 @@ class ProductDeleter
             return false;
         }
 
-        $this->repository->remove($product, true);
+        $this->repository->remove($product);
 
         return true;
     }

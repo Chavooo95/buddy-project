@@ -38,8 +38,8 @@ final class ProductODMRepositoryTest extends KernelTestCase
 
         $this->assertNotNull($found);
         $this->assertSame($product->id(), $found->id());
-        $this->assertSame($product->name(), $found->name());
-        $this->assertSame($product->price(), $found->price());
+        $this->assertEquals($product->name(), $found->name());
+        $this->assertEquals($product->price(), $found->price());
 
     }
 

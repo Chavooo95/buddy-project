@@ -11,38 +11,37 @@ use Test\Data\Product\Infrastructure\Repository\InMemoryProductRepository;
 
 final class ProductCreatorTest extends TestCase
 {
-    public function testCreatesAndSavesProduct(): void
+    public function test_it_creates_and_saves_a_product(): void
     {
-        $repo = new InMemoryProductRepository();
-        $subject = new ProductCreator($repo);
+        $repository = new InMemoryProductRepository();
+        $useCase = new ProductCreator($repository);
 
-        $product = $subject(['name' => 'Keyboard', 'price' => 12.34]);
+        $product = $useCase(['name' => 'Keyboard', 'price' => 12.34]);
 
-        $this->assertSame($product, $repo->findByName('Keyboard')[0]);
-        $this->assertEquals('Keyboard', $product->name());
-        $this->assertEquals(12.34, $product->price());
-        // dd($repo->find($product->id()));
+        $this->assertSame($product, $repository->findByName('Keyboard')[0]);
+        $this->assertEquals('Keyboard', $product->name()->value);
+        $this->assertEquals(12.34, $product->price()->value);
     }
 
-    public function testRejectsMissingName(): void
+    public function test_it_rejects_a_missing_name(): void
     {
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->never())->method('save');
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->never())->method('save');
 
-        $uc = new ProductCreator($repo);
+        $useCase = new ProductCreator($repository);
 
         $this->expectException(InvalidArgumentException::class);
-        $uc(['price' => 1]);
+        $useCase(['price' => 1]);
     }
 
-    public function testRejectsNegativePrice(): void
+    public function test_it_rejects_a_negative_price(): void
     {
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->never())->method('save');
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->never())->method('save');
 
-        $uc = new ProductCreator($repo);
+        $useCase = new ProductCreator($repository);
 
         $this->expectException(InvalidArgumentException::class);
-        $uc(['name' => 'Keyboard', 'price' => -1]);
+        $useCase(['name' => 'Keyboard', 'price' => -1]);
     }
 }

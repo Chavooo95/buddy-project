@@ -10,33 +10,33 @@ use PHPUnit\Framework\TestCase;
 
 final class ProductDeleterTest extends TestCase
 {
-    public function testReturnsFalseWhenNotFound(): void
+    public function test_it_returns_false_when_the_product_is_not_found(): void
     {
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())
             ->method('find')
             ->with('x')
             ->willReturn(null);
-        $repo->expects($this->never())->method('remove');
+        $repository->expects($this->never())->method('remove');
 
-        $uc = new ProductDeleter($repo);
+        $useCase = new ProductDeleter($repository);
 
-        $this->assertFalse($uc('x'));
+        $this->assertFalse($useCase('x'));
     }
 
-    public function testRemovesAndReturnsTrueWhenFound(): void
+    public function test_it_removes_the_product_and_returns_true_when_found(): void
     {
-        $product = $this->createMock(Product::class);
+        $product = $this->createStub(Product::class);
 
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())
             ->method('find')
             ->with('01HZZZZZZZZZZZZZZZZZZZZZZZ')
             ->willReturn($product);
-        $repo->expects($this->once())->method('remove')->with($product, true);
+        $repository->expects($this->once())->method('remove')->with($product);
 
-        $uc = new ProductDeleter($repo);
+        $useCase = new ProductDeleter($repository);
 
-        $this->assertTrue($uc('01HZZZZZZZZZZZZZZZZZZZZZZZ'));
+        $this->assertTrue($useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ'));
     }
 }
