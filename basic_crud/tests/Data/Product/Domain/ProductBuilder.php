@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Test\Data\Product\Domain;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductName;
+use App\Product\Entity\ValueObjects\ProductPrice;
 
 final class ProductBuilder
 {
@@ -20,8 +22,8 @@ final class ProductBuilder
     public function build(): Product
     {
         return (new Product())
-            ->setName($this->name)
-            ->setPrice($this->price);
+            ->setName(new ProductName($this->name))
+            ->setPrice(new ProductPrice($this->price));
     }
 
     public function withName(string $name): self

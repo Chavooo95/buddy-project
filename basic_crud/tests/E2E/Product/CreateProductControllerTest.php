@@ -20,7 +20,7 @@ final class CreateProductControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['name' => $product->name(), 'price' => $product->price()])
+            json_encode(['name' => $product->name()->value, 'price' => $product->price()->value])
         );
 
         $this->assertResponseStatusCodeSame(201);
@@ -29,8 +29,8 @@ final class CreateProductControllerTest extends WebTestCase
 
         $this->assertTrue($data['success']);
         $this->assertEquals('Product created successfully', $data['message']);
-        $this->assertEquals($product->name(), $data['name']);
-        $this->assertEquals($product->price(), $data['price']);
+        $this->assertEquals($product->name()->value, $data['name']);
+        $this->assertEquals($product->price()->value, $data['price']);
         $this->assertNotEmpty($data['ulid']);
     }
 
