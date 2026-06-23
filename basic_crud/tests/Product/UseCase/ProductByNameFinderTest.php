@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Test\Product\UseCase;
@@ -11,33 +10,31 @@ use PHPUnit\Framework\TestCase;
 
 final class ProductByNameFinderTest extends TestCase
 {
-    public function test_it_returns_products_matching_exact_name(): void
+    public function test_it_returns_products_matching_the_exact_name(): void
     {
-        $product = $this->createMock(Product::class);
+        $product = $this->createStub(Product::class);
 
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())
             ->method('findByName')
             ->with('Keyboard')
             ->willReturn([$product]);
 
-        $useCase = new ProductByNameFinder($repo);
-        $result = $useCase('Keyboard');
+        $useCase = new ProductByNameFinder($repository);
 
-        $this->assertSame([$product], $result);
+        $this->assertSame([$product], $useCase('Keyboard'));
     }
 
-    public function test_it_returns_empty_array_when_no_match(): void
+    public function test_it_returns_an_empty_array_when_no_product_matches(): void
     {
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())
             ->method('findByName')
             ->with('NonExistent')
             ->willReturn([]);
 
-        $useCase = new ProductByNameFinder($repo);
-        $result = $useCase('NonExistent');
+        $useCase = new ProductByNameFinder($repository);
 
-        $this->assertSame([], $result);
+        $this->assertSame([], $useCase('NonExistent'));
     }
 }

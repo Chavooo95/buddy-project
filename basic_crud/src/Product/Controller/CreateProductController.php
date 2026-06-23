@@ -40,8 +40,8 @@ final class CreateProductController
                 'success' => true,
                 'message' => 'Product created successfully',
                 'ulid' => $product->id(),
-                'name' => $product->name(),
-                'price' => $product->price(),
+                'name' => $product->name()?->value,
+                'price' => $product->price()?->value,
             ]);
             return $response;
         } catch (InvalidArgumentException $e) {

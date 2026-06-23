@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Product\UseCase;
+namespace Test\Product\UseCase;
 
 use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
@@ -10,35 +10,33 @@ use PHPUnit\Framework\TestCase;
 
 final class ProductListerTest extends TestCase
 {
-    public function testListsAllProductsWhenNoSearchProvided(): void
+    public function test_it_lists_all_products_when_no_search_is_provided(): void
     {
-        $p1 = $this->createMock(Product::class);
-        $p2 = $this->createMock(Product::class);
+        $first = $this->createStub(Product::class);
+        $second = $this->createStub(Product::class);
 
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->once())->method('findAll')->willReturn([$p1, $p2]);
-        $repo->expects($this->never())->method('findByPartialName');
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())->method('findAll')->willReturn([$first, $second]);
+        $repository->expects($this->never())->method('findByPartialName');
 
-        $uc = new ProductLister($repo);
+        $useCase = new ProductLister($repository);
 
-        $result = $uc(null);
-
-        $this->assertCount(2, $result);
-        $this->assertSame([$p1, $p2], $result);
+        $this->assertSame([$first, $second], $useCase(null));
     }
 
-    public function testSearchesWhenSearchProvided(): void
+    public function test_it_searches_by_partial_name_when_a_search_term_is_provided(): void
     {
-        $p1 = $this->createMock(Product::class);
+        $match = $this->createStub(Product::class);
 
-        $repo = $this->createMock(ProductRepositoryInterface::class);
-        $repo->expects($this->never())->method('findAll');
-        $repo->expects($this->once())->method('findByPartialName')->with('Test')->willReturn([$p1]);
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->never())->method('findAll');
+        $repository->expects($this->once())
+            ->method('findByPartialName')
+            ->with('Test')
+            ->willReturn([$match]);
 
-        $uc = new ProductLister($repo);
+        $useCase = new ProductLister($repository);
 
-        $result = $uc('Test');
-
-        $this->assertSame([$p1], $result);
+        $this->assertSame([$match], $useCase('Test'));
     }
 }

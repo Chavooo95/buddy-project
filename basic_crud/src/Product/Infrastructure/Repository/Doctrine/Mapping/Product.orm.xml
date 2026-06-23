@@ -6,8 +6,8 @@
 
     <entity name="App\Product\Entity\Product" table="products">
         <id name="id" column="id" type="string" length="26" />
-        <field name="name" type="string" length="255" nullable="false" />
-        <field name="price" type="float" nullable="false" />
+        <field name="name" type="product_name" length="255" nullable="false" />
+        <field name="price" type="product_price" nullable="false" />
         <field name="createdAt" type="datetime" nullable="false" />
         <field name="updatedAt" type="datetime" nullable="true" />
     </entity>

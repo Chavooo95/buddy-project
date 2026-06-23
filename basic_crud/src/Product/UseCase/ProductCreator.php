@@ -5,6 +5,7 @@ namespace App\Product\UseCase;
 
 use App\Product\Entity\Product;
 use App\Product\Entity\ValueObjects\ProductName;
+use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
 
@@ -26,16 +27,9 @@ class ProductCreator
             throw new InvalidArgumentException('Product price is required');
         }
 
-        $name = new ProductName($data['name']);
-
-        $price = $data['price'];
-        if ($price < 0) {
-            throw new InvalidArgumentException('Product price cannot be negative');
-        }
-
         $product = new Product();
-        $product->setName($name->value);
-        $product->setPrice($price);
+        $product->setName(new ProductName($data['name']));
+        $product->setPrice(new ProductPrice($data['price']));
 
         $this->repository->save($product);
 
