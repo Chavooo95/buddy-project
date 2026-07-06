@@ -16,14 +16,16 @@ use Symfony\Component\Uid\Ulid;
 class Product
 {
     private string $id;
-    private ?ProductName $name = null;
-    private ?ProductPrice $price = null;
-    private ?DateTimeInterface $createdAt = null;
+    private ProductName $name;
+    private ProductPrice $price;
+    private DateTimeInterface $createdAt;
     private ?DateTimeInterface $updatedAt = null;
 
-    public function __construct()
+    public function __construct(ProductName $name, ProductPrice $price)
     {
         $this->id = (string) new Ulid();
+        $this->name = $name;
+        $this->price = $price;
         $this->createdAt = new DateTime();
     }
 
@@ -32,7 +34,7 @@ class Product
         return $this->id;
     }
 
-    public function name(): ?ProductName
+    public function name(): ProductName
     {
         return $this->name;
     }
@@ -45,7 +47,7 @@ class Product
         return $this;
     }
 
-    public function price(): ?ProductPrice
+    public function price(): ProductPrice
     {
         return $this->price;
     }
@@ -62,10 +64,10 @@ class Product
     {
         return [
             'id'        => $this->id,
-            'name'      => $this->name?->value,
-            'price'     => $this->price?->value,
-            'createdAt' => $this->createdAt?->format(\DateTimeInterface::ATOM),
-            'updatedAt' => $this->updatedAt?->format(\DateTimeInterface::ATOM),
+            'name'      => $this->name->value,
+            'price'     => $this->price->value,
+            'createdAt' => $this->createdAt->format(DateTimeInterface::ATOM),
+            'updatedAt' => $this->updatedAt?->format(DateTimeInterface::ATOM),
         ];
     }
 
