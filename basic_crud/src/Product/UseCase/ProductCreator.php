@@ -27,9 +27,10 @@ class ProductCreator
             throw new InvalidArgumentException('Product price is required');
         }
 
-        $product = new Product();
-        $product->setName(new ProductName($data['name']));
-        $product->setPrice(new ProductPrice($data['price']));
+        $product = new Product(
+            new ProductName($data['name']),
+            new ProductPrice($data['price']),
+        );
 
         $this->repository->save($product);
 

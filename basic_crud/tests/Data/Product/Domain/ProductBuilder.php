@@ -21,9 +21,10 @@ final class ProductBuilder
 
     public function build(): Product
     {
-        return (new Product())
-            ->setName(new ProductName($this->name))
-            ->setPrice(new ProductPrice($this->price));
+        return new Product(
+            new ProductName($this->name),
+            new ProductPrice($this->price),
+        );
     }
 
     public function withName(string $name): self
