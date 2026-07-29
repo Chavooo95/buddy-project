@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Product\Infrastructure\Repository;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Repository\ProductRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -59,8 +60,8 @@ class ProductORMRepository implements ProductRepositoryInterface
             ->getResult();
     }
 
-    public function find(string $id): ?Product
+    public function find(ProductId $id): ?Product
     {
-        return $this->entityManager->find(Product::class, $id);
+        return $this->entityManager->find(Product::class, $id->value);
     }
 }

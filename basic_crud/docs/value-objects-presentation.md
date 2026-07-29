@@ -45,31 +45,31 @@ style: |
 
 # Value Objects
 
-## Modelando el dominio con tipos seguros
+## Modeling the domain with safe types
 
 Carlos Terrero Orpí
 basic_crud — Product domain
 
 ---
 
-# ¿Qué es un Value Object?
+# What is a Value Object?
 
-Un **objeto inmutable** definido por **el valor de sus atributos**, no por una identidad.
+An **immutable object** defined by **the value of its attributes**, not by an identity.
 
-- No tiene `id`
-- Dos VOs con el mismo valor **son el mismo VO**
-- Auto-validado en construcción
-- Una vez creado, **no cambia**
+- It has no `id`
+- Two VOs with the same value **are the same VO**
+- Self-validated on construction
+- Once created, **it never changes**
 
 <div class="highlight">
 
-> "Si tengo dos billetes y los dos son de 5€, ¿son el mismo billete? Da igual: para pagar el café, son intercambiables."
+> "If I have two banknotes and both are 5€, are they the same banknote? It doesn't matter: to pay for the coffee, they're interchangeable."
 
 </div>
 
 ---
 
-# El problema: primitive obsession
+# The problem: primitive obsession
 
 ```php
 class Product
@@ -78,18 +78,18 @@ class Product
 
     public function setName(string $name): void
     {
-        $this->name = $name;   // ¿vacío? ¿espacios? ¿2 caracteres?
+        $this->name = $name;   // empty? whitespace? 2 characters?
     }
 }
 ```
 
-- Cualquier `string` cuela: `""`, `"  "`, `"a"`, `"\n"`
-- La validación se duplica en cada `setName`, controller, command…
-- El tipo `string` no comunica intención
+- Any `string` gets through: `""`, `"  "`, `"a"`, `"\n"`
+- Validation is duplicated in every `setName`, controller, command…
+- The `string` type doesn't communicate intent
 
 ---
 
-# La solución: `ProductName`
+# The solution: `ProductName`
 
 ```php
 namespace App\Product\Entity\ValueObjects;
@@ -115,33 +115,27 @@ final readonly class ProductName
 
 <div class="highlight">
 
-**Si tengo un `ProductName`, es un nombre válido. Punto.**
+**If I have a `ProductName`, it's a valid name. Period.**
 
 </div>
 
 ---
 
-# Anatomía: `final readonly`
+# Anatomy: `final readonly`
 
 ```php
 final readonly class ProductName
 ```
 
-| Modificador | Garantía |
+| Modifier | Guarantee |
 |---|---|
-| `final` | Nadie puede heredar y romper invariantes |
-| `readonly` | Propiedades inmutables tras construir |
-| `public string $value` | Acceso directo sin getter ceremonial |
-
-<div class="highlight">
-
-PHP 8.2+ → el compilador es tu aliado. Sin trucos defensivos.
-
-</div>
+| `final` | No one can extend it and break the invariants |
+| `readonly` | Properties are immutable after construction |
+| `public string $value` | Direct access without a ceremonial getter |
 
 ---
 
-# Validación en el constructor
+# Validation in the constructor
 
 ```php
 public function __construct(string $value)
@@ -157,11 +151,11 @@ public function __construct(string $value)
 }
 ```
 
-**Always valid principle**: si el constructor termina sin excepción, el objeto está en estado válido. Siempre.
+**Always valid principle**: if the constructor finishes without an exception, the object is in a valid state. Always.
 
 ---
 
-# Excepciones de dominio
+# Domain exceptions
 
 ```php
 namespace App\Product\Entity\ValueObjects\Exception;
@@ -182,30 +176,30 @@ final class ProductNameException extends InvalidArgumentException
 }
 ```
 
-**Named constructors** → un solo tipo, dos formas de fallar bien descritas.
+**Named constructors** → a single type, two well-described ways to fail.
 
 ---
 
-# ¿Por qué excepciones propias?
+# Why custom exceptions?
 
-| Genérica (`InvalidArgumentException`) | De dominio (`ProductNameException`) |
+| Generic (`InvalidArgumentException`) | Domain (`ProductNameException`) |
 |---|---|
-| Cualquier librería la lanza | Solo la lanza **nuestro** VO |
-| Catch ambiguo | `catch (ProductNameException $e)` |
-| Mensaje en string suelto | Centralizado en la clase |
-| Difícil de tracear | Habla el lenguaje del dominio |
+| Any library can throw it | Only **our** VO throws it |
+| Ambiguous catch | `catch (ProductNameException $e)` |
+| Message as a loose string | Centralized in the class |
+| Hard to trace | Speaks the language of the domain |
 
 ```php
 try {
     new ProductName($input);
 } catch (ProductNameException $e) {
-    // sé exactamente qué falló y dónde
+    // I know exactly what failed and where
 }
 ```
 
 ---
 
-# Igualdad por valor
+# Equality by value
 
 ```php
 public function test_check_valueObject_has_the_same_value(): void
@@ -217,13 +211,13 @@ public function test_check_valueObject_has_the_same_value(): void
 }
 ```
 
-- `assertEquals` compara **valor** (no referencia)
-- Dos `ProductName('Test Product')` son indistinguibles
-- Es la esencia del Value Object
+- `assertEquals` compares **value** (not reference)
+- Two `ProductName('Test Product')` are indistinguishable
+- It's the essence of the Value Object
 
 ---
 
-# Normalización transparente
+# Transparent normalization
 
 ```php
 public function test_that_valueObjects_trim_the_name()
@@ -235,16 +229,16 @@ public function test_that_valueObjects_trim_the_name()
 }
 ```
 
-El VO **limpia el input** antes de validar:
+The VO **cleans up the input** before validating:
 
 - `"   Test Product   "` → `"Test Product"`
-- `"   "` → vacío → excepción
+- `"   "` → empty → exception
 
-Quien lo construye no tiene que recordar hacer `trim`.
+Whoever constructs it doesn't have to remember to `trim`.
 
 ---
 
-# Tests de validación
+# Validation tests
 
 ```php
 public function test_throws_ProductNameException_on_empty_name(): void
@@ -269,7 +263,7 @@ public function test_throws_ProductNameException_with_less_than_three_chars(): v
 }
 ```
 
-Los tests **documentan los invariantes** — y ahora hablan el lenguaje del dominio.
+The tests **document the invariants** — and now they speak the language of the domain.
 
 ---
 
@@ -277,39 +271,39 @@ Los tests **documentan los invariantes** — y ahora hablan el lenguaje del domi
 
 | | **Entity** (`Product`) | **Value Object** (`ProductName`) |
 |---|---|---|
-| Identidad | `id` (ULID) | Por valor |
-| Mutabilidad | Sí (`setName`, `setPrice`) | Inmutable |
-| Igualdad | Por `id` | Por valor |
-| Ciclo de vida | Tiene historia | No tiene |
-| Ejemplo | "Este producto concreto" | "El nombre 'Camiseta'" |
+| Identity | `id` (ULID) | By value |
+| Mutability | Yes (`setName`, `setPrice`) | Immutable |
+| Equality | By `id` | By value |
+| Lifecycle | Has a history | Has none |
+| Example | "This specific product" | "The name 'T-shirt'" |
 
 ---
 
-# Beneficios
+# Benefits
 
-1. **Type safety**: el compilador/analizador estático rechaza usos inválidos
-2. **Validación en un solo sitio**: el constructor
-3. **Intención explícita**: `ProductName` > `string`
-4. **Tests focalizados**: pruebas el VO, no cada lugar que lo usa
-5. **Refactor seguro**: cambios al concepto = cambios al VO
-6. **Documentación viva**: el código describe el dominio
+1. **Type safety**: the compiler / static analyzer rejects invalid uses
+2. **Validation in a single place**: the constructor
+3. **Explicit intent**: `ProductName` > `string`
+4. **Focused tests**: you test the VO, not every place that uses it
+5. **Safe refactoring**: changes to the concept = changes to the VO
+6. **Living documentation**: the code describes the domain
 
 ---
 
 <!-- _class: lead -->
 
-# Pero no son la bala de plata 🥈
+# But they're not a silver bullet 🥈
 
-Todo lo anterior tiene un precio.
-Un VO **resuelve un problema concreto**, la validación dispersa de un valor con invariantes, **no todos los problemas**.
+Everything above comes at a price.
+A VO **solves one specific problem**, the scattered validation of a value with invariants, **not every problem**.
 
-Envolver por envolver es *over-engineering* con otro nombre.
+Wrapping for the sake of wrapping is *over-engineering* by another name.
 
 ---
 
-# Coste 1: boilerplate y proliferación
+# Cost 1: boilerplate and proliferation
 
-Un solo concepto = **tres ficheros** (VO + excepción + tests):
+A single concept = **three files** (VO + exception + tests):
 
 ```
 ProductName.php
@@ -317,104 +311,97 @@ ProductNameException.php
 ProductNameTest.php
 ```
 
-- Multiplícalo por cada campo: `Price`, `Sku`, `Slug`, `Stock`…
-- Más clases = más superficie que mantener y navegar
-- El `->value` se filtra por todo el código que consume el VO
+- Multiply it by every field: `Price`, `Sku`, `Slug`, `Stock`…
+- More classes = more surface to maintain and navigate
+- The `->value` leaks through all the code that consumes the VO
 
 <div class="highlight">
 
-Para un valor **sin invariantes reales**, un `string` honesto es mejor que un VO ceremonial.
+For a value **with no real invariants**, an honest `string` beats a ceremonial VO.
 
 </div>
 
 ---
 
-# Coste 2: fricción en las fronteras
+# Cost 2: friction at the boundaries
 
-El mundo exterior habla en **primitivos**: JSON, formularios, columnas de BD.
+The outside world speaks in **primitives**: JSON, forms, DB columns.
 
 ```php
-// Entrada: hay que construir el VO desde el primitivo
+// Input: you have to build the VO from the primitive
 $name = new ProductName($request->get('name'));
 
-// Persistencia (MongoDB / Doctrine ODM):
-// necesitas un type custom o mapear a mano
+// Persistence (MongoDB / Doctrine ODM):
+// you need a custom type or to map it by hand
 $document['name'] = $product->name->value;
 
-// Salida (API/serialización): de vuelta a string
+// Output (API / serialization): back to a string
 ['name' => $product->name->value]
 ```
 
-Cada borde del sistema es un punto de **conversión ↔ hidratación** que antes no existía.
+Every edge of the system is a **conversion ↔ hydration** point that didn't exist before.
 
 ---
 
-# Coste 3: invariantes que cruzan campos
+# Cost 3: invariants that span fields
 
-Un VO solo conoce **su propio valor**. No puede validar reglas entre campos:
+A VO only knows **its own value**. It can't validate rules between fields:
 
 ```php
-// ❌ ProductName no sabe nada del precio
-// "el precio con descuento debe ser < precio base"
+// ❌ ProductName knows nothing about the price
+// "the discounted price must be < base price"
 ```
 
-- Esas reglas viven en la **entidad** o en un **domain service**
-- El VO no te exime de tener lógica de dominio en otro sitio
-- Riesgo: creer que "ya está todo validado" porque cada campo es un VO
+- Those rules live in the **entity** or in a **domain service**
+- The VO doesn't free you from having domain logic elsewhere
+- Risk: believing "everything is already validated" because each field is a VO
 
 ---
 
-# Cuándo **no** usar un Value Object
+# When **not** to use a Value Object
 
-| Situación | Mejor opción |
+| Situation | Better option |
 |---|---|
-| Valor sin invariantes (nota libre, flag) | Primitivo |
-| Dato que solo pasa de largo (DTO transporte) | `array` / `readonly` DTO |
-| Prototipo / CRUD trivial | Empieza simple, refactoriza luego |
-| Regla que cruza varios campos | Entidad o domain service |
-| El equipo no comparte el lenguaje DDD | Mide el coste de mantenimiento |
+| Value with no invariants (free note, flag) | Primitive |
+| Data that just passes through (transport DTO) | `array` / `readonly` DTO |
+| Prototype / trivial CRUD | Start simple, refactor later |
+| Rule that spans several fields | Entity or domain service |
+| The team doesn't share the DDD language | Weigh the maintenance cost |
 
 ---
 
-# Regla práctica
+# Rule of thumb
 
 <div class="highlight">
 
-Crea un VO cuando hay **invariantes que proteger** y el concepto **se repite o tiene reglas propias**.
+Create a VO when there are **invariants to protect** and the concept **repeats or has its own rules**.
 
 </div>
 
-- ¿Cualquier valor del tipo es válido? → primitivo
-- ¿Hay reglas, normalización o un concepto del dominio? → VO
-- En la duda: empieza con el primitivo y **promociona a VO cuando duela**
+- Is any value of the type valid? → primitive
+- Are there rules, normalization or a domain concept? → VO
+- When in doubt: start with the primitive and **promote it to a VO when it hurts**
 
-El VO es una herramienta, no un dogma.
-
----
-
-# Próximos pasos en el proyecto
-
-- [ ] `ProductPrice` + `ProductPriceException` — invariantes: > 0, máximo 2 decimales
-- [ ] Integrar VOs en `Product` (en vez de `?string`, `?float`)
+The VO is a tool, not a dogma.
 
 ---
 
 <!-- _class: lead -->
 
-# Resumen
+# Summary
 
-**Un Value Object es:**
-inmutable · auto-validado · sin identidad · igual por valor
+**A Value Object is:**
+immutable · self-validated · no identity · equal by value
 
-**¿Por qué?**
-Modelar el dominio con tipos que **no pueden estar mal**.
+**Why?**
+To model the domain with types that **can't be wrong**.
 
 ---
 
 <!-- _class: lead -->
 
-# ¿Preguntas?
+# Questions?
 
 VO: `src/Product/Entity/ValueObjects/ProductName.php`
-Excepción: `src/Product/Entity/ValueObjects/Exception/ProductNameException.php`
+Exception: `src/Product/Entity/ValueObjects/Exception/ProductNameException.php`
 Tests: `tests/Product/ValueObjects/ProductNameTest.php`

@@ -37,7 +37,7 @@ final class ProductODMRepositoryTest extends KernelTestCase
         $found = $this->subject->find($product->id());
 
         $this->assertNotNull($found);
-        $this->assertSame($product->id(), $found->id());
+        $this->assertSame($product->id()->value, $found->id()->value);
         $this->assertEquals($product->name(), $found->name());
         $this->assertEquals($product->price(), $found->price());
 
@@ -58,7 +58,7 @@ final class ProductODMRepositoryTest extends KernelTestCase
         $this->subject->save($product);
         $found = $this->subject->findByPartialName('Key');
         $this->assertCount(1, $found);
-        $this->assertSame($product->id(), $found[0]->id());
+        $this->assertSame($product->id()->value, $found[0]->id()->value);
     }
 
     public function test_it_finds_a_product_by_exact_name(): void
@@ -67,7 +67,7 @@ final class ProductODMRepositoryTest extends KernelTestCase
         $this->subject->save($product);
         $found = $this->subject->findByName('Keyboard');
         $this->assertCount(1, $found);
-        $this->assertSame($product->id(), $found[0]->id());
+        $this->assertSame($product->id()->value, $found[0]->id()->value);
     }
 
     public function test_find_by_name_does_not_match_partial_name(): void

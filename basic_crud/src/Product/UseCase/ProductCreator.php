@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace App\Product\UseCase;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
+use DateTime;
 use InvalidArgumentException;
 
 class ProductCreator
@@ -28,8 +30,10 @@ class ProductCreator
         }
 
         $product = new Product(
+            ProductId::generate(),
             new ProductName($data['name']),
             new ProductPrice($data['price']),
+            new DateTime(),
         );
 
         $this->repository->save($product);

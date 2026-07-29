@@ -19,14 +19,14 @@ final class ShowProductControllerTest extends WebTestCase
 
         $repository->save($product);
 
-        $client->request('GET', '/api/products/' . $product->id());
+        $client->request('GET', '/api/products/' . $product->id()->value);
 
         $this->assertResponseStatusCodeSame(200);
 
         $data = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertTrue($data['success']);
-        $this->assertEquals($product->id(), $data['ulid']);
+        $this->assertEquals($product->id()->value, $data['ulid']);
         $this->assertEquals($product->name()->value, $data['name']);
         $this->assertEquals($product->price()->value, $data['price']);
     }

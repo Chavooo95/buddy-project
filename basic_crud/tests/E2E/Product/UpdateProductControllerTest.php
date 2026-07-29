@@ -21,7 +21,7 @@ final class UpdateProductControllerTest extends WebTestCase
 
         $client->request(
             'PUT',
-            '/api/products/' . $product->id(),
+            '/api/products/' . $product->id()->value,
             [], [], ['CONTENT_TYPE' => 'application/json'],
             json_encode(['name' => 'New Name', 'price' => 99.99])
         );
@@ -32,7 +32,7 @@ final class UpdateProductControllerTest extends WebTestCase
 
         $this->assertTrue($data['success']);
         $this->assertEquals('Product updated successfully', $data['message']);
-        $this->assertEquals($product->id(), $data['ulid']);
+        $this->assertEquals($product->id()->value, $data['ulid']);
         $this->assertEquals('New Name', $data['name']);
         $this->assertEquals(99.99, $data['price']);
     }

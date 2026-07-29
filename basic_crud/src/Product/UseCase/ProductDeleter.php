@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Product\UseCase;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Repository\ProductRepositoryInterface;
 
 class ProductDeleter
@@ -17,7 +18,7 @@ class ProductDeleter
 
     public function __invoke(string $id): bool
     {
-        $product = $this->repository->find($id);
+        $product = $this->repository->find(new ProductId($id));
         if (!$product instanceof Product) {
             return false;
         }
