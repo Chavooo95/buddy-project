@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Product\Repository;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductId;
 
 /**
  * Product Repository Interface
@@ -13,7 +14,7 @@ interface ProductRepositoryInterface
 {
     public function findAll(): array;
 
-    public function find(string $id): ?Product;
+    public function find(ProductId $id): ?Product;
 
     public function save(Product $entity): void;
 

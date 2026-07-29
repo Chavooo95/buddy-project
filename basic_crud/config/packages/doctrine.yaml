@@ -2,6 +2,7 @@ doctrine:
   dbal:
     url: '%env(resolve:DATABASE_URL)%'
     types:
+      product_id: App\Product\Infrastructure\Repository\Doctrine\Type\Orm\ProductIdType
       product_name: App\Product\Infrastructure\Repository\Doctrine\Type\Orm\ProductNameType
       product_price: App\Product\Infrastructure\Repository\Doctrine\Type\Orm\ProductPriceType
   orm:

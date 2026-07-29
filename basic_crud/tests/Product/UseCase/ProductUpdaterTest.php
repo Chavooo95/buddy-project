@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Test\Product\UseCase;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
@@ -18,7 +19,7 @@ final class ProductUpdaterTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with('x')
+            ->with(new ProductId('x'))
             ->willReturn(null);
         $repository->expects($this->never())->method('save');
 
@@ -42,7 +43,7 @@ final class ProductUpdaterTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with('01HZZZZZZZZZZZZZZZZZZZZZZZ')
+            ->with(new ProductId('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
             ->willReturn($product);
         $repository->expects($this->once())->method('save')->with($product);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Integration\Product\Repository;
 
+use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Infrastructure\Repository\ProductORMRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,11 +36,11 @@ final class ProductORMRepositoryTest extends KernelTestCase
 
         $row = $this->db->fetchAssociative(
             'SELECT * FROM products WHERE id = ?',
-            [$product->id()]
+            [$product->id()->value]
         );
 
         $this->assertNotFalse($row);
-        $this->assertSame($product->id(), $row['id']);
+        $this->assertSame($product->id()->value, $row['id']);
         $this->assertSame($product->name()->value, $row['name']);
         $this->assertSame($product->price()->value, (float) $row['price']);
     }
@@ -52,14 +53,14 @@ final class ProductORMRepositoryTest extends KernelTestCase
         $found = $this->subject->find($product->id());
 
         $this->assertNotNull($found);
-        $this->assertSame($product->id(), $found->id());
+        $this->assertSame($product->id()->value, $found->id()->value);
         $this->assertEquals($product->name(), $found->name());
         $this->assertEquals($product->price(), $found->price());
     }
 
     public function test_it_returns_null_when_product_not_found(): void
     {
-        $found = $this->subject->find('non-existent-id');
+        $found = $this->subject->find(new ProductId('non-existent-id'));
 
         $this->assertNull($found);
     }
@@ -92,7 +93,7 @@ final class ProductORMRepositoryTest extends KernelTestCase
         $this->subject->save($product);
         $found = $this->subject->findByPartialName('Key');
         $this->assertCount(1, $found);
-        $this->assertSame($product->id(), $found[0]->id());
+        $this->assertSame($product->id()->value, $found[0]->id()->value);
     }
 
     public function test_it_finds_a_product_by_exact_name(): void
@@ -101,7 +102,7 @@ final class ProductORMRepositoryTest extends KernelTestCase
         $this->subject->save($product);
         $found = $this->subject->findByName('Keyboard');
         $this->assertCount(1, $found);
-        $this->assertSame($product->id(), $found[0]->id());
+        $this->assertSame($product->id()->value, $found[0]->id()->value);
     }
 
     public function test_find_by_name_does_not_match_partial_name(): void

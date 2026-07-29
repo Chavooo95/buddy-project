@@ -39,9 +39,9 @@ final class CreateProductController
             $response->setData([
                 'success' => true,
                 'message' => 'Product created successfully',
-                'ulid' => $product->id(),
-                'name' => $product->name()?->value,
-                'price' => $product->price()?->value,
+                'ulid' => $product->id()->value,
+                'name' => $product->name()->value,
+                'price' => $product->price()->value,
             ]);
             return $response;
         } catch (InvalidArgumentException $e) {

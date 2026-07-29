@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Test\Product\UseCase;
 
 use App\Product\Entity\Product;
+use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ProductDeleter;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +16,7 @@ final class ProductDeleterTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with('x')
+            ->with(new ProductId('x'))
             ->willReturn(null);
         $repository->expects($this->never())->method('remove');
 
@@ -31,7 +32,7 @@ final class ProductDeleterTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with('01HZZZZZZZZZZZZZZZZZZZZZZZ')
+            ->with(new ProductId('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
             ->willReturn($product);
         $repository->expects($this->once())->method('remove')->with($product);
 

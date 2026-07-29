@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Product\Entity;
 
+use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use DateTime;
 use DateTimeInterface;
-use Symfony\Component\Uid\Ulid;
 
 /**
  * Product Entity
@@ -15,21 +15,21 @@ use Symfony\Component\Uid\Ulid;
  */
 class Product
 {
-    private string $id;
+    private ProductId $id;
     private ProductName $name;
     private ProductPrice $price;
     private DateTimeInterface $createdAt;
     private ?DateTimeInterface $updatedAt = null;
 
-    public function __construct(ProductName $name, ProductPrice $price)
+    public function __construct(ProductId $id, ProductName $name, ProductPrice $price, DateTimeInterface $createdAt)
     {
-        $this->id = (string) new Ulid();
+        $this->id = $id;
         $this->name = $name;
         $this->price = $price;
-        $this->createdAt = new DateTime();
+        $this->createdAt = $createdAt;
     }
 
-    public function id(): string
+    public function id(): ProductId
     {
         return $this->id;
     }
@@ -63,7 +63,7 @@ class Product
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
+            'id'        => $this->id->value,
             'name'      => $this->name->value,
             'price'     => $this->price->value,
             'createdAt' => $this->createdAt->format(DateTimeInterface::ATOM),

@@ -19,7 +19,7 @@ final class DeleteProductControllerTest extends WebTestCase
 
         $repository->save($product);
 
-        $client->request('DELETE', '/api/products/' . $product->id());
+        $client->request('DELETE', '/api/products/' . $product->id()->value);
 
         $this->assertResponseStatusCodeSame(200);
 
