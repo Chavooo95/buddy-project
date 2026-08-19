@@ -75,4 +75,49 @@ final class CreateProductControllerTest extends WebTestCase
         $this->assertFalse($data['success']);
         $this->assertEquals('Invalid JSON provided', $data['message']);
     }
+    public function test_if_creates_a_product_with_stringed_price(): void
+    {
+        $client = static::createClient();
+
+        $product = (new ProductBuilder())->build();
+
+        $client->request(
+            'POST',
+            '/api/products',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['name' => $product->name()->value, 'price' => '10.98'])
+        );
+
+        $this->assertResponseStatusCodeSame(201);
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertTrue($data['success']);
+        $this->assertEquals(10.98, $data['price']);
+    }
+
+    public function test_it_returns_400_on_non_numeric_price(): void
+    {
+        $client = static::createClient();
+
+        $product = (new ProductBuilder())->build();
+
+        $client->request(
+            'POST',
+            '/api/products',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['name' => $product->name()->value, 'price' => 'abc'])
+        );
+
+        $this->assertResponseStatusCodeSame(400);
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertFalse($data['success']);
+        $this->assertEquals('Validation error', $data['message']);
+    }
 }

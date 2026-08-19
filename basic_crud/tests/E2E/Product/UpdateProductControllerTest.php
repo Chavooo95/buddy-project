@@ -6,6 +6,7 @@ namespace Test\E2E\Product;
 
 use App\Product\Repository\ProductRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Uid\Ulid;
 use Test\Data\Product\Domain\ProductBuilder;
 
 final class UpdateProductControllerTest extends WebTestCase
@@ -43,7 +44,7 @@ final class UpdateProductControllerTest extends WebTestCase
 
         $client->request(
             'PUT',
-            '/api/products/non-existent-id',
+            '/api/products/' . new Ulid(),
             [], [], ['CONTENT_TYPE' => 'application/json'],
             json_encode(['name' => 'New Name', 'price' => 99.99])
         );
@@ -54,5 +55,24 @@ final class UpdateProductControllerTest extends WebTestCase
 
         $this->assertFalse($data['success']);
         $this->assertEquals('Product not found', $data['message']);
+    }
+
+    public function test_it_returns_400_on_malformed_id(): void
+    {
+        $client = static::createClient();
+
+        $client->request(
+            'PUT',
+            '/api/products/non-existent-id',
+            [], [], ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['name' => 'New Name', 'price' => 99.99])
+        );
+
+        $this->assertResponseStatusCodeSame(400);
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertFalse($data['success']);
+        $this->assertEquals('Validation error', $data['message']);
     }
 }

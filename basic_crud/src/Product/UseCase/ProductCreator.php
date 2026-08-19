@@ -32,7 +32,7 @@ class ProductCreator
         $product = new Product(
             ProductId::generate(),
             new ProductName($data['name']),
-            new ProductPrice($data['price']),
+            ProductPrice::fromRaw($data['price']),
             new DateTime(),
         );
 

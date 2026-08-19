@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloquent vs Doctrine · Comparativa técnica</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --panel:#1c2430; --border:#2b3441;
+    --text:#e6edf3; --muted:#9aa7b4; --dim:#6b7684;
+    --elq:#ff5a3c; --elq-soft:rgba(255,90,60,.12); --elq-bd:rgba(255,90,60,.4);
+    --doc:#3ea6ff; --doc-soft:rgba(62,166,255,.12); --doc-bd:rgba(62,166,255,.4);
+    --good:#3fb950; --bad:#f85149; --warn:#d29922;
+    --code:#0a0e14;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
+
+  .deck{height:100vh;width:100vw;position:relative}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    padding:56px 72px 72px;overflow:auto;
+    animation:fade .35s ease;
+  }
+  .slide.active{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  h1{font-size:52px;line-height:1.1;font-weight:800;letter-spacing:-1px}
+  h2{font-size:34px;font-weight:750;letter-spacing:-.5px;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+  h2 .bar{width:6px;height:34px;border-radius:3px;background:linear-gradient(var(--elq),var(--doc))}
+  h3{font-size:19px;font-weight:700;margin-bottom:10px}
+  p{color:var(--muted);font-size:18px;line-height:1.6}
+  .lead{font-size:22px;color:var(--text)}
+  .kicker{text-transform:uppercase;letter-spacing:3px;font-size:13px;font-weight:700;color:var(--dim);margin-bottom:22px}
+
+  /* cover */
+  .cover{justify-content:center;align-items:flex-start}
+  .cover .vs{font-size:96px;font-weight:900;letter-spacing:-3px;line-height:1;margin:8px 0 26px}
+  .cover .vs .e{color:var(--elq)} .cover .vs .d{color:var(--doc)}
+  .cover .vs .sep{color:var(--dim);font-weight:400;font-size:64px;margin:0 18px;vertical-align:middle}
+  .cover .sub{font-size:24px;color:var(--muted);max-width:760px;line-height:1.5}
+  .cover .meta{margin-top:40px;color:var(--dim);font-size:15px;display:flex;gap:22px;flex-wrap:wrap}
+  .cover .meta b{color:var(--muted);font-weight:600}
+
+  /* two columns */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;flex:1;min-height:0}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:26px 26px 24px;display:flex;flex-direction:column}
+  .card.elq{border-top:3px solid var(--elq)}
+  .card.doc{border-top:3px solid var(--doc)}
+  .tag{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:16px;width:fit-content}
+  .tag.elq{background:var(--elq-soft);color:var(--elq);border:1px solid var(--elq-bd)}
+  .tag.doc{background:var(--doc-soft);color:var(--doc);border:1px solid var(--doc-bd)}
+  .tag .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+
+  ul.list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:4px}
+  ul.list li{position:relative;padding-left:28px;font-size:17px;line-height:1.5;color:var(--muted)}
+  ul.list li b{color:var(--text);font-weight:650}
+  ul.list li::before{position:absolute;left:0;top:1px;font-size:16px}
+  li.pro::before{content:"✔";color:var(--good)}
+  li.con::before{content:"✕";color:var(--bad)}
+  li.dot::before{content:"▹";color:var(--dim)}
+  li.neu::before{content:"◆";color:var(--warn);font-size:12px;top:3px}
+
+  /* code */
+  pre{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow:auto;font-family:var(--mono);font-size:13.5px;line-height:1.55;color:#c9d1d9;margin-top:6px}
+  code{font-family:var(--mono)}
+  .cmt{color:#6b7684;font-style:italic}
+  .kw{color:#ff7b72} .fn{color:#d2a8ff} .str{color:#a5d6ff} .cls{color:#7ee787} .var{color:#79c0ff} .num{color:#f0883e}
+  .filelabel{font-family:var(--mono);font-size:12px;color:var(--dim);margin:2px 0 -2px}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:16px;margin-top:6px}
+  th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+  thead th{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);border-bottom:2px solid var(--border)}
+  th.elq{color:var(--elq)} th.doc{color:var(--doc)}
+  td.dim{color:var(--muted);font-weight:600;width:210px}
+  tbody tr:hover{background:rgba(255,255,255,.02)}
+  .win-e{color:var(--elq);font-weight:600} .win-d{color:var(--doc);font-weight:600}
+
+  .callout{background:linear-gradient(90deg,var(--elq-soft),var(--doc-soft));border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-top:auto;font-size:18px;color:var(--text)}
+  .callout b{color:#fff}
+  .split-note{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px}
+
+  .big-two{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;flex:1}
+  .concept{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:34px}
+  .concept.elq{border-left:4px solid var(--elq)} .concept.doc{border-left:4px solid var(--doc)}
+  .concept .n{font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+  .concept.elq .n{color:var(--elq)} .concept.doc .n{color:var(--doc)}
+  .concept .d{font-size:22px;font-weight:700;color:var(--text);margin-bottom:14px;line-height:1.3}
+  .concept p{font-size:16px}
+  .midvs{font-size:40px;font-weight:900;color:var(--dim)}
+
+  .when{display:grid;grid-template-columns:1fr 1fr;gap:26px;flex:1}
+  .when .card h3{font-size:22px;margin-bottom:18px}
+  .when .card.elq h3{color:var(--elq)} .when .card.doc h3{color:var(--doc)}
+
+  /* nav */
+  .nav{position:fixed;bottom:20px;right:28px;display:flex;align-items:center;gap:14px;z-index:20}
+  .nav button{background:var(--panel);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;font-size:18px;cursor:pointer;transition:.15s}
+  .nav button:hover{background:var(--border);border-color:var(--dim)}
+  .counter{font-family:var(--mono);font-size:14px;color:var(--dim);min-width:54px;text-align:center}
+  .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--elq),var(--doc));z-index:20;transition:width .3s}
+  .hint{position:fixed;bottom:24px;left:28px;font-size:13px;color:var(--dim);z-index:20}
+  .slidetag{position:fixed;top:20px;right:28px;font-family:var(--mono);font-size:12px;color:var(--dim);z-index:20}
+
+  @media print{
+    body{overflow:visible;background:#fff}
+    .slide{display:flex!important;position:relative;page-break-after:always;height:100vh;background:var(--bg)}
+    .nav,.hint,.progress,.slidetag{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="slidetag" id="slidetag"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · COVER -->
+  <section class="slide active cover">
+    <div class="kicker">Comparativa técnica · ORMs en PHP</div>
+    <div class="vs"><span class="e">Eloquent</span><span class="sep">vs</span><span class="d">Doctrine</span></div>
+    <div class="sub">Diferencias, ventajas y desventajas de los dos ORMs dominantes de PHP — y por qué importa cuando construyes con DDD y Value Objects.</div>
+    <div class="meta">
+      <span><b>Contexto:</b> basic_crud · Symfony + Doctrine (ORM/ODM)</span>
+      <span><b>Patrón del proyecto:</b> Data Mapper + Value Objects</span>
+      <span><b>Fecha:</b> 2026-07-29</span>
+    </div>
+  </section>
+
+  <!-- 2 · TL;DR -->
+  <section class="slide">
+    <div class="kicker">La idea en una frase</div>
+    <h1 style="font-size:40px;max-width:1000px;line-height:1.25">La diferencia de fondo no es sintaxis: es <span style="color:var(--elq)">Active Record</span> frente a <span style="color:var(--doc)">Data Mapper</span>.</h1>
+    <div class="big-two" style="flex:none;margin-top:40px">
+      <div class="concept elq">
+        <div class="n">◆ Eloquent — Active Record</div>
+        <div class="d">La entidad <em>sabe</em> cómo guardarse a sí misma.</div>
+        <p>El modelo extiende del ORM y mezcla datos + persistencia. <code>$product-&gt;save()</code>. Rapidísimo para CRUD; acoplado a la BD por diseño.</p>
+      </div>
+      <div class="midvs">vs</div>
+      <div class="concept doc">
+        <div class="n">◆ Doctrine — Data Mapper</div>
+        <div class="d">La entidad no sabe nada de la BD.</div>
+        <p>Objetos PHP planos (POPO). Un <em>EntityManager</em> externo mapea y persiste. <code>$em-&gt;persist($p); $em-&gt;flush();</code>. Ideal para dominios ricos.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:34px"><b>Todo lo demás</b> (sintaxis, rendimiento, curva de aprendizaje, encaje con DDD) se deriva de esta única decisión de arquitectura.</div>
+  </section>
+
+  <!-- 3 · Qué es cada uno -->
+  <section class="slide">
+    <h2><span class="bar"></span>¿Qué es cada uno?</h2>
+    <div class="cols">
+      <div class="card elq">
+        <span class="tag elq"><span class="dot"></span>ELOQUENT</span>
+        <p style="margin-bottom:16px">El ORM que viene <b>integrado en Laravel</b>. Estándar de facto del ecosistema Laravel.</p>
+        <ul class="list">
+          <li class="dot"><b>Patrón:</b> Active Record</li>
+          <li class="dot"><b>Filosofía:</b> convención sobre configuración, "magia" productiva</li>
+          <li class="dot"><b>Entidad = Modelo:</b> extiende <code>Model</code></li>
+          <li class="dot"><b>Público objetivo:</b> apps CRUD, MVP, startups, entregas rápidas</li>
+          <li class="dot"><b>Desde:</b> Laravel 4 (2013)</li>
+        </ul>
+      </div>
+      <div class="card doc">
+        <span class="tag doc"><span class="dot"></span>DOCTRINE</span>
+        <p style="margin-bottom:16px">ORM <b>independiente del framework</b>. Estándar en Symfony; usable en cualquier proyecto PHP.</p>
+        <ul class="list">
+          <li class="dot"><b>Patrón:</b> Data Mapper + Unit of Work</li>
+          <li class="dot"><b>Filosofía:</b> explícito, desacoplado, dominio puro</li>
+          <li class="dot"><b>Entidad = POPO:</b> clase PHP sin herencia del ORM</li>
+          <li class="dot"><b>Público objetivo:</b> dominios complejos, DDD, sistemas de larga vida</li>
+          <li class="dot"><b>Incluye:</b> ORM (SQL) <span style="color:var(--dim)">y</span> ODM (MongoDB)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Definir una entidad -->
+  <section class="slide">
+    <h2><span class="bar"></span>Definir una entidad / modelo</h2>
+    <div class="cols">
+      <div class="card elq">
+        <span class="tag elq"><span class="dot"></span>ELOQUENT</span>
+        <pre><span class="kw">class</span> <span class="cls">Product</span> <span class="kw">extends</span> <span class="cls">Model</span>
+{
+    <span class="cmt">// tabla, PK, timestamps: por convención</span>
+    <span class="kw">protected</span> <span class="var">$fillable</span> = [<span class="str">'name'</span>, <span class="str">'price'</span>];
+}
+
+<span class="cmt">// Uso</span>
+<span class="var">$p</span> = <span class="cls">Product</span>::<span class="fn">create</span>([<span class="str">'name'</span>=&gt;<span class="str">'Book'</span>, <span class="str">'price'</span>=&gt;<span class="num">9.99</span>]);
+<span class="var">$p</span>-&gt;price = <span class="num">12</span>;
+<span class="var">$p</span>-&gt;<span class="fn">save</span>();</pre>
+        <ul class="list" style="margin-top:16px">
+          <li class="pro">Cero configuración, casi cero código</li>
+          <li class="con">Hereda ~50 métodos de persistencia</li>
+          <li class="con">Modelo acoplado a la tabla y a la BD</li>
+        </ul>
+      </div>
+      <div class="card doc">
+        <span class="tag doc"><span class="dot"></span>DOCTRINE <span style="color:var(--dim);font-weight:400">· tu Product real</span></span>
+        <pre><span class="kw">class</span> <span class="cls">Product</span>   <span class="cmt">// POPO — sin extends</span>
+{
+    <span class="kw">public function</span> <span class="fn">__construct</span>(
+        <span class="kw">private</span> <span class="cls">ProductId</span> <span class="var">$id</span>,
+        <span class="kw">private</span> <span class="cls">ProductName</span> <span class="var">$name</span>,
+        <span class="kw">private</span> <span class="cls">ProductPrice</span> <span class="var">$price</span>,
+        <span class="kw">private</span> <span class="cls">DateTimeInterface</span> <span class="var">$createdAt</span>,
+    ) {}
+    <span class="cmt">// mapeo en XML, fuera de la clase</span>
+}</pre>
+        <ul class="list" style="margin-top:16px">
+          <li class="pro"><b>Entidad de dominio pura</b> — testeable sin BD</li>
+          <li class="pro">Constructor "siempre válido", invariantes garantizadas</li>
+          <li class="con">Requiere definir el mapeo aparte</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Persistencia -->
+  <section class="slide">
+    <h2><span class="bar"></span>Persistencia</h2>
+    <div class="cols">
+      <div class="card elq">
+        <span class="tag elq"><span class="dot"></span>ELOQUENT · el modelo se guarda solo</span>
+        <pre><span class="var">$p</span> = <span class="cls">Product</span>::<span class="fn">find</span>(<span class="num">1</span>);
+<span class="var">$p</span>-&gt;price = <span class="num">20</span>;
+<span class="var">$p</span>-&gt;<span class="fn">save</span>();      <span class="cmt">// UPDATE inmediato</span>
+
+<span class="cls">Product</span>::<span class="fn">destroy</span>(<span class="num">1</span>);  <span class="cmt">// DELETE inmediato</span></pre>
+        <ul class="list" style="margin-top:16px">
+          <li class="pro">Directo, intuitivo, una línea</li>
+          <li class="neu">Cada <code>save()</code> = un query (sin batching)</li>
+          <li class="con">Sin seguimiento automático de cambios en lote</li>
+        </ul>
+      </div>
+      <div class="card doc">
+        <span class="tag doc"><span class="dot"></span>DOCTRINE · Unit of Work</span>
+        <pre><span class="var">$p</span> = <span class="var">$em</span>-&gt;<span class="fn">find</span>(<span class="cls">Product</span>::<span class="kw">class</span>, <span class="var">$id</span>);
+<span class="var">$p</span>-&gt;<span class="fn">setPrice</span>(<span class="kw">new</span> <span class="cls">ProductPrice</span>(<span class="num">20</span>));
+
+<span class="var">$em</span>-&gt;<span class="fn">flush</span>();  <span class="cmt">// detecta cambios y</span>
+             <span class="cmt">// agrupa TODO en una transacción</span></pre>
+        <ul class="list" style="margin-top:16px">
+          <li class="pro"><b>Unit of Work:</b> agrupa inserts/updates/deletes</li>
+          <li class="pro"><b>Identity Map:</b> una instancia por identidad</li>
+          <li class="pro">Dirty checking: no llamas a "save" por objeto</li>
+          <li class="con">Hay que entender persist / flush / detach</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Consultas -->
+  <section class="slide">
+    <h2><span class="bar"></span>Consultas</h2>
+    <div class="cols">
+      <div class="card elq">
+        <span class="tag elq"><span class="dot"></span>ELOQUENT · fluent query builder</span>
+        <pre><span class="cls">Product</span>::<span class="fn">where</span>(<span class="str">'name'</span>, <span class="str">'like'</span>, <span class="str">"%$q%"</span>)
+    -&gt;<span class="fn">orderBy</span>(<span class="str">'name'</span>)
+    -&gt;<span class="fn">get</span>();
+
+<span class="var">$user</span>-&gt;posts()-&gt;<span class="fn">where</span>(...)-&gt;<span class="fn">get</span>();</pre>
+        <ul class="list" style="margin-top:16px">
+          <li class="pro">Legible, encadenable, muy rápido de escribir</li>
+          <li class="pro">Relaciones como métodos del modelo</li>
+          <li class="con">Strings mágicos → errores en runtime, no compile</li>
+          <li class="con">Fácil caer en <b>N+1</b> sin darte cuenta</li>
+        </ul>
+      </div>
+      <div class="card doc">
+        <span class="tag doc"><span class="dot"></span>DOCTRINE · DQL / QueryBuilder <span style="color:var(--dim);font-weight:400">· tu repo</span></span>
+        <pre><span class="var">$em</span>-&gt;<span class="fn">createQueryBuilder</span>()
+   -&gt;<span class="fn">select</span>(<span class="str">'p'</span>)
+   -&gt;<span class="fn">from</span>(<span class="cls">Product</span>::<span class="kw">class</span>, <span class="str">'p'</span>)
+   -&gt;<span class="fn">andWhere</span>(<span class="str">'p.name LIKE :name'</span>)
+   -&gt;<span class="fn">setParameter</span>(<span class="str">'name'</span>, <span class="str">"%$q%"</span>)
+   -&gt;<span class="fn">getQuery</span>()-&gt;<span class="fn">getResult</span>();</pre>
+        <ul class="list" style="margin-top:16px">
+          <li class="pro">DQL razona en <b>objetos</b>, no en tablas</li>
+          <li class="pro">100% portable entre motores SQL</li>
+          <li class="con">Más verboso para consultas triviales</li>
+          <li class="neu">Encapsulado en repositorios (buen patrón DDD)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · Value Objects / DDD -->
+  <section class="slide">
+    <h2><span class="bar"></span>Value Objects &amp; DDD <span style="font-size:16px;color:var(--dim);font-weight:400;margin-left:8px">— el corazón de tu proyecto</span></h2>
+    <div class="cols">
+      <div class="card elq">
+        <span class="tag elq"><span class="dot"></span>ELOQUENT · custom cast</span>
+        <pre><span class="cmt">// Se apoya en "casts" del modelo</span>
+<span class="kw">protected function</span> <span class="fn">casts</span>(): <span class="cls">array</span> {
+  <span class="kw">return</span> [<span class="str">'price'</span> =&gt; <span class="cls">PriceCast</span>::<span class="kw">class</span>];
+}
+<span class="cmt">// PriceCast implements CastsAttributes</span>
+<span class="cmt">// get()/set() ↔ ProductPrice</span></pre>
+        <ul class="list" style="margin-top:14px">
+          <li class="neu">Posible desde Laravel 7 (custom casts)</li>
+          <li class="con">El VO vive "colgado" del modelo Active Record</li>
+          <li class="con">El dominio sigue dependiendo del ORM</li>
+        </ul>
+      </div>
+      <div class="card doc">
+        <span class="tag doc"><span class="dot"></span>DOCTRINE · custom Type <span style="color:var(--dim);font-weight:400">· ProductPriceType real</span></span>
+        <pre><span class="kw">final class</span> <span class="cls">ProductPriceType</span> <span class="kw">extends</span> <span class="cls">Type</span> {
+  <span class="kw">public function</span> <span class="fn">convertToPHPValue</span>(<span class="var">$v</span>,<span class="var">$p</span>) {
+    <span class="kw">return new</span> <span class="cls">ProductPrice</span>((<span class="cls">float</span>)<span class="var">$v</span>);
+  }
+  <span class="kw">public function</span> <span class="fn">convertToDatabaseValue</span>(<span class="var">$v</span>,<span class="var">$p</span>) {
+    <span class="kw">return</span> <span class="var">$v</span>-&gt;value;   <span class="cmt">// float en BD</span>
+  }
+}</pre>
+        <ul class="list" style="margin-top:14px">
+          <li class="pro">El VO es 100% del <b>dominio</b>, ignora la BD</li>
+          <li class="pro">Mapeo aislado en infraestructura</li>
+          <li class="pro">También Embeddables para VOs multi-campo</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · Ventajas Eloquent -->
+  <section class="slide">
+    <h2><span class="bar" style="background:var(--elq)"></span><span style="color:var(--elq)">Eloquent</span> — Ventajas &amp; Desventajas</h2>
+    <div class="cols">
+      <div class="card elq">
+        <h3 style="color:var(--good)">✔ Ventajas</h3>
+        <ul class="list">
+          <li class="pro"><b>Velocidad de desarrollo</b> imbatible para CRUD</li>
+          <li class="pro"><b>Curva de aprendizaje</b> mínima; muy intuitivo</li>
+          <li class="pro">Convención sobre configuración → poco boilerplate</li>
+          <li class="pro">Ecosistema Laravel: scopes, eventos, factories, seeders</li>
+          <li class="pro">Relaciones expresivas y legibles</li>
+          <li class="pro">Documentación y comunidad enormes</li>
+        </ul>
+      </div>
+      <div class="card elq">
+        <h3 style="color:var(--bad)">✕ Desventajas</h3>
+        <ul class="list">
+          <li class="con"><b>Acopla el dominio a la BD</b> (mal encaje con DDD)</li>
+          <li class="con">Tiende a <b>modelos anémicos</b> / "God models"</li>
+          <li class="con">Difícil de testear sin base de datos</li>
+          <li class="con">"Magia" implícita → sorpresas y N+1 ocultos</li>
+          <li class="con">Sin Unit of Work ni Identity Map reales</li>
+          <li class="con">Muy atado a Laravel (portabilidad baja)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · Ventajas Doctrine -->
+  <section class="slide">
+    <h2><span class="bar" style="background:var(--doc)"></span><span style="color:var(--doc)">Doctrine</span> — Ventajas &amp; Desventajas</h2>
+    <div class="cols">
+      <div class="card doc">
+        <h3 style="color:var(--good)">✔ Ventajas</h3>
+        <ul class="list">
+          <li class="pro"><b>Dominio puro</b>: entidades POPO, ideal para DDD</li>
+          <li class="pro"><b>Unit of Work + Identity Map</b> (transacciones y consistencia)</li>
+          <li class="pro">Value Objects / Embeddables de primera clase</li>
+          <li class="pro">Independiente del framework y del motor SQL</li>
+          <li class="pro">Testeabilidad alta (sin acoplar a la BD)</li>
+          <li class="pro">Escala a dominios grandes y de larga vida</li>
+        </ul>
+      </div>
+      <div class="card doc">
+        <h3 style="color:var(--bad)">✕ Desventajas</h3>
+        <ul class="list">
+          <li class="con"><b>Curva de aprendizaje pronunciada</b></li>
+          <li class="con">Más configuración y boilerplate (mapeo, types)</li>
+          <li class="con">Overkill para CRUD sencillo / prototipos</li>
+          <li class="con">persist/flush/detach confunden al principio</li>
+          <li class="con">Puede consumir más memoria (tracking del UoW)</li>
+          <li class="con">Menos "magia" → escribes más para lo simple</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Tabla comparativa -->
+  <section class="slide">
+    <h2><span class="bar"></span>Comparativa rápida</h2>
+    <table>
+      <thead>
+        <tr><th>Criterio</th><th class="elq">Eloquent</th><th class="doc">Doctrine</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="dim">Patrón</td><td>Active Record</td><td>Data Mapper + Unit of Work</td></tr>
+        <tr><td class="dim">Entidad</td><td>Extiende <code>Model</code> (acoplada)</td><td>POPO (pura)</td></tr>
+        <tr><td class="dim">Curva de aprendizaje</td><td class="win-e">Baja ✔</td><td>Alta</td></tr>
+        <tr><td class="dim">Velocidad en CRUD</td><td class="win-e">Muy alta ✔</td><td>Media</td></tr>
+        <tr><td class="dim">Encaje con DDD</td><td>Pobre</td><td class="win-d">Excelente ✔</td></tr>
+        <tr><td class="dim">Value Objects</td><td>Vía casts (limitado)</td><td class="win-d">Types / Embeddables ✔</td></tr>
+        <tr><td class="dim">Testeabilidad</td><td>Necesita BD</td><td class="win-d">Dominio sin BD ✔</td></tr>
+        <tr><td class="dim">Portabilidad</td><td>Atado a Laravel</td><td class="win-d">Framework-agnóstico ✔</td></tr>
+        <tr><td class="dim">Consultas</td><td>Query Builder fluido</td><td>DQL + QueryBuilder</td></tr>
+        <tr><td class="dim">Config / boilerplate</td><td class="win-e">Mínimo ✔</td><td>Considerable</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 11 · Cuándo usar cada uno -->
+  <section class="slide">
+    <h2><span class="bar"></span>¿Cuándo usar cada uno?</h2>
+    <div class="when">
+      <div class="card elq">
+        <h3>Elige Eloquent si…</h3>
+        <ul class="list">
+          <li class="pro">Ya trabajas en <b>Laravel</b></li>
+          <li class="pro">La app es <b>CRUD-céntrica</b> (dashboards, back-offices)</li>
+          <li class="pro">Necesitas <b>entregar rápido</b> (MVP, startup)</li>
+          <li class="pro">El equipo es junior o valora la simplicidad</li>
+          <li class="pro">La lógica de negocio es ligera</li>
+        </ul>
+      </div>
+      <div class="card doc">
+        <h3>Elige Doctrine si…</h3>
+        <ul class="list">
+          <li class="pro">Aplicas <b>DDD</b> / arquitectura hexagonal</li>
+          <li class="pro">El <b>dominio es complejo</b> y de larga vida</li>
+          <li class="pro">Quieres el dominio <b>desacoplado</b> de la persistencia</li>
+          <li class="pro">Trabajas en <b>Symfony</b> o PHP puro</li>
+          <li class="pro">Necesitas transacciones y consistencia fuertes</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><b>No hay ganador absoluto:</b> es un intercambio entre <span style="color:var(--elq)">velocidad y simplicidad</span> (Eloquent) frente a <span style="color:var(--doc)">pureza del dominio y escalabilidad</span> (Doctrine).</div>
+  </section>
+
+  <!-- 12 · Conclusión / proyecto -->
+  <section class="slide">
+    <div class="kicker">Conclusión · aplicado a basic_crud</div>
+    <h1 style="font-size:38px;max-width:1050px;line-height:1.3">Tu proyecto eligió <span style="color:var(--doc)">Doctrine</span> — y es coherente con lo que estás construyendo.</h1>
+    <div class="cols" style="flex:none;margin-top:36px">
+      <div class="card">
+        <h3 style="color:var(--doc)">Por qué encaja aquí</h3>
+        <ul class="list">
+          <li class="pro">Entidad <code>Product</code> POPO con constructor "siempre válido"</li>
+          <li class="pro">Value Objects (<code>ProductId</code>, <code>ProductName</code>, <code>ProductPrice</code>) con invariantes</li>
+          <li class="pro">Custom Types (ORM + ODM) que aíslan el mapeo</li>
+          <li class="pro">Repositorios tras una interfaz → dominio desacoplado</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--warn)">El precio que pagas</h3>
+        <ul class="list">
+          <li class="neu">Más archivos: entidad, VOs, types, mapeo XML, repos</li>
+          <li class="neu">Hay que dominar persist / flush / Unit of Work</li>
+          <li class="neu">Para un CRUD "de libro", Eloquent sería más corto…</li>
+          <li class="pro">…pero perderías la pureza de dominio que buscas</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:32px"><b>Regla práctica:</b> la complejidad del dominio manda. Dominio rico y duradero → Data Mapper (Doctrine). CRUD y velocidad → Active Record (Eloquent).</div>
+  </section>
+
+</div>
+
+<div class="progress" style="display:none"></div>
+<div class="nav">
+  <button id="prev" aria-label="Anterior">‹</button>
+  <span class="counter" id="counter">1 / 12</span>
+  <button id="next" aria-label="Siguiente">›</button>
+</div>
+<div class="hint">← → · espacio para avanzar · <b>F</b> pantalla completa · <b>P</b> imprimir/PDF</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const counter=document.getElementById('counter');
+  const bar=document.getElementById('progress');
+  const tag=document.getElementById('slidetag');
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    counter.textContent=(i+1)+' / '+slides.length;
+    bar.style.width=((i+1)/slides.length*100)+'%';
+    tag.textContent='Eloquent vs Doctrine';
+    slides[i].scrollTop=0;
+  }
+  document.getElementById('next').onclick=()=>show(i+1);
+  document.getElementById('prev').onclick=()=>show(i-1);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1);}
+    else if(e.key==='Home'){show(0);}
+    else if(e.key==='End'){show(slides.length-1);}
+    else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+    else if(e.key.toLowerCase()==='p'){window.print();}
+  });
+  show(0);
+</script>
+</body>
+</html>

@@ -48,4 +48,11 @@ final class ProductIdTest extends TestCase
         $this->expectExceptionMessage('Product id cannot be empty');
         new ProductId('   ');
     }
+
+    public function test_throws_ProductIdException_on_invalid_ulid_format(): void
+    {
+        $this->expectException(ProductIdException::class);
+        $this->expectExceptionMessage('is not a valid ULID');
+        new ProductId('non-existent-id');
+    }
 }
