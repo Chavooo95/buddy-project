@@ -16,6 +16,9 @@ final readonly class ProductId
         if ($value === '') {
             throw ProductIdException::empty();
         }
+        if (!Ulid::isValid($value)) {
+            throw ProductIdException::invalidFormat($value);
+        }
         $this->value = $value;
     }
 

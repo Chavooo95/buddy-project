@@ -16,4 +16,9 @@ final class ProductIdException extends InvalidArgumentException
     {
         return new self('Product id cannot be empty');
     }
+
+    public static function invalidFormat(string $value): self
+    {
+        return new self(sprintf('Product id "%s" is not a valid ULID', $value));
+    }
 }

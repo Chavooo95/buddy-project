@@ -9,6 +9,7 @@ use App\Product\Infrastructure\Repository\ProductORMRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Uid\Ulid;
 use Test\Data\Product\Domain\ProductBuilder;
 
 final class ProductORMRepositoryTest extends KernelTestCase
@@ -60,7 +61,8 @@ final class ProductORMRepositoryTest extends KernelTestCase
 
     public function test_it_returns_null_when_product_not_found(): void
     {
-        $found = $this->subject->find(new ProductId('non-existent-id'));
+        $id = new Ulid();
+        $found = $this->subject->find(new ProductId((string) $id));
 
         $this->assertNull($found);
     }

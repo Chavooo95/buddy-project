@@ -7,21 +7,24 @@ use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ProductShower;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Ulid;
 use Test\Data\Product\Domain\ProductBuilder;
 
 final class ProductShowerTest extends TestCase
 {
     public function test_it_returns_null_when_the_product_is_not_found(): void
     {
+        $id = (string) new Ulid();
+
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(new ProductId('anything'))
+            ->with(new ProductId($id))
             ->willReturn(null);
 
         $useCase = new ProductShower($repository);
 
-        $this->assertNull($useCase('anything'));
+        $this->assertNull($useCase($id));
     }
 
     public function test_it_returns_the_product_when_found(): void

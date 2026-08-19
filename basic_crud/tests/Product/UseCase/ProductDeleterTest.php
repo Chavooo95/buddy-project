@@ -8,21 +8,24 @@ use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ProductDeleter;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Ulid;
 
 final class ProductDeleterTest extends TestCase
 {
     public function test_it_returns_false_when_the_product_is_not_found(): void
     {
+        $id = (string) new Ulid();
+
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(new ProductId('x'))
+            ->with(new ProductId($id))
             ->willReturn(null);
         $repository->expects($this->never())->method('remove');
 
         $useCase = new ProductDeleter($repository);
 
-        $this->assertFalse($useCase('x'));
+        $this->assertFalse($useCase($id));
     }
 
     public function test_it_removes_the_product_and_returns_true_when_found(): void

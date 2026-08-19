@@ -30,7 +30,7 @@ class ProductUpdater
         }
 
         if (array_key_exists('price', $data)) {
-            $product->setPrice(new ProductPrice((float) $data['price']));
+            $product->setPrice(ProductPrice::fromRaw($data['price']));
         }
 
         $this->repository->save($product);

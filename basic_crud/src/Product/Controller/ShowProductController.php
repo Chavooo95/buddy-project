@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Product\Controller;
 
 use App\Product\UseCase\ProductShower;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
@@ -36,6 +37,12 @@ final class ShowProductController
                 'name' => $product->name()->value,
                 'price' => $product->price()->value,
             ]);
+        } catch (InvalidArgumentException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Validation error',
+                'error' => $e->getMessage(),
+            ], 400);
         } catch (Throwable $e) {
             return new JsonResponse([
                 'success' => false,
