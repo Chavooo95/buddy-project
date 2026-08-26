@@ -119,5 +119,6 @@ final class CreateProductControllerTest extends WebTestCase
 
         $this->assertFalse($data['success']);
         $this->assertEquals('Validation error', $data['message']);
+        $this->assertEquals('Product price must be numeric, got string', $data['error']);
     }
 }

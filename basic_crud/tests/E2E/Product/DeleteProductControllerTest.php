@@ -56,5 +56,6 @@ final class DeleteProductControllerTest extends WebTestCase
 
         $this->assertFalse($data['success']);
         $this->assertEquals('Validation error', $data['message']);
+        $this->assertEquals('Product id "non-existent-id" is not a valid ULID', $data['error']);
     }
 }
