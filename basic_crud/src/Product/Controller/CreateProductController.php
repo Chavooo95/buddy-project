@@ -3,21 +3,25 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
+use App\Product\Request\CreateProductRequest;
 use App\Product\UseCase\ProductCreator;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 #[Route('/api/products', name: 'product_create', methods: ['POST'])]
 final class CreateProductController
 {
     private ProductCreator $createProduct;
+    private ValidatorInterface $validator;
 
-    public function __construct(ProductCreator $createProduct)
+    public function __construct(ProductCreator $createProduct, ValidatorInterface $validator)
     {
         $this->createProduct = $createProduct;
+        $this->validator = $validator;
     }
 
     public function __invoke(Request $request): JsonResponse
@@ -30,6 +34,15 @@ final class CreateProductController
                     'success' => false,
                     'message' => 'Invalid JSON provided',
                 ], 400);
+            }
+
+            $violations = $this->validator->validate(new CreateProductRequest(
+                $data['name'] ?? null,
+                $data['price'] ?? null,
+            ));
+
+            if (count($violations) > 0) {
+                throw new InvalidArgumentException($violations->get(0)->getMessage());
             }
 
             $product = ($this->createProduct)($data);
