@@ -18,11 +18,4 @@ final class ProductPriceException extends InvalidArgumentException
             sprintf('Product price "%s" must be greater than zero', $value)
         );
     }
-
-    public static function invalidType(mixed $value): self
-    {
-        return new self(
-            sprintf('Product price must be numeric, got %s', get_debug_type($value))
-        );
-    }
 }

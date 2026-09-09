@@ -31,7 +31,7 @@ class ProductUpdater
         }
 
         if ($request->price !== null) {
-            $product->setPrice(ProductPrice::fromRaw($request->price));
+            $product->setPrice(new ProductPrice($request->price));
         }
 
         $this->repository->save($product);

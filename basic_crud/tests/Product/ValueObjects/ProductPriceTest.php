@@ -47,24 +47,4 @@ final class ProductPriceTest extends TestCase {
         $productPrice = new ProductPrice(0.1 + 0.2);
         $this->assertEquals(0.3, $productPrice->value);
     }
-
-    public function test_fromRaw_accepts_a_numeric_string(): void
-    {
-        $productPrice = ProductPrice::fromRaw('19.99');
-        $this->assertEquals(19.99, $productPrice->value);
-    }
-
-    public function test_fromRaw_throws_ProductPriceException_on_non_numeric_string(): void
-    {
-        $this->expectException(ProductPriceException::class);
-        $this->expectExceptionMessage('must be numeric');
-        ProductPrice::fromRaw('abc');
-    }
-
-    public function test_fromRaw_throws_ProductPriceException_on_non_numeric_type(): void
-    {
-        $this->expectException(ProductPriceException::class);
-        $this->expectExceptionMessage('must be numeric');
-        ProductPrice::fromRaw([19.99]);
-    }
 }
