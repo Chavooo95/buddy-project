@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Product\Controller;
 
 use App\Product\UseCase\ProductByNameFinder;
+use App\Shared\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
@@ -29,17 +30,12 @@ final class FindProductsByNameController
                 $data[] = $product->toArray();
             }
 
-            return new JsonResponse([
-                'success' => true,
+            return ApiResponse::ok([
                 'data' => $data,
                 'count' => count($data),
             ]);
         } catch (Throwable $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Error retrieving products',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponse::serverError('Error retrieving products', $e->getMessage());
         }
     }
 }

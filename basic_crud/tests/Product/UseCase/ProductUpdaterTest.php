@@ -8,6 +8,7 @@ use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
+use App\Product\Request\UpdateProductRequest;
 use App\Product\UseCase\ProductUpdater;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +29,7 @@ final class ProductUpdaterTest extends TestCase
 
         $useCase = new ProductUpdater($repository);
 
-        $this->assertNull($useCase($id, ['name' => 'New']));
+        $this->assertNull($useCase($id, new UpdateProductRequest(name: 'New')));
     }
 
     public function test_it_updates_and_saves_the_product_when_found(): void
@@ -52,9 +53,24 @@ final class ProductUpdaterTest extends TestCase
 
         $useCase = new ProductUpdater($repository);
 
-        $result = $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', ['name' => 'New Name', 'price' => 99.99]);
+        $result = $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', new UpdateProductRequest('New Name', 99.99));
 
         $this->assertSame($product, $result);
+    }
+
+    public function test_it_only_touches_the_fields_that_were_sent(): void
+    {
+        $product = $this->createMock(Product::class);
+        $product->expects($this->once())->method('setName')->willReturnSelf();
+        $product->expects($this->never())->method('setPrice');
+
+        $repository = $this->createMock(ProductRepositoryInterface::class);
+        $repository->expects($this->once())->method('find')->willReturn($product);
+        $repository->expects($this->once())->method('save');
+
+        $useCase = new ProductUpdater($repository);
+
+        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', new UpdateProductRequest(name: 'New Name'));
     }
 
     public function test_it_rejects_an_empty_name(): void
@@ -68,6 +84,6 @@ final class ProductUpdaterTest extends TestCase
         $useCase = new ProductUpdater($repository);
 
         $this->expectException(InvalidArgumentException::class);
-        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', ['name' => '   ']);
+        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', new UpdateProductRequest(name: '   '));
     }
 }

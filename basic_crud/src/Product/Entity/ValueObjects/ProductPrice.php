@@ -18,12 +18,4 @@ final readonly class ProductPrice
             throw ProductPriceException::notPositive($this->value);
         }
     }
-    public static function fromRaw(mixed $value): self
-    {
-        if (!is_numeric($value)) {
-            throw ProductPriceException::invalidType($value);
-        }
-
-        return new self((float) $value);
-    }
 }

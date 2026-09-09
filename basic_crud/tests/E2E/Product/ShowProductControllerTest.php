@@ -32,6 +32,21 @@ final class ShowProductControllerTest extends WebTestCase
         $this->assertEquals($product->price()->value, $data['price']);
     }
 
+    public function test_it_keeps_the_zero_fraction_of_a_whole_price(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        $repository = $container->get(ProductRepositoryInterface::class);
+        $product = (new ProductBuilder())->withPrice(10.00)->build();
+
+        $repository->save($product);
+
+        $client->request('GET', '/api/products/' . $product->id()->value);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertStringContainsString('"price":10.0', $client->getResponse()->getContent());
+    }
+
     public function test_it_returns_404_when_product_not_found(): void
     {
         $client = static::createClient();

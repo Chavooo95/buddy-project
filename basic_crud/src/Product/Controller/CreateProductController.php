@@ -3,21 +3,26 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
+use App\Product\Request\CreateProductRequest;
 use App\Product\UseCase\ProductCreator;
+use App\Shared\Http\ApiResponse;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 #[Route('/api/products', name: 'product_create', methods: ['POST'])]
 final class CreateProductController
 {
     private ProductCreator $createProduct;
+    private ValidatorInterface $validator;
 
-    public function __construct(ProductCreator $createProduct)
+    public function __construct(ProductCreator $createProduct, ValidatorInterface $validator)
     {
         $this->createProduct = $createProduct;
+        $this->validator = $validator;
     }
 
     public function __invoke(Request $request): JsonResponse
@@ -25,37 +30,28 @@ final class CreateProductController
         try {
             $data = json_decode($request->getContent(), true);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                return new JsonResponse([
-                    'success' => false,
-                    'message' => 'Invalid JSON provided',
-                ], 400);
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+                return ApiResponse::invalidJson();
             }
 
-            $product = ($this->createProduct)($data);
+            $violations = $this->validator->validate($data, CreateProductRequest::constraints());
 
-            $response = new JsonResponse(status: 201);
-            $response->setEncodingOptions($response->getEncodingOptions() | \JSON_PRESERVE_ZERO_FRACTION);
-            $response->setData([
-                'success' => true,
+            if (count($violations) > 0) {
+                return ApiResponse::invalidPayload($violations);
+            }
+
+            $product = ($this->createProduct)(CreateProductRequest::fromArray($data));
+
+            return ApiResponse::created([
                 'message' => 'Product created successfully',
                 'ulid' => $product->id()->value,
                 'name' => $product->name()->value,
                 'price' => $product->price()->value,
             ]);
-            return $response;
         } catch (InvalidArgumentException $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Validation error',
-                'error' => $e->getMessage(),
-            ], 400);
+            return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Error creating product',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponse::serverError('Error creating product', $e->getMessage());
         }
     }
 }
