@@ -8,8 +8,8 @@ use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
+use App\Product\Request\CreateProductRequest;
 use DateTime;
-use InvalidArgumentException;
 
 class ProductCreator
 {
@@ -19,20 +19,13 @@ class ProductCreator
     {
         $this->repository = $repository;
     }
-    /** @param array{name: string, price: float} $data */
-    public function __invoke(array $data): Product
-    {
-        if (!isset($data['name'])) {
-            throw new InvalidArgumentException('Product name is required');
-        }
-        if (!isset($data['price'])) {
-            throw new InvalidArgumentException('Product price is required');
-        }
 
+    public function __invoke(CreateProductRequest $request): Product
+    {
         $product = new Product(
             ProductId::generate(),
-            new ProductName($data['name']),
-            ProductPrice::fromRaw($data['price']),
+            new ProductName($request->name),
+            ProductPrice::fromRaw($request->price),
             new DateTime(),
         );
 

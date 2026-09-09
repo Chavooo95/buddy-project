@@ -8,6 +8,7 @@ use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
+use App\Product\Request\UpdateProductRequest;
 
 class ProductUpdater
 {
@@ -18,19 +19,19 @@ class ProductUpdater
         $this->repository = $repository;
     }
 
-    public function __invoke(string $id, array $data): ?Product
+    public function __invoke(string $id, UpdateProductRequest $request): ?Product
     {
         $product = $this->repository->find(new ProductId($id));
         if (!$product instanceof Product) {
             return null;
         }
 
-        if (array_key_exists('name', $data)) {
-            $product->setName(new ProductName((string) $data['name']));
+        if ($request->name !== null) {
+            $product->setName(new ProductName($request->name));
         }
 
-        if (array_key_exists('price', $data)) {
-            $product->setPrice(ProductPrice::fromRaw($data['price']));
+        if ($request->price !== null) {
+            $product->setPrice(ProductPrice::fromRaw($request->price));
         }
 
         $this->repository->save($product);

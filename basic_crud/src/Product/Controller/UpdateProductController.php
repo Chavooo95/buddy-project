@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
@@ -29,23 +30,24 @@ final class UpdateProductController
         try {
             $data = json_decode($request->getContent(), true);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
                 return new JsonResponse([
                     'success' => false,
                     'message' => 'Invalid JSON provided',
                 ], 400);
             }
 
-            $violations = $this->validator->validate(new UpdateProductRequest(
-                array_key_exists('name', $data) ? $data['name'] : null,
-                array_key_exists('price', $data) ? $data['price'] : null,
-            ));
+            $violations = $this->validator->validate($data, UpdateProductRequest::constraints());
 
             if (count($violations) > 0) {
-                throw new InvalidArgumentException($violations->get(0)->getMessage());
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'error' => $this->firstError($violations),
+                ], 400);
             }
 
-            $product = ($this->updateProduct)($id, $data);
+            $product = ($this->updateProduct)($id, UpdateProductRequest::fromArray($data));
 
             if (!$product) {
                 return new JsonResponse([
@@ -74,5 +76,15 @@ final class UpdateProductController
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    private function firstError(ConstraintViolationListInterface $violations): string
+    {
+        $violation = $violations->get(0);
+        $field = trim($violation->getPropertyPath(), '[]');
+
+        return $field === ''
+            ? (string) $violation->getMessage()
+            : sprintf('%s: %s', $field, $violation->getMessage());
     }
 }
