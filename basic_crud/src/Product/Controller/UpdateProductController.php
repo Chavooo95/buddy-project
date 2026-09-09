@@ -5,11 +5,11 @@ namespace App\Product\Controller;
 
 use App\Product\Request\UpdateProductRequest;
 use App\Product\UseCase\ProductUpdater;
+use App\Shared\Http\ApiResponse;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
@@ -31,60 +31,31 @@ final class UpdateProductController
             $data = json_decode($request->getContent(), true);
 
             if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
-                return new JsonResponse([
-                    'success' => false,
-                    'message' => 'Invalid JSON provided',
-                ], 400);
+                return ApiResponse::invalidJson();
             }
 
             $violations = $this->validator->validate($data, UpdateProductRequest::constraints());
 
             if (count($violations) > 0) {
-                return new JsonResponse([
-                    'success' => false,
-                    'message' => 'Validation error',
-                    'error' => $this->firstError($violations),
-                ], 400);
+                return ApiResponse::invalidPayload($violations);
             }
 
             $product = ($this->updateProduct)($id, UpdateProductRequest::fromArray($data));
 
             if (!$product) {
-                return new JsonResponse([
-                    'success' => false,
-                    'message' => 'Product not found',
-                ], 404);
+                return ApiResponse::notFound('Product not found');
             }
 
-            return new JsonResponse([
-                'success' => true,
+            return ApiResponse::ok([
                 'message' => 'Product updated successfully',
                 'ulid' => $product->id()->value,
                 'name' => $product->name()->value,
                 'price' => $product->price()->value,
             ]);
         } catch (InvalidArgumentException $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Validation error',
-                'error' => $e->getMessage(),
-            ], 400);
+            return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Error updating product',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponse::serverError('Error updating product', $e->getMessage());
         }
-    }
-
-    private function firstError(ConstraintViolationListInterface $violations): string
-    {
-        $violation = $violations->get(0);
-        $field = trim($violation->getPropertyPath(), '[]');
-
-        return $field === ''
-            ? (string) $violation->getMessage()
-            : sprintf('%s: %s', $field, $violation->getMessage());
     }
 }

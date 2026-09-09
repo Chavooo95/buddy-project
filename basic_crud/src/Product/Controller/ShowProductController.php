@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Product\Controller;
 
 use App\Product\UseCase\ProductShower;
+use App\Shared\Http\ApiResponse;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,30 +26,18 @@ final class ShowProductController
             $product = ($this->showProduct)($id);
 
             if (!$product) {
-                return new JsonResponse([
-                    'success' => false,
-                    'message' => 'Product not found',
-                ], 404);
+                return ApiResponse::notFound('Product not found');
             }
 
-            return new JsonResponse([
-                'success' => true,
+            return ApiResponse::ok([
                 'ulid' => $product->id()->value,
                 'name' => $product->name()->value,
                 'price' => $product->price()->value,
             ]);
         } catch (InvalidArgumentException $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Validation error',
-                'error' => $e->getMessage(),
-            ], 400);
+            return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Error retrieving product',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponse::serverError('Error retrieving product', $e->getMessage());
         }
     }
 }
