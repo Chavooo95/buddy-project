@@ -119,6 +119,28 @@ final class CreateProductControllerTest extends WebTestCase
 
         $this->assertFalse($data['success']);
         $this->assertEquals('Validation error', $data['message']);
-        $this->assertEquals('Product price must be numeric, got string', $data['error']);
+        $this->assertEquals('price: must be numeric', $data['error']);
+    }
+
+    public function test_it_returns_400_on_unexpected_field(): void
+    {
+        $client = static::createClient();
+
+        $client->request(
+            'POST',
+            '/api/products',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['name' => 'Keyboard', 'price' => 29.99, 'discount' => 5])
+        );
+
+        $this->assertResponseStatusCodeSame(400);
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertFalse($data['success']);
+        $this->assertEquals('Validation error', $data['message']);
+        $this->assertEquals('discount: This field was not expected', $data['error']);
     }
 }
