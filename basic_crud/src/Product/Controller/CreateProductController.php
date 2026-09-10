@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
+use App\Product\Request\Constraint\CreateProductConstraints;
 use App\Product\Request\CreateProductRequest;
 use App\Product\UseCase\ProductCreator;
 use App\Shared\Http\ApiResponse;
@@ -34,7 +35,7 @@ final class CreateProductController
                 return ApiResponse::invalidJson();
             }
 
-            $violations = $this->validator->validate($data, CreateProductRequest::constraints());
+            $violations = $this->validator->validate($data, CreateProductConstraints::collection());
 
             if (count($violations) > 0) {
                 return ApiResponse::invalidPayload($violations);

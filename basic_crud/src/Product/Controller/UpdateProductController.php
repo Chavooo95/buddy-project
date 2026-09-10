@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
+use App\Product\Request\Constraint\UpdateProductConstraints;
 use App\Product\Request\UpdateProductRequest;
 use App\Product\UseCase\ProductUpdater;
 use App\Shared\Http\ApiResponse;
@@ -34,7 +35,7 @@ final class UpdateProductController
                 return ApiResponse::invalidJson();
             }
 
-            $violations = $this->validator->validate($data, UpdateProductRequest::constraints());
+            $violations = $this->validator->validate($data, UpdateProductConstraints::collection());
 
             if (count($violations) > 0) {
                 return ApiResponse::invalidPayload($violations);
