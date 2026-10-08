@@ -37,7 +37,7 @@ final class ShowProductController
         } catch (InvalidArgumentException $e) {
             return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {
-            return ApiResponse::serverError('Error retrieving product', $e->getMessage());
+            return ApiResponse::serverError('product_retrieval_failed', $e->getMessage());
         }
     }
 }

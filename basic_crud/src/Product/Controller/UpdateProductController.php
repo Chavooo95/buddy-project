@@ -48,7 +48,6 @@ final class UpdateProductController
             }
 
             return ApiResponse::ok([
-                'message' => 'Product updated successfully',
                 'ulid' => $product->id()->value,
                 'name' => $product->name()->value,
                 'price' => $product->price()->value,
@@ -56,7 +55,7 @@ final class UpdateProductController
         } catch (InvalidArgumentException $e) {
             return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {
-            return ApiResponse::serverError('Error updating product', $e->getMessage());
+            return ApiResponse::serverError('product_update_failed', $e->getMessage());
         }
     }
 }

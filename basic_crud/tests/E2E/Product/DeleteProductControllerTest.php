@@ -22,12 +22,8 @@ final class DeleteProductControllerTest extends WebTestCase
 
         $client->request('DELETE', '/api/products/' . $product->id()->value);
 
-        $this->assertResponseStatusCodeSame(200);
-
-        $data = json_decode($client->getResponse()->getContent(), true);
-
-        $this->assertTrue($data['success']);
-        $this->assertEquals('Product deleted successfully', $data['message']);
+        $this->assertResponseStatusCodeSame(204);
+        $this->assertEmpty($client->getResponse()->getContent());
     }
 
     public function test_it_returns_404_when_product_not_found(): void
@@ -38,10 +34,10 @@ final class DeleteProductControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(404);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertFalse($data['success']);
-        $this->assertEquals('Product not found', $data['message']);
+        $this->assertEquals('not_found', $body['error']['code']);
+        $this->assertEquals('Product not found', $body['error']['detail']);
     }
 
     public function test_it_returns_400_on_malformed_id(): void
@@ -52,10 +48,9 @@ final class DeleteProductControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(400);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertFalse($data['success']);
-        $this->assertEquals('Validation error', $data['message']);
-        $this->assertEquals('Product id "non-existent-id" is not a valid ULID', $data['error']);
+        $this->assertEquals('validation_failed', $body['error']['code']);
+        $this->assertEquals('Product id "non-existent-id" is not a valid ULID', $body['error']['detail']);
     }
 }
