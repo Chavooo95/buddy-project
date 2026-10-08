@@ -7,8 +7,8 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Install MongoDB PHP extension (1.x - compatible with doctrine/mongodb-odm-bundle ^5)
-RUN pecl install mongodb-1.21.0 \
+# Install MongoDB PHP extension (2.x - matches the version setup-php installs in CI)
+RUN pecl install mongodb-2.5.2 \
     && docker-php-ext-enable mongodb
 
 WORKDIR /var/www/html
