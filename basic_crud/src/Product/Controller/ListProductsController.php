@@ -32,12 +32,9 @@ final class ListProductsController
                 $data[] = $product->toArray();
             }
 
-            return ApiResponse::ok([
-                'data' => $data,
-                'count' => count($data),
-            ]);
+            return ApiResponse::collection($data);
         } catch (Throwable $e) {
-            return ApiResponse::serverError('Error retrieving products', $e->getMessage());
+            return ApiResponse::serverError('product_retrieval_failed', $e->getMessage());
         }
     }
 }

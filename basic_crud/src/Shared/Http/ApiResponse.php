@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Shared\Http;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
@@ -16,35 +17,45 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  */
 final class ApiResponse
 {
-    /** @param array<string, mixed> $payload */
-    public static function ok(array $payload): JsonResponse
+    /** @param array<string, mixed> $data */
+    public static function ok(array $data): JsonResponse
     {
-        return self::json(['success' => true] + $payload, 200);
+        return self::json(['data' => $data], 200);
     }
 
-    /** @param array<string, mixed> $payload */
-    public static function created(array $payload): JsonResponse
+    /** @param array<string, mixed> $data */
+    public static function created(array $data, string $location): JsonResponse
     {
-        return self::json(['success' => true] + $payload, 201);
+        $response = self::json(['data' => $data], 201);
+        $response->headers->set('Location', $location);
+
+        return $response;
     }
 
-    public static function notFound(string $message): JsonResponse
+    /** @param list<mixed> $items */
+    public static function collection(array $items): JsonResponse
     {
-        return self::json(['success' => false, 'message' => $message], 404);
+        return self::json(['data' => $items, 'count' => count($items)], 200);
+    }
+
+    public static function noContent(): Response
+    {
+        return new Response(status: 204);
+    }
+
+    public static function notFound(string $detail): JsonResponse
+    {
+        return self::error('not_found', $detail, 404);
     }
 
     public static function invalidJson(): JsonResponse
     {
-        return self::json(['success' => false, 'message' => 'Invalid JSON provided'], 400);
+        return self::error('invalid_json', 'Invalid JSON provided', 400);
     }
 
-    public static function validationError(string $error): JsonResponse
+    public static function validationError(string $detail): JsonResponse
     {
-        return self::json([
-            'success' => false,
-            'message' => 'Validation error',
-            'error' => $error,
-        ], 400);
+        return self::error('validation_failed', $detail, 400);
     }
 
     /**
@@ -63,13 +74,14 @@ final class ApiResponse
         );
     }
 
-    public static function serverError(string $message, string $error): JsonResponse
+    public static function serverError(string $code, string $detail): JsonResponse
     {
-        return self::json([
-            'success' => false,
-            'message' => $message,
-            'error' => $error,
-        ], 500);
+        return self::error($code, $detail, 500);
+    }
+
+    private static function error(string $code, string $detail, int $status): JsonResponse
+    {
+        return self::json(['error' => ['code' => $code, 'detail' => $detail]], $status);
     }
 
     /** @param array<string, mixed> $payload */

@@ -44,15 +44,14 @@ final class CreateProductController
             $product = ($this->createProduct)(CreateProductRequest::fromArray($data));
 
             return ApiResponse::created([
-                'message' => 'Product created successfully',
                 'ulid' => $product->id()->value,
                 'name' => $product->name()->value,
                 'price' => $product->price()->value,
-            ]);
+            ], '/api/products/' . $product->id()->value);
         } catch (InvalidArgumentException $e) {
             return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {
-            return ApiResponse::serverError('Error creating product', $e->getMessage());
+            return ApiResponse::serverError('product_creation_failed', $e->getMessage());
         }
     }
 }

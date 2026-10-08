@@ -23,11 +23,10 @@ final class FindProductsByNameControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertTrue($data['success']);
-        $this->assertGreaterThanOrEqual(1, $data['count']);
-        $this->assertEquals('Keyboard', $data['data'][0]['name']);
+        $this->assertGreaterThanOrEqual(1, $body['count']);
+        $this->assertEquals('Keyboard', $body['data'][0]['name']);
     }
 
     public function test_it_does_not_return_partial_matches(): void
@@ -43,11 +42,10 @@ final class FindProductsByNameControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertTrue($data['success']);
-        $this->assertEquals(0, $data['count']);
-        $this->assertEmpty($data['data']);
+        $this->assertEquals(0, $body['count']);
+        $this->assertEmpty($body['data']);
     }
 
     public function test_it_returns_empty_when_no_product_found(): void
@@ -58,10 +56,9 @@ final class FindProductsByNameControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertTrue($data['success']);
-        $this->assertEquals(0, $data['count']);
-        $this->assertEmpty($data['data']);
+        $this->assertEquals(0, $body['count']);
+        $this->assertEmpty($body['data']);
     }
 }
