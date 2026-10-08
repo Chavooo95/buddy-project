@@ -9,6 +9,7 @@ use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\Request\UpdateProductRequest;
+use App\Product\UseCase\Exception\ProductNotFoundException;
 
 class ProductUpdater
 {
@@ -19,11 +20,11 @@ class ProductUpdater
         $this->repository = $repository;
     }
 
-    public function __invoke(string $id, UpdateProductRequest $request): ?Product
+    public function __invoke(string $id, UpdateProductRequest $request): void
     {
         $product = $this->repository->find(new ProductId($id));
         if (!$product instanceof Product) {
-            return null;
+            throw ProductNotFoundException::withId($id);
         }
 
         if ($request->name !== null) {
@@ -35,7 +36,5 @@ class ProductUpdater
         }
 
         $this->repository->save($product);
-
-        return $product;
     }
 }
