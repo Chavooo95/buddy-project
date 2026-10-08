@@ -27,13 +27,13 @@ final class UpdateProductControllerTest extends WebTestCase
             json_encode(['name' => 'New Name', 'price' => 99.99])
         );
 
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(204);
+        $this->assertEmpty($client->getResponse()->getContent());
 
-        $body = json_decode($client->getResponse()->getContent(), true);
+        $updated = $repository->find($product->id());
 
-        $this->assertEquals($product->id()->value, $body['data']['ulid']);
-        $this->assertEquals('New Name', $body['data']['name']);
-        $this->assertEquals(99.99, $body['data']['price']);
+        $this->assertEquals('New Name', $updated->name()->value);
+        $this->assertEquals(99.99, $updated->price()->value);
     }
 
     public function test_it_returns_404_when_product_not_found(): void
