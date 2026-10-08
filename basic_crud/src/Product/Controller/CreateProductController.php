@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
+use App\Product\Request\Constraint\CreateProductConstraints;
 use App\Product\Request\CreateProductRequest;
 use App\Product\UseCase\ProductCreator;
 use App\Shared\Http\ApiResponse;
@@ -34,7 +35,7 @@ final class CreateProductController
                 return ApiResponse::invalidJson();
             }
 
-            $violations = $this->validator->validate($data, CreateProductRequest::constraints());
+            $violations = $this->validator->validate($data, CreateProductConstraints::collection());
 
             if (count($violations) > 0) {
                 return ApiResponse::invalidPayload($violations);
@@ -43,15 +44,14 @@ final class CreateProductController
             $product = ($this->createProduct)(CreateProductRequest::fromArray($data));
 
             return ApiResponse::created([
-                'message' => 'Product created successfully',
                 'ulid' => $product->id()->value,
                 'name' => $product->name()->value,
                 'price' => $product->price()->value,
-            ]);
+            ], '/api/products/' . $product->id()->value);
         } catch (InvalidArgumentException $e) {
             return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {
-            return ApiResponse::serverError('Error creating product', $e->getMessage());
+            return ApiResponse::serverError('product_creation_failed', $e->getMessage());
         }
     }
 }

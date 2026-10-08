@@ -24,12 +24,11 @@ final class ShowProductControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertTrue($data['success']);
-        $this->assertEquals($product->id()->value, $data['ulid']);
-        $this->assertEquals($product->name()->value, $data['name']);
-        $this->assertEquals($product->price()->value, $data['price']);
+        $this->assertEquals($product->id()->value, $body['data']['ulid']);
+        $this->assertEquals($product->name()->value, $body['data']['name']);
+        $this->assertEquals($product->price()->value, $body['data']['price']);
     }
 
     public function test_it_keeps_the_zero_fraction_of_a_whole_price(): void
@@ -55,10 +54,10 @@ final class ShowProductControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(404);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertFalse($data['success']);
-        $this->assertEquals('Product not found', $data['message']);
+        $this->assertEquals('not_found', $body['error']['code']);
+        $this->assertEquals('Product not found', $body['error']['detail']);
     }
 
     public function test_it_returns_400_on_malformed_id(): void
@@ -69,10 +68,9 @@ final class ShowProductControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(400);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertFalse($data['success']);
-        $this->assertEquals('Validation error', $data['message']);
-        $this->assertEquals('Product id "non-existent-id" is not a valid ULID', $data['error']);
+        $this->assertEquals('validation_failed', $body['error']['code']);
+        $this->assertEquals('Product id "non-existent-id" is not a valid ULID', $body['error']['detail']);
     }
 }

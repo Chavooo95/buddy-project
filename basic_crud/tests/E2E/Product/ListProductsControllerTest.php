@@ -23,11 +23,10 @@ final class ListProductsControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertTrue($data['success']);
-        $this->assertGreaterThanOrEqual(1, $data['count']);
-        $this->assertNotEmpty($data['data']);
+        $this->assertGreaterThanOrEqual(1, $body['count']);
+        $this->assertNotEmpty($body['data']);
     }
 
     public function test_it_filters_products_by_search(): void
@@ -43,10 +42,9 @@ final class ListProductsControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertTrue($data['success']);
-        $this->assertGreaterThanOrEqual(1, $data['count']);
-        $this->assertEquals('Keyboard', $data['data'][0]['name']);
+        $this->assertGreaterThanOrEqual(1, $body['count']);
+        $this->assertEquals('Keyboard', $body['data'][0]['name']);
     }
 }

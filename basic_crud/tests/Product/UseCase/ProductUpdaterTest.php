@@ -9,6 +9,7 @@ use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\Request\UpdateProductRequest;
+use App\Product\UseCase\Exception\ProductNotFoundException;
 use App\Product\UseCase\ProductUpdater;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +17,7 @@ use Symfony\Component\Uid\Ulid;
 
 final class ProductUpdaterTest extends TestCase
 {
-    public function test_it_returns_null_when_the_product_is_not_found(): void
+    public function test_it_throws_when_the_product_is_not_found(): void
     {
         $id = (string) new Ulid();
 
@@ -29,7 +30,9 @@ final class ProductUpdaterTest extends TestCase
 
         $useCase = new ProductUpdater($repository);
 
-        $this->assertNull($useCase($id, new UpdateProductRequest(name: 'New')));
+        $this->expectException(ProductNotFoundException::class);
+
+        $useCase($id, new UpdateProductRequest(name: 'New'));
     }
 
     public function test_it_updates_and_saves_the_product_when_found(): void
@@ -53,9 +56,7 @@ final class ProductUpdaterTest extends TestCase
 
         $useCase = new ProductUpdater($repository);
 
-        $result = $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', new UpdateProductRequest('New Name', 99.99));
-
-        $this->assertSame($product, $result);
+        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', new UpdateProductRequest('New Name', 99.99));
     }
 
     public function test_it_only_touches_the_fields_that_were_sent(): void

@@ -10,7 +10,7 @@ final readonly class ProductId
 {
     public string $value;
 
-    public function __construct(string $value)
+    public function __construct(?string $value)
     {
         $value = trim($value);
         if ($value === '') {
