@@ -10,25 +10,9 @@ final readonly class ProductId
 {
     public string $value;
 
-    /**
-     * Without a value a brand-new ULID is generated; with one, the incoming
-     * value is verified before being accepted.
-     */
     private function __construct(?string $value = null)
     {
-        if ($value === null) {
-            $this->value = (string) new Ulid();
-            return;
-        }
-
-        $value = trim($value);
-        if ($value === '') {
-            throw ProductIdException::empty();
-        }
-        if (!Ulid::isValid($value)) {
-            throw ProductIdException::invalidFormat($value);
-        }
-        $this->value = $value;
+        $this->value = $value === null ? self::newUlid() : self::verifiedUlid($value);
     }
 
     public static function generate(): self
@@ -39,6 +23,24 @@ final readonly class ProductId
     public static function fromString(string $value): self
     {
         return new self($value);
+    }
+
+    private static function newUlid(): string
+    {
+        return (string) new Ulid();
+    }
+
+    private static function verifiedUlid(string $value): string
+    {
+        $value = trim($value);
+        if ($value === '') {
+            throw ProductIdException::empty();
+        }
+        if (!Ulid::isValid($value)) {
+            throw ProductIdException::invalidFormat($value);
+        }
+
+        return $value;
     }
 
     /**
