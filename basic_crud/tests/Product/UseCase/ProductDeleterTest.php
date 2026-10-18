@@ -20,7 +20,7 @@ final class ProductDeleterTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(new ProductId($id))
+            ->with(ProductId::fromString($id))
             ->willReturn(null);
         $repository->expects($this->never())->method('remove');
 
@@ -38,7 +38,7 @@ final class ProductDeleterTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(new ProductId('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
+            ->with(ProductId::fromString('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
             ->willReturn($product);
         $repository->expects($this->once())->method('remove')->with($product);
 

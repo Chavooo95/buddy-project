@@ -22,17 +22,17 @@ class ProductUpdater
 
     public function __invoke(string $id, UpdateProductRequest $request): void
     {
-        $product = $this->repository->find(new ProductId($id));
+        $product = $this->repository->find(ProductId::fromString($id));
         if (!$product instanceof Product) {
             throw ProductNotFoundException::withId($id);
         }
 
         if ($request->name !== null) {
-            $product->setName(new ProductName($request->name));
+            $product->rename(ProductName::fromString($request->name));
         }
 
         if ($request->price !== null) {
-            $product->setPrice(new ProductPrice($request->price));
+            $product->changePrice(ProductPrice::fromFloat($request->price));
         }
 
         $this->repository->save($product);

@@ -21,12 +21,17 @@ class Product
     private DateTimeInterface $createdAt;
     private ?DateTimeInterface $updatedAt = null;
 
-    public function __construct(ProductId $id, ProductName $name, ProductPrice $price, DateTimeInterface $createdAt)
+    private function __construct(ProductId $id, ProductName $name, ProductPrice $price, DateTimeInterface $createdAt)
     {
         $this->id = $id;
         $this->name = $name;
         $this->price = $price;
         $this->createdAt = $createdAt;
+    }
+
+    public static function create(ProductId $id, ProductName $name, ProductPrice $price): self
+    {
+        return new self($id, $name, $price, new DateTime());
     }
 
     public function id(): ProductId
@@ -39,7 +44,7 @@ class Product
         return $this->name;
     }
 
-    public function setName(ProductName $name): static
+    public function rename(ProductName $name): static
     {
         $this->name = $name;
         $this->updateTimestamp();
@@ -52,7 +57,7 @@ class Product
         return $this->price;
     }
 
-    public function setPrice(ProductPrice $price): static
+    public function changePrice(ProductPrice $price): static
     {
         $this->price = $price;
         $this->updateTimestamp();

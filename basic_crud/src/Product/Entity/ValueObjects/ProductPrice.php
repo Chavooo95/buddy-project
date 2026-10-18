@@ -11,11 +11,16 @@ final readonly class ProductPrice
 
     public float $value;
 
-    public function __construct(float $value)
+    private function __construct(float $value)
     {
         $this->value = round($value, self::MAX_DECIMALS);
         if ($this->value <= 0) {
             throw ProductPriceException::notPositive($this->value);
         }
+    }
+
+    public static function fromFloat(float $value): self
+    {
+        return new self($value);
     }
 }

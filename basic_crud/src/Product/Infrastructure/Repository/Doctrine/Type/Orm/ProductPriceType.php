@@ -43,6 +43,6 @@ final class ProductPriceType extends Type
             return $value;
         }
 
-        return new ProductPrice((float) $value);
+        return ProductPrice::fromFloat((float) $value);
     }
 }

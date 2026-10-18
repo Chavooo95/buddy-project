@@ -31,7 +31,7 @@ final class ProductIdType extends Type
             return $value;
         }
 
-        return new ProductId((string) $value);
+        return ProductId::fromString((string) $value);
     }
 
     public function closureToMongo(): string

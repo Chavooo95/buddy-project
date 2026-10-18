@@ -11,7 +11,7 @@ final readonly class ProductName
 
     public string $value;
 
-    public function __construct(string $value)
+    private function __construct(string $value)
     {
         $this->value = trim($value);
         if ($this->value === '') {
@@ -20,5 +20,10 @@ final readonly class ProductName
         if (strlen($this->value) < self::MIN_LENGTH) {
             throw ProductNameException::tooShort($this->value, self::MIN_LENGTH);
         }
+    }
+
+    public static function fromString(string $value): self
+    {
+        return new self($value);
     }
 }

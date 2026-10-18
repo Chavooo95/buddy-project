@@ -1,52 +1,155 @@
 # Buddy Project
 
-Symfony 6.4 CRUD API for `Product` with a single entity mapped against **two interchangeable persistence layers**: PostgreSQL (via Doctrine ORM) and MongoDB (via Doctrine ODM). Switching storage is a one-line change in `config/services.yaml`.
+A **learning project**: a small Symfony CRUD API for a single `Product` resource, used as a playground to practise backend design ideas — hexagonal-ish layering, use cases, value objects, named constructors, swappable persistence (PostgreSQL via Doctrine ORM / MongoDB via Doctrine ODM), request validation at the edge and a test pyramid (unit, integration, E2E).
+
+> **Why does it look like a mix of things?**
+> Every concept was explored on its own branch (`feat/create_first_approach_to_VO`, `feat/framework_validations`, `refactor/split_requests_from_constraints…`, …) and merged back as it matured. So you will find leftovers from earlier iterations (an out-of-date `DATABASE_DEMO.md`, Makefile targets from the SQLite days, slides in `docs/`) living next to the current approach. That's expected: the git history *is* part of the learning material. When in doubt, `src/` and the tests are the source of truth.
 
 The Symfony app lives in [`basic_crud/`](./basic_crud). All commands below assume that as the working directory.
 
+## What you'll find here
+
+| Concept | Where to look |
+|---|---|
+| Use cases (one class per action, `__invoke`) | `src/Product/UseCase/` |
+| Value objects with private constructors and named constructors (`ProductId::generate()`, `ProductId::fromString()`, `ProductName::fromString()`, `ProductPrice::fromFloat()`) | `src/Product/Entity/ValueObjects/` |
+| An entity that speaks the domain language (`Product::create()`, `rename()`, `changePrice()`) | `src/Product/Entity/Product.php` |
+| Repository port + two adapters (ORM / ODM) and custom Doctrine types for the VOs | `src/Product/Repository/`, `src/Product/Infrastructure/Repository/` |
+| Payload validation with Symfony constraints, separated from the request DTOs | `src/Product/Request/` |
+| A single JSON envelope for every response | `src/Shared/Http/ApiResponse.php` |
+| Test builders and an in-memory repository | `tests/Data/` |
+| Talks / slides written along the way | `docs/` |
+
 ## Requirements
 
-- **Docker** with the `compose` plugin (Docker Desktop, OrbStack, or Colima).
-- *(Optional)* PHP 8.3+ and Composer on host for IDE introspection. Not required to run the project — everything (PHP 8.3, Postgres 15, MongoDB 7, composer) runs inside containers.
+- **Docker** with the `compose` plugin (Docker Desktop, OrbStack or Colima). This is the only hard requirement: PHP 8.3, Composer, PostgreSQL 15 and MongoDB 7 all run inside containers.
+- **make** (comes with macOS / most Linux distros).
+- *(Optional)* PHP 8.3+ with `ext-mongodb` and Composer on the host, only if you want IDE introspection or to run `make install-host`.
+- *(Optional)* `curl`, Postman or any HTTP client to play with the API.
 
-## Quick start
+## Installation
 
 ```bash
-cd basic_crud
+git clone <repo-url> buddy-project
+cd buddy-project/basic_crud
 
-# 1. Build, install dependencies (in container) and start everything
+# 1. Build the PHP image, install dependencies inside it, create .env from .env.dev
+#    and start postgres + mongodb + php
 make dev
 
-# 2. Create the schema
+# 2. Create the PostgreSQL schema
 docker compose exec php php bin/console doctrine:database:create --if-not-exists
 docker compose exec php php bin/console doctrine:schema:update --force --complete
 
-# 3. (Optional, only if you plan to use MongoDB) create collections + indexes
+# 3. (Only if you switch to MongoDB) create collections + indexes
 docker compose exec php php bin/console doctrine:mongodb:schema:create
 ```
 
-The API is now at <http://localhost:8000>. `make dev` is idempotent — it copies `.env` from `.env.dev` if missing, runs `composer install` inside the project's php image, and brings up postgres / mongo / php.
+The API is now listening on <http://localhost:8000>. Check it with:
 
-If you prefer to run composer on the host (PHP 8.3+, with `ext-mongodb` installed via `pecl install mongodb`), use `make install-host` instead of `make install`.
+```bash
+curl http://localhost:8000/api/products
+# {"data":[],"count":0}
+```
 
-## Endpoints
+`make dev` is idempotent, so you can run it again whenever you come back to the project. `make down` stops everything.
 
-All under `/api/products`. Bodies are JSON.
+## Using the API
 
-| Method | Path | Body | Description |
+All endpoints live under `/api/products`, accept and return JSON, and wrap the payload in a common envelope:
+
+- Success → `{"data": …}` (collections also include `"count"`).
+- Error → `{"error": {"code": "…", "detail": "…"}}`.
+
+| Method | Path | Body | Success |
 |---|---|---|---|
-| POST   | `/api/products`              | `{"name": "...", "price": 9.99}` | Create |
-| GET    | `/api/products`              | —                                | List all |
-| GET    | `/api/products/{id}`         | —                                | Get by ULID |
-| GET    | `/api/products/name/{name}`  | —                                | Find by name |
-| PUT    | `/api/products/{id}`         | `{"name": "...", "price": 12.5}` | Update |
-| DELETE | `/api/products/{id}`         | —                                | Delete |
+| POST   | `/api/products`             | `{"name": "...", "price": 9.99}` (both required) | `201` + `Location` header |
+| GET    | `/api/products`             | — (optional `?search=` for a partial name match) | `200` |
+| GET    | `/api/products/{id}`        | — | `200` |
+| GET    | `/api/products/name/{name}` | — (exact name match) | `200` |
+| PUT    | `/api/products/{id}`        | `{"name": "..."}`, `{"price": 1.5}` or both | `204` |
+| DELETE | `/api/products/{id}`        | — | `204` |
 
-`id` is a ULID assigned at creation. The full route table is also available with `docker compose exec php php bin/console debug:router`.
+`{id}` is a [ULID](https://github.com/ulid/spec) generated by the server on creation.
+
+### Tutorial: a product's full lifecycle
+
+**1. Create a product**
+
+```bash
+curl -i -X POST http://localhost:8000/api/products \
+  -H 'Content-Type: application/json' \
+  -d '{"name": "Gaming Keyboard", "price": 89.99}'
+```
+
+```http
+HTTP/1.1 201 Created
+Location: /api/products/01M57Q36YKJ4FAAF1BSZ1FQHTY
+
+{"data":{"ulid":"01M57Q36YKJ4FAAF1BSZ1FQHTY","name":"Gaming Keyboard","price":89.99}}
+```
+
+Keep the `ulid`, you'll need it for the next calls:
+
+```bash
+ID=01M57Q36YKJ4FAAF1BSZ1FQHTY
+```
+
+**2. Read it back**
+
+```bash
+curl http://localhost:8000/api/products/$ID
+# {"data":{"ulid":"01M57Q36YKJ4FAAF1BSZ1FQHTY","name":"Gaming Keyboard","price":89.99}}
+```
+
+**3. List / search**
+
+```bash
+curl http://localhost:8000/api/products                        # everything
+curl "http://localhost:8000/api/products?search=Keyb"          # name contains "Keyb"
+curl "http://localhost:8000/api/products/name/Gaming%20Keyboard" # exact name
+```
+
+```json
+{"data":[{"id":"01M57Q36YKJ4FAAF1BSZ1FQHTY","name":"Gaming Keyboard","price":89.99,"createdAt":"2026-10-18T14:36:47+00:00","updatedAt":null}],"count":1}
+```
+
+**4. Update it** (send only the fields you want to change)
+
+```bash
+curl -i -X PUT http://localhost:8000/api/products/$ID \
+  -H 'Content-Type: application/json' \
+  -d '{"price": 79.5}'
+# HTTP/1.1 204 No Content
+```
+
+**5. Delete it**
+
+```bash
+curl -i -X DELETE http://localhost:8000/api/products/$ID
+# HTTP/1.1 204 No Content
+```
+
+### What errors look like
+
+Validation happens in two layers: Symfony constraints check the *shape* of the payload (required fields, types) and the value objects enforce the *business rules* (name length, positive price, valid ULID).
+
+| Request | Status | Response |
+|---|---|---|
+| Body is not valid JSON | `400` | `{"error":{"code":"invalid_json","detail":"Invalid JSON provided"}}` |
+| `{"name": "Mouse"}` on POST | `400` | `{"error":{"code":"validation_failed","detail":"price: This field is required"}}` |
+| `{"name": "ab", "price": 10}` | `400` | `…"detail":"Product name \"ab\" needs to be at least 3 characters or more"` |
+| `{"name": "Mouse", "price": 0}` | `400` | `…"detail":"Product price \"0\" must be greater than zero"` |
+| `GET /api/products/not-a-ulid` | `400` | `…"detail":"Product id \"not-a-ulid\" is not a valid ULID"` |
+| Well-formed id that doesn't exist | `404` | `{"error":{"code":"not_found","detail":"Product not found"}}` |
+
+### Postman
+
+[`basic_crud/postman_petitions.txt`](./basic_crud/postman_petitions.txt) is a Postman v2.1 collection. Import it (*Import → File*) to get the requests ready to fire. Some of its examples predate the ULID ids, so replace any `1` in the URLs with a real id.
 
 ## Switching the storage backend
 
-The repository implementation used at runtime is wired by an alias in [`config/services.yaml`](./basic_crud/config/services.yaml):
+The repository implementation used at runtime is chosen by an alias in [`config/services.yaml`](./basic_crud/config/services.yaml):
 
 ```yaml
 App\Product\Repository\ProductRepositoryInterface:
@@ -54,45 +157,48 @@ App\Product\Repository\ProductRepositoryInterface:
 # alias: App\Product\Infrastructure\Repository\ProductODMRepository   # MongoDB
 ```
 
-Change the alias, then `docker compose restart php`. Controllers, use cases, the `Product` entity, and JSON responses are unchanged — that's the point of the abstraction.
+Change the alias and run `docker compose restart php`. Controllers, use cases, the `Product` entity and the JSON responses stay exactly the same; that's the point of the abstraction.
 
-## Running tests
+## Running the tests
 
 ```bash
-# All tests
-docker compose exec php ./vendor/bin/phpunit
-
-# Filter by name pattern
-docker compose exec php ./vendor/bin/phpunit --filter ProductCreator
+make test                          # whole suite inside the php container
+make test-filter f=ProductCreator  # filter by test/class name
 ```
 
-The test suite is organised by type:
-- `tests/Product/UseCase/` — unit tests using an `InMemoryProductRepository` (no DB).
-- `tests/Integration/Product/Repository/` — hit a real Postgres / Mongo.
-- `tests/E2E/Product/` — HTTP-level against the running app.
+The suite is organised by type:
 
-`make test` is equivalent to the phpunit command above.
+- `tests/Product/` — unit tests for value objects and use cases (in-memory repository, no DB).
+- `tests/Integration/Product/Repository/` — repositories against a real PostgreSQL / MongoDB.
+- `tests/E2E/Product/` — HTTP-level tests against the kernel.
+
+CI runs the same suite on every PR to `main` (`.github/workflows/tests.yml`).
 
 ## Project layout
 
 ```
 basic_crud/
-├── src/Product/
-│   ├── Controller/                 # HTTP entry points (one per endpoint)
-│   ├── Entity/                     # Product
-│   ├── UseCase/                    # ProductCreator, ProductLister, ...
-│   ├── Repository/                 # ProductRepositoryInterface
-│   └── Infrastructure/Repository/
-│       ├── ProductORMRepository.php  # PostgreSQL
-│       └── ProductODMRepository.php  # MongoDB
+├── src/
+│   ├── Product/
+│   │   ├── Controller/              # One invokable controller per endpoint
+│   │   ├── Entity/                  # Product + ValueObjects/
+│   │   ├── Request/                 # Request DTOs + Constraint/ (payload validation)
+│   │   ├── UseCase/                 # ProductCreator, ProductUpdater, ...
+│   │   ├── Repository/              # ProductRepositoryInterface (the port)
+│   │   └── Infrastructure/Repository/
+│   │       ├── ProductORMRepository.php   # PostgreSQL adapter
+│   │       ├── ProductODMRepository.php   # MongoDB adapter
+│   │       └── Doctrine/            # XML mappings + custom types for the VOs
+│   └── Shared/Http/ApiResponse.php  # JSON envelope
 ├── tests/
-│   ├── Data/                       # In-memory repo + builders
-│   ├── Product/UseCase/            # Unit
-│   ├── Integration/                # Repo + real DB
-│   └── E2E/                        # HTTP
-├── config/                         # Symfony config (services.yaml decides ORM vs ODM)
-├── docker/                         # Dockerfile for the PHP image (installs ext-mongodb)
-├── docker-compose.yml              # postgres + mongo + php server
+│   ├── Data/                        # Builders + in-memory repository
+│   ├── Product/                     # Unit
+│   ├── Integration/                 # Repositories + real DBs
+│   └── E2E/                         # HTTP
+├── config/                          # Symfony config (services.yaml picks ORM vs ODM)
+├── docker/                          # PHP image (with ext-mongodb) + Postgres init
+├── docs/                            # Slides and notes from the learning sessions
+├── docker-compose.yml
 └── Makefile
 ```
 
@@ -100,24 +206,23 @@ basic_crud/
 
 | Target | What it does |
 |---|---|
-| `make dev`            | Build image + install deps (in container) + start postgres / mongo / php |
-| `make install`        | Install dependencies inside the project's php image (default) |
-| `make install-host`   | Install dependencies using host composer (needs PHP 8.3+ and `ext-mongodb`) |
+| `make dev`                | Build image, install deps (in container), start postgres / mongo / php |
 | `make up` / `make down` / `make restart` | Container lifecycle |
-| `make logs`           | Tail container logs |
-| `make test`           | Run phpunit inside the PHP container |
-| `make db-schema-update` | `doctrine:schema:update --force --complete` inside container |
-| `make test-db-setup`  | Create + migrate the test database |
-| `make cache-clear`    | Clear Symfony cache (host PHP, env=dev) |
-| `make status`         | Quick diagnostics |
+| `make logs`               | Tail container logs |
+| `make test` / `make test-filter f=…` | Run PHPUnit inside the php container |
+| `make db-schema-update`   | `doctrine:schema:update --force --complete` inside the container |
+| `make test-db-setup`      | Create the test database |
+| `make analyze`            | PHPStan inside the container |
+| `make install-host`       | Install deps with host Composer (needs PHP 8.3+ and `ext-mongodb`) |
 
 Run `make help` for the full list.
 
 ## Known gotchas
 
-- **`make cache-clear` and `make db-create` use host PHP.** They will fail if your host doesn't have PHP 8.3+ and `ext-mongodb`. For DB ops the in-container equivalents are reliable: `docker compose exec php php bin/console doctrine:...`.
+- **Some Make targets use host PHP** (`cache-clear`, `db-create`, `db-migrate`, `db-reset`, `serve`, …). They fail without PHP 8.3+ and `ext-mongodb` on your machine. Use the `docker compose exec php php bin/console …` equivalent instead. `db-reset` is a leftover from the SQLite days.
 - **MongoDB needs `doctrine:mongodb:schema:create` once** to create the indexes; collections are created lazily on first insert.
 - **`DATABASE_DEMO.md` is out of date.** It mentions SQLite/MySQL and a `switch_database.sh` that doesn't exist; the real switch is the alias in `services.yaml`.
+- **Response shapes are not fully uniform yet**: single-product responses use the key `ulid` and omit timestamps, while lists use `id` and include `createdAt` / `updatedAt`.
 
 ## Stack
 

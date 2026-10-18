@@ -5,7 +5,7 @@ namespace App\Product\Request;
 
 final readonly class UpdateProductRequest
 {
-    public function __construct(
+    private function __construct(
         public ?string $name = null,
         public ?float $price = null,
     ) {
