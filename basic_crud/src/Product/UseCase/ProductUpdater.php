@@ -28,11 +28,11 @@ class ProductUpdater
         }
 
         if ($request->name !== null) {
-            $product->setName(ProductName::fromString($request->name));
+            $product->rename(ProductName::fromString($request->name));
         }
 
         if ($request->price !== null) {
-            $product->setPrice(ProductPrice::fromFloat($request->price));
+            $product->changePrice(ProductPrice::fromFloat($request->price));
         }
 
         $this->repository->save($product);
