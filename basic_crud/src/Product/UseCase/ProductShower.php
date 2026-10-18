@@ -18,7 +18,7 @@ class ProductShower
 
     public function __invoke(string $id): ?Product
     {
-        $product = $this->repository->find(new ProductId($id));
+        $product = $this->repository->find(ProductId::fromString($id));
 
         return $product instanceof Product ? $product : null;
     }

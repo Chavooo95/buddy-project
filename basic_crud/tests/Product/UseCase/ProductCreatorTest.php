@@ -17,7 +17,7 @@ final class ProductCreatorTest extends TestCase
         $repository = new InMemoryProductRepository();
         $useCase = new ProductCreator($repository);
 
-        $product = $useCase(new CreateProductRequest('Keyboard', 12.34));
+        $product = $useCase(CreateProductRequest::fromArray(['name' => 'Keyboard', 'price' => 12.34]));
 
         $this->assertSame($product, $repository->findByName('Keyboard')[0]);
         $this->assertEquals('Keyboard', $product->name()->value);
@@ -32,6 +32,6 @@ final class ProductCreatorTest extends TestCase
         $useCase = new ProductCreator($repository);
 
         $this->expectException(InvalidArgumentException::class);
-        $useCase(new CreateProductRequest('Keyboard', -1.0));
+        $useCase(CreateProductRequest::fromArray(['name' => 'Keyboard', 'price' => -1.0]));
     }
 }
