@@ -29,7 +29,7 @@ final class CreateProductControllerTest extends WebTestCase
 
         $this->assertEquals($product->name()->value, $body['data']['name']);
         $this->assertEquals($product->price()->value, $body['data']['price']);
-        $this->assertNotEmpty($body['data']['ulid']);
+        $this->assertNotEmpty($body['data']['id']);
     }
 
     public function test_it_points_the_location_header_at_the_new_product(): void
@@ -51,7 +51,7 @@ final class CreateProductControllerTest extends WebTestCase
         $body = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertEquals(
-            '/api/products/' . $body['data']['ulid'],
+            '/api/products/' . $body['data']['id'],
             $client->getResponse()->headers->get('Location')
         );
     }

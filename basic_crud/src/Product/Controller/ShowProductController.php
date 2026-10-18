@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
+use App\Product\Controller\Presenter\ProductPresenter;
 use App\Product\UseCase\ProductShower;
 use App\Shared\Http\ApiResponse;
 use InvalidArgumentException;
@@ -29,11 +30,7 @@ final class ShowProductController
                 return ApiResponse::notFound('Product not found');
             }
 
-            return ApiResponse::ok([
-                'ulid' => $product->id()->value,
-                'name' => $product->name()->value,
-                'price' => $product->price()->value,
-            ]);
+            return ApiResponse::ok(ProductPresenter::present($product));
         } catch (InvalidArgumentException $e) {
             return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {
