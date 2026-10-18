@@ -44,7 +44,7 @@ class Product
         return $this->name;
     }
 
-    public function setName(ProductName $name): static
+    public function rename(ProductName $name): static
     {
         $this->name = $name;
         $this->updateTimestamp();
@@ -57,7 +57,7 @@ class Product
         return $this->price;
     }
 
-    public function setPrice(ProductPrice $price): static
+    public function changePrice(ProductPrice $price): static
     {
         $this->price = $price;
         $this->updateTimestamp();

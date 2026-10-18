@@ -39,11 +39,11 @@ final class ProductUpdaterTest extends TestCase
     {
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
-            ->method('setName')
+            ->method('rename')
             ->with(ProductName::fromString('New Name'))
             ->willReturnSelf();
         $product->expects($this->once())
-            ->method('setPrice')
+            ->method('changePrice')
             ->with(ProductPrice::fromFloat(99.99))
             ->willReturnSelf();
 
@@ -62,8 +62,8 @@ final class ProductUpdaterTest extends TestCase
     public function test_it_only_touches_the_fields_that_were_sent(): void
     {
         $product = $this->createMock(Product::class);
-        $product->expects($this->once())->method('setName')->willReturnSelf();
-        $product->expects($this->never())->method('setPrice');
+        $product->expects($this->once())->method('rename')->willReturnSelf();
+        $product->expects($this->never())->method('changePrice');
 
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())->method('find')->willReturn($product);
