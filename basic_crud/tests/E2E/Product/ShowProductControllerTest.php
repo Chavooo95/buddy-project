@@ -26,7 +26,7 @@ final class ShowProductControllerTest extends WebTestCase
 
         $body = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertEquals($product->id()->value, $body['data']['ulid']);
+        $this->assertEquals($product->id()->value, $body['data']['id']);
         $this->assertEquals($product->name()->value, $body['data']['name']);
         $this->assertEquals($product->price()->value, $body['data']['price']);
     }
