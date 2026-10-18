@@ -16,6 +16,7 @@ The Symfony app lives in [`basic_crud/`](./basic_crud). All commands below assum
 | An entity that speaks the domain language (`Product::create()`, `rename()`, `changePrice()`) | `src/Product/Entity/Product.php` |
 | Repository port + two adapters (ORM / ODM) and custom Doctrine types for the VOs | `src/Product/Repository/`, `src/Product/Infrastructure/Repository/` |
 | Payload validation with Symfony constraints, separated from the request DTOs | `src/Product/Request/` |
+| A presenter that owns the HTTP shape of a product, so the entity stays free of JSON concerns | `src/Product/Controller/Presenter/` |
 | A single JSON envelope for every response | `src/Shared/Http/ApiResponse.php` |
 | Test builders and an in-memory repository | `tests/Data/` |
 | Talks / slides written along the way | `docs/` |
@@ -56,7 +57,7 @@ curl http://localhost:8000/api/products
 
 ## Using the API
 
-All endpoints live under `/api/products`, accept and return JSON, and wrap the payload in a common envelope:
+All endpoints live under `/api/products`, accept and return JSON, and every product is represented the same way (`id`, `name`, `price`, `createdAt`, `updatedAt`) inside a common envelope:
 
 - Success → `{"data": …}` (collections also include `"count"`).
 - Error → `{"error": {"code": "…", "detail": "…"}}`.
@@ -86,10 +87,10 @@ curl -i -X POST http://localhost:8000/api/products \
 HTTP/1.1 201 Created
 Location: /api/products/01M57Q36YKJ4FAAF1BSZ1FQHTY
 
-{"data":{"ulid":"01M57Q36YKJ4FAAF1BSZ1FQHTY","name":"Gaming Keyboard","price":89.99}}
+{"data":{"id":"01M57Q36YKJ4FAAF1BSZ1FQHTY","name":"Gaming Keyboard","price":89.99,"createdAt":"2026-10-18T14:36:47+00:00","updatedAt":null}}
 ```
 
-Keep the `ulid`, you'll need it for the next calls:
+Keep the `id`, you'll need it for the next calls:
 
 ```bash
 ID=01M57Q36YKJ4FAAF1BSZ1FQHTY
@@ -99,7 +100,7 @@ ID=01M57Q36YKJ4FAAF1BSZ1FQHTY
 
 ```bash
 curl http://localhost:8000/api/products/$ID
-# {"data":{"ulid":"01M57Q36YKJ4FAAF1BSZ1FQHTY","name":"Gaming Keyboard","price":89.99}}
+# {"data":{"id":"01M57Q36YKJ4FAAF1BSZ1FQHTY","name":"Gaming Keyboard","price":89.99,"createdAt":"2026-10-18T14:36:47+00:00","updatedAt":null}}
 ```
 
 **3. List / search**
@@ -181,6 +182,7 @@ basic_crud/
 ├── src/
 │   ├── Product/
 │   │   ├── Controller/              # One invokable controller per endpoint
+│   │   │   └── Presenter/           # Product → JSON shape (same for every endpoint)
 │   │   ├── Entity/                  # Product + ValueObjects/
 │   │   ├── Request/                 # Request DTOs + Constraint/ (payload validation)
 │   │   ├── UseCase/                 # ProductCreator, ProductUpdater, ...
@@ -222,7 +224,6 @@ Run `make help` for the full list.
 - **Some Make targets use host PHP** (`cache-clear`, `db-create`, `db-migrate`, `db-reset`, `serve`, …). They fail without PHP 8.3+ and `ext-mongodb` on your machine. Use the `docker compose exec php php bin/console …` equivalent instead. `db-reset` is a leftover from the SQLite days.
 - **MongoDB needs `doctrine:mongodb:schema:create` once** to create the indexes; collections are created lazily on first insert.
 - **`DATABASE_DEMO.md` is out of date.** It mentions SQLite/MySQL and a `switch_database.sh` that doesn't exist; the real switch is the alias in `services.yaml`.
-- **Response shapes are not fully uniform yet**: single-product responses use the key `ulid` and omit timestamps, while lists use `id` and include `createdAt` / `updatedAt`.
 
 ## Stack
 
