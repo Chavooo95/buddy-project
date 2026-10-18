@@ -5,7 +5,7 @@ namespace App\Product\Request;
 
 final readonly class CreateProductRequest
 {
-    public function __construct(
+    private function __construct(
         public string $name,
         public float $price,
     ) {

@@ -8,7 +8,6 @@ use App\Product\Entity\Product;
 use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
-use DateTime;
 
 final class ProductBuilder
 {
@@ -23,11 +22,10 @@ final class ProductBuilder
 
     public function build(): Product
     {
-        return new Product(
+        return Product::create(
             ProductId::generate(),
-            new ProductName($this->name),
-            new ProductPrice($this->price),
-            new DateTime(),
+            ProductName::fromString($this->name),
+            ProductPrice::fromFloat($this->price),
         );
     }
 

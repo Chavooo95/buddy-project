@@ -62,7 +62,7 @@ final class ProductORMRepositoryTest extends KernelTestCase
     public function test_it_returns_null_when_product_not_found(): void
     {
         $id = new Ulid();
-        $found = $this->subject->find(new ProductId((string) $id));
+        $found = $this->subject->find(ProductId::fromString((string) $id));
 
         $this->assertNull($found);
     }

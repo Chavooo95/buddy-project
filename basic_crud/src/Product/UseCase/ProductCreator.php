@@ -9,7 +9,6 @@ use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\Request\CreateProductRequest;
-use DateTime;
 
 class ProductCreator
 {
@@ -22,11 +21,10 @@ class ProductCreator
 
     public function __invoke(CreateProductRequest $request): Product
     {
-        $product = new Product(
+        $product = Product::create(
             ProductId::generate(),
-            new ProductName($request->name),
-            new ProductPrice($request->price),
-            new DateTime(),
+            ProductName::fromString($request->name),
+            ProductPrice::fromFloat($request->price),
         );
 
         $this->repository->save($product);

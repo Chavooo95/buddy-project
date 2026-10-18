@@ -12,14 +12,14 @@ final class ProductIdTest extends TestCase
 {
     public function test_check_valueObject_has_the_same_value(): void
     {
-        $idFirst = new ProductId('01HZZZZZZZZZZZZZZZZZZZZZZZ');
-        $idSecond = new ProductId('01HZZZZZZZZZZZZZZZZZZZZZZZ');
+        $idFirst = ProductId::fromString('01HZZZZZZZZZZZZZZZZZZZZZZZ');
+        $idSecond = ProductId::fromString('01HZZZZZZZZZZZZZZZZZZZZZZZ');
         $this->assertEquals($idFirst, $idSecond);
     }
 
     public function test_that_valueObject_trims_the_value(): void
     {
-        $id = new ProductId('   01HZZZZZZZZZZZZZZZZZZZZZZZ   ');
+        $id = ProductId::fromString('   01HZZZZZZZZZZZZZZZZZZZZZZZ   ');
         $this->assertEquals('01HZZZZZZZZZZZZZZZZZZZZZZZ', $id->value);
     }
 
@@ -31,7 +31,7 @@ final class ProductIdTest extends TestCase
 
     public function test_it_is_castable_to_string(): void
     {
-        $id = new ProductId('01HZZZZZZZZZZZZZZZZZZZZZZZ');
+        $id = ProductId::fromString('01HZZZZZZZZZZZZZZZZZZZZZZZ');
         $this->assertSame('01HZZZZZZZZZZZZZZZZZZZZZZZ', (string) $id);
     }
 
@@ -39,20 +39,20 @@ final class ProductIdTest extends TestCase
     {
         $this->expectException(ProductIdException::class);
         $this->expectExceptionMessage('Product id cannot be empty');
-        new ProductId('');
+        ProductId::fromString('');
     }
 
     public function test_rejects_whitespace_only_value(): void
     {
         $this->expectException(ProductIdException::class);
         $this->expectExceptionMessage('Product id cannot be empty');
-        new ProductId('   ');
+        ProductId::fromString('   ');
     }
 
     public function test_throws_ProductIdException_on_invalid_ulid_format(): void
     {
         $this->expectException(ProductIdException::class);
         $this->expectExceptionMessage('is not a valid ULID');
-        new ProductId('non-existent-id');
+        ProductId::fromString('non-existent-id');
     }
 }

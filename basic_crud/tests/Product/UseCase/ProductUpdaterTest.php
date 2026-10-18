@@ -24,7 +24,7 @@ final class ProductUpdaterTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(new ProductId($id))
+            ->with(ProductId::fromString($id))
             ->willReturn(null);
         $repository->expects($this->never())->method('save');
 
@@ -32,7 +32,7 @@ final class ProductUpdaterTest extends TestCase
 
         $this->expectException(ProductNotFoundException::class);
 
-        $useCase($id, new UpdateProductRequest(name: 'New'));
+        $useCase($id, UpdateProductRequest::fromArray(['name' => 'New']));
     }
 
     public function test_it_updates_and_saves_the_product_when_found(): void
@@ -40,23 +40,23 @@ final class ProductUpdaterTest extends TestCase
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('setName')
-            ->with(new ProductName('New Name'))
+            ->with(ProductName::fromString('New Name'))
             ->willReturnSelf();
         $product->expects($this->once())
             ->method('setPrice')
-            ->with(new ProductPrice(99.99))
+            ->with(ProductPrice::fromFloat(99.99))
             ->willReturnSelf();
 
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(new ProductId('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
+            ->with(ProductId::fromString('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
             ->willReturn($product);
         $repository->expects($this->once())->method('save')->with($product);
 
         $useCase = new ProductUpdater($repository);
 
-        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', new UpdateProductRequest('New Name', 99.99));
+        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', UpdateProductRequest::fromArray(['name' => 'New Name', 'price' => 99.99]));
     }
 
     public function test_it_only_touches_the_fields_that_were_sent(): void
@@ -71,7 +71,7 @@ final class ProductUpdaterTest extends TestCase
 
         $useCase = new ProductUpdater($repository);
 
-        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', new UpdateProductRequest(name: 'New Name'));
+        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', UpdateProductRequest::fromArray(['name' => 'New Name']));
     }
 
     public function test_it_rejects_an_empty_name(): void
@@ -85,6 +85,6 @@ final class ProductUpdaterTest extends TestCase
         $useCase = new ProductUpdater($repository);
 
         $this->expectException(InvalidArgumentException::class);
-        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', new UpdateProductRequest(name: '   '));
+        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', UpdateProductRequest::fromArray(['name' => '   ']));
     }
 }

@@ -19,7 +19,7 @@ final class ProductShowerTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(new ProductId($id))
+            ->with(ProductId::fromString($id))
             ->willReturn(null);
 
         $useCase = new ProductShower($repository);
@@ -34,7 +34,7 @@ final class ProductShowerTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(new ProductId('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
+            ->with(ProductId::fromString('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
             ->willReturn($product);
 
         $useCase = new ProductShower($repository);
