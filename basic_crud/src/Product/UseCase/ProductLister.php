@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\UseCase;
 
+use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
 
 class ProductLister
@@ -14,10 +15,7 @@ class ProductLister
         $this->repository = $repository;
     }
 
-    /**
-     * @param string|null $search
-     * @return array
-     */
+    /** @return list<Product> */
     public function __invoke(?string $search = null): array
     {
         if ($search !== null && trim($search) !== '') {

@@ -51,7 +51,6 @@ class ProductODMRepository implements ProductRepositoryInterface
             ->field('name')->equals($name)
             ->sort('name', 'ASC')
             ->getQuery()
-            ->execute()
             ->toArray();
     }
 
@@ -61,7 +60,6 @@ class ProductODMRepository implements ProductRepositoryInterface
             ->field('name')->equals(new \MongoDB\BSON\Regex($name, 'i'))
             ->sort('name', 'ASC')
             ->getQuery()
-            ->execute()
             ->toArray();
     }
 

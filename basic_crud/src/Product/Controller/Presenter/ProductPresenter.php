@@ -20,6 +20,10 @@ final class ProductPresenter
         ];
     }
 
+    /**
+     * @param iterable<Product> $products
+     * @return list<array<string, mixed>>
+     */
     public static function presentCollection(iterable $products): array
     {
         $data = [];
