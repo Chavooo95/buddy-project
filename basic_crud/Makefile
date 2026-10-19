@@ -16,7 +16,7 @@ YELLOW = \033[1;33m
 BLUE = \033[0;34m
 NC = \033[0m # No Color
 
-.PHONY: help install setup up down build restart logs clean test cache-clear db-create db-migrate db-fixtures serve stop
+.PHONY: help install setup up down build restart logs clean test analyze cache-clear db-create db-migrate db-fixtures serve stop
 
 # Default target
 help: ## Show this help message
@@ -124,7 +124,7 @@ test-db-setup: ## Create and migrate the test database (PostgreSQL)
 	docker compose exec php php bin/console doctrine:schema:update --force --env=test
 	@echo "$(GREEN)Test database ready!$(NC)"
 
-test: ## Run tests
+test: analyze ## Run static analysis, then tests
 	@echo "$(YELLOW)Running tests...$(NC)"
 	docker compose exec php ./vendor/bin/phpunit
 	@echo "$(GREEN)Tests completed!$(NC)"
@@ -148,9 +148,9 @@ cs-fix: ## Fix code style with PHP-CS-Fixer
 	$(PHP) vendor/bin/php-cs-fixer fix src
 	@echo "$(GREEN)Code style fixed!$(NC)"
 
-analyze: ## Run static analysis
+analyze: ## Run static analysis (PHPStan, configured in phpstan.neon)
 	@echo "$(YELLOW)Running static analysis...$(NC)"
-	docker compose exec php  ./vendor/bin/phpstan analyse src
+	docker compose exec php ./vendor/bin/phpstan analyse --no-progress --memory-limit=512M
 	@echo "$(GREEN)Static analysis completed!$(NC)"
 
 # Complete workflow commands
