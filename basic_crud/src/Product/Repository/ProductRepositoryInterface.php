@@ -12,6 +12,7 @@ use App\Product\Entity\ValueObjects\ProductId;
  */
 interface ProductRepositoryInterface
 {
+    /** @return list<Product> */
     public function findAll(): array;
 
     public function find(ProductId $id): ?Product;
@@ -20,7 +21,9 @@ interface ProductRepositoryInterface
 
     public function remove(Product $entity): void;
 
+    /** @return list<Product> */
     public function findByName(string $name): array;
 
+    /** @return list<Product> */
     public function findByPartialName(string $name): array;
 }

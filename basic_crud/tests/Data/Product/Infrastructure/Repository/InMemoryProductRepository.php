@@ -10,6 +10,7 @@ use App\Product\Repository\ProductRepositoryInterface;
 
 final class InMemoryProductRepository implements ProductRepositoryInterface
 {
+    /** @var array<string, Product> */
     private array $products = [];
 
     public function findAll(): array

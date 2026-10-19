@@ -9,7 +9,7 @@ final class ProductNameException extends InvalidArgumentException
 {
     private function __construct(string $message)
     {
-        return parent::__construct($message);
+        parent::__construct($message);
     }
 
     public static function empty(): self
