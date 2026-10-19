@@ -163,8 +163,9 @@ Change the alias and run `docker compose restart php`. Controllers, use cases, t
 ## Running the tests
 
 ```bash
-make test                          # whole suite inside the php container
-make test-filter f=ProductCreator  # filter by test/class name
+make test                          # PHPStan, then the whole PHPUnit suite, inside the php container
+make test-filter f=ProductCreator  # only PHPUnit, filtered by test/class name
+make analyze                       # only PHPStan
 ```
 
 The suite is organised by type:
@@ -173,7 +174,9 @@ The suite is organised by type:
 - `tests/Integration/Product/Repository/` — repositories against a real PostgreSQL / MongoDB.
 - `tests/E2E/Product/` — HTTP-level tests against the kernel.
 
-CI runs the same suite on every PR to `main` (`.github/workflows/tests.yml`).
+Static analysis runs with [PHPStan](https://phpstan.org/) at the level set in `basic_crud/phpstan.neon` (currently 6), over `src` and `tests`.
+
+CI runs PHPStan and then the same suite on every pull request, whatever its base branch, so stacked PRs are checked too, and on every push to `main` (`.github/workflows/tests.yml`).
 
 ## Project layout
 
@@ -211,10 +214,11 @@ basic_crud/
 | `make dev`                | Build image, install deps (in container), start postgres / mongo / php |
 | `make up` / `make down` / `make restart` | Container lifecycle |
 | `make logs`               | Tail container logs |
-| `make test` / `make test-filter f=…` | Run PHPUnit inside the php container |
+| `make test`               | PHPStan, then PHPUnit, inside the php container |
+| `make test-filter f=…`    | PHPUnit only, filtered by name |
 | `make db-schema-update`   | `doctrine:schema:update --force --complete` inside the container |
 | `make test-db-setup`      | Create the test database |
-| `make analyze`            | PHPStan inside the container |
+| `make analyze`            | PHPStan only (config in `phpstan.neon`) |
 | `make install-host`       | Install deps with host Composer (needs PHP 8.3+ and `ext-mongodb`) |
 
 Run `make help` for the full list.
