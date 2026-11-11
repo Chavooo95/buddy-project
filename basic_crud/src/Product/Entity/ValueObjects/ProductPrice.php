@@ -19,7 +19,7 @@ final readonly class ProductPrice
         }
     }
 
-    public static function fromFloat(float $value): self
+    public static function fromStorage(float $value): self
     {
         return new self($value);
     }

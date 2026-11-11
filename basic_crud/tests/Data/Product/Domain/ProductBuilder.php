@@ -24,8 +24,8 @@ final class ProductBuilder
     {
         return Product::create(
             ProductId::generate(),
-            ProductName::fromString($this->name),
-            ProductPrice::fromFloat($this->price),
+            ProductName::fromStorage($this->name),
+            ProductPrice::fromStorage($this->price),
         );
     }
 

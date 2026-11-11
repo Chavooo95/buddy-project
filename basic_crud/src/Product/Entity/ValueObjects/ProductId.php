@@ -10,17 +10,17 @@ final readonly class ProductId
 {
     public string $value;
 
-    private function __construct(?string $value = null)
+    private function __construct(?string $value)
     {
         $this->value = $value === null ? self::newUlid() : self::verifiedUlid($value);
     }
 
     public static function generate(): self
     {
-        return new self();
+        return new self(null);
     }
 
-    public static function fromString(string $value): self
+    public static function fromStorage(string $value): self
     {
         return new self($value);
     }

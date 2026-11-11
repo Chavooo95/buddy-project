@@ -23,8 +23,8 @@ class ProductCreator
     {
         $product = Product::create(
             ProductId::generate(),
-            ProductName::fromString($request->name),
-            ProductPrice::fromFloat($request->price),
+            ProductName::fromStorage($request->name),
+            ProductPrice::fromStorage($request->price),
         );
 
         $this->repository->save($product);

@@ -7,7 +7,7 @@ use App\Product\UseCase\Exception\ProductNotFoundException;
 use App\Product\UseCase\ProductDeleter;
 use App\Shared\Http\ApiResponse;
 use InvalidArgumentException;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
@@ -21,7 +21,7 @@ final class DeleteProductController
         $this->deleteProduct = $deleteProduct;
     }
 
-    public function __invoke(string $id): Response
+    public function __invoke(string $id): JsonResponse
     {
         try {
             ($this->deleteProduct)($id);

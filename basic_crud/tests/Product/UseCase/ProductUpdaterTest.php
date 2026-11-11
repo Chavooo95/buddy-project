@@ -24,7 +24,7 @@ final class ProductUpdaterTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(ProductId::fromString($id))
+            ->with(ProductId::fromStorage($id))
             ->willReturn(null);
         $repository->expects($this->never())->method('save');
 
@@ -40,17 +40,17 @@ final class ProductUpdaterTest extends TestCase
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('rename')
-            ->with(ProductName::fromString('New Name'))
+            ->with(ProductName::fromStorage('New Name'))
             ->willReturnSelf();
         $product->expects($this->once())
             ->method('changePrice')
-            ->with(ProductPrice::fromFloat(99.99))
+            ->with(ProductPrice::fromStorage(99.99))
             ->willReturnSelf();
 
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(ProductId::fromString('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
+            ->with(ProductId::fromStorage('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
             ->willReturn($product);
         $repository->expects($this->once())->method('save')->with($product);
 
