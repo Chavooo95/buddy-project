@@ -30,7 +30,7 @@ final class ProductPresenterTest extends TestCase
     public function test_it_includes_updatedAt_once_the_product_changed(): void
     {
         $product = (new ProductBuilder())->build();
-        $product->rename(ProductName::fromString('Renamed'));
+        $product->rename(ProductName::fromStorage('Renamed'));
 
         $presented = ProductPresenter::present($product);
 

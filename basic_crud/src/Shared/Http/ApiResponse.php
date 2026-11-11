@@ -38,9 +38,9 @@ final class ApiResponse
         return self::json(['data' => $items, 'count' => count($items)], 200);
     }
 
-    public static function noContent(): Response
+    public static function noContent(): JsonResponse
     {
-        return new Response(status: 204);
+        return new JsonResponse(status: 204);
     }
 
     public static function notFound(string $detail): JsonResponse

@@ -20,7 +20,7 @@ class ProductODMRepository implements ProductRepositoryInterface
 
     public function findAll(): array
     {
-        return $this->documentManager->getRepository(Product::class)->findAll();
+        return array_values($this->documentManager->getRepository(Product::class)->findAll());
     }
 
     /**
@@ -42,25 +42,16 @@ class ProductODMRepository implements ProductRepositoryInterface
         $this->documentManager->flush();
     }
 
-    /**
-     * @throws MongoDBException
-     */
     public function findByName(string $name): array
     {
-        return $this->documentManager->createQueryBuilder(Product::class)
-            ->field('name')->equals($name)
-            ->sort('name', 'ASC')
-            ->getQuery()
-            ->toArray();
+        return array_values($this->documentManager->getRepository(Product::class)
+            ->findBy(['name' => $name], ['name' => 'ASC']));
     }
 
     public function findByPartialName(string $name): array
     {
-        return $this->documentManager->createQueryBuilder(Product::class)
-            ->field('name')->equals(new \MongoDB\BSON\Regex($name, 'i'))
-            ->sort('name', 'ASC')
-            ->getQuery()
-            ->toArray();
+        return array_values($this->documentManager->getRepository(Product::class)
+            ->findBy(['name' => new \MongoDB\BSON\Regex($name, 'i')], ['name' => 'ASC']));
     }
 
     public function find(ProductId $id): ?Product

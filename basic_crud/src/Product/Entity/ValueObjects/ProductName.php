@@ -22,7 +22,7 @@ final readonly class ProductName
         }
     }
 
-    public static function fromString(string $value): self
+    public static function fromStorage(string $value): self
     {
         return new self($value);
     }

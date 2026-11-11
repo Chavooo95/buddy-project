@@ -43,6 +43,6 @@ final class ProductNameType extends Type
             return $value;
         }
 
-        return ProductName::fromString((string) $value);
+        return ProductName::fromStorage((string) $value);
     }
 }

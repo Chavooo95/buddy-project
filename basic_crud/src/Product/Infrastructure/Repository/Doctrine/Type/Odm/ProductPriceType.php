@@ -31,7 +31,7 @@ final class ProductPriceType extends Type
             return $value;
         }
 
-        return ProductPrice::fromFloat((float) $value);
+        return ProductPrice::fromStorage((float) $value);
     }
 
     public function closureToMongo(): string
