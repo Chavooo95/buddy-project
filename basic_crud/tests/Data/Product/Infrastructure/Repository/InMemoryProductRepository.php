@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Test\Data\Product\Infrastructure\Repository;
 
-use App\Product\Entity\Product;
-use App\Product\Entity\ValueObjects\ProductId;
-use App\Product\Repository\ProductRepositoryInterface;
+use App\Product\Domain\Product;
+use App\Product\Domain\Repository\ProductRepositoryInterface;
+use App\Product\Domain\ValueObject\ProductId;
 
 final class InMemoryProductRepository implements ProductRepositoryInterface
 {

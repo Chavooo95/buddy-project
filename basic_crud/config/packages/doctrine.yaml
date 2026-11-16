@@ -2,9 +2,9 @@ doctrine:
   dbal:
     url: '%env(resolve:DATABASE_URL)%'
     types:
-      product_id: App\Product\Infrastructure\Repository\Doctrine\Type\Orm\ProductIdType
-      product_name: App\Product\Infrastructure\Repository\Doctrine\Type\Orm\ProductNameType
-      product_price: App\Product\Infrastructure\Repository\Doctrine\Type\Orm\ProductPriceType
+      product_id: App\Product\Infrastructure\Persistence\Doctrine\Type\Orm\ProductIdType
+      product_name: App\Product\Infrastructure\Persistence\Doctrine\Type\Orm\ProductNameType
+      product_price: App\Product\Infrastructure\Persistence\Doctrine\Type\Orm\ProductPriceType
   orm:
     auto_generate_proxy_classes: true
     enable_lazy_ghost_objects: true
@@ -16,6 +16,6 @@ doctrine:
       App:
         is_bundle: false
         type: xml
-        dir: '%kernel.project_dir%/src/Product/Infrastructure/Repository/Doctrine/Mapping'
-        prefix: 'App\Product\Entity'
+        dir: '%kernel.project_dir%/src/Product/Infrastructure/Persistence/Doctrine/Mapping'
+        prefix: 'App\Product\Domain'
         alias: App
