@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Test\Integration\Product\Repository;
 
-use App\Product\Entity\ValueObjects\ProductId;
-use App\Product\Infrastructure\Repository\ProductORMRepository;
+use App\Product\Domain\ValueObject\ProductId;
+use App\Product\Infrastructure\Persistence\Doctrine\ProductORMRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

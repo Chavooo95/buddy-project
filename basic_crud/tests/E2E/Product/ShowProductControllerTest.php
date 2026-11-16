@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Test\E2E\Product;
 
-use App\Product\Repository\ProductRepositoryInterface;
+use App\Product\Domain\Repository\ProductRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Uid\Ulid;
 use Test\Data\Product\Domain\ProductBuilder;

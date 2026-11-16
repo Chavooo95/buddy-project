@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Test\Integration\Product\Repository;
 
-use App\Product\Entity\Product;
-use App\Product\Infrastructure\Repository\ProductODMRepository;
+use App\Product\Domain\Product;
+use App\Product\Infrastructure\Persistence\Doctrine\ProductODMRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Test\Data\Product\Domain\ProductBuilder;

@@ -1,0 +1,67 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Product\Infrastructure\Persistence\Doctrine;
+
+use App\Product\Domain\Product;
+use App\Product\Domain\Repository\ProductRepositoryInterface;
+use App\Product\Domain\ValueObject\ProductId;
+use Doctrine\ORM\EntityManagerInterface;
+
+class ProductORMRepository implements ProductRepositoryInterface
+{
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager
+    ) {}
+
+    public function findAll(): array {
+        return $this->entityManager->createQueryBuilder()
+            ->select('p')
+            ->from(Product::class, 'p')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Save product entity
+     */
+    public function save(Product $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
+    }
+
+    public function remove(Product $entity): void
+    {
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
+    }
+
+    public function findByName(string $name): array
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select('p')
+            ->from(Product::class, 'p')
+            ->andWhere('p.name = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByPartialName(string $name): array
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select('p')
+            ->from(Product::class, 'p')
+            ->andWhere('p.name LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->orderBy('p.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function find(ProductId $id): ?Product
+    {
+        return $this->entityManager->find(Product::class, $id->value);
+    }
+}
