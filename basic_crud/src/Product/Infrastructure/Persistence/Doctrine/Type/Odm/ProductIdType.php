@@ -5,6 +5,7 @@ namespace App\Product\Infrastructure\Persistence\Doctrine\Type\Odm;
 
 use App\Product\Domain\ValueObject\ProductId;
 use Doctrine\ODM\MongoDB\Types\Type;
+use InvalidArgumentException;
 
 /**
  * Maps the ProductId value object to a plain string field (Doctrine ODM / MongoDB).
@@ -31,7 +32,11 @@ final class ProductIdType extends Type
             return $value;
         }
 
-        return ProductId::fromStorage((string) $value);
+        if (!is_string($value)) {
+            throw new InvalidArgumentException(sprintf('%s expects a string, got %s', self::NAME, get_debug_type($value)));
+        }
+
+        return ProductId::fromStorage($value);
     }
 
     public function closureToMongo(): string

@@ -5,6 +5,7 @@ namespace App\Product\Infrastructure\Persistence\Doctrine\Type\Odm;
 
 use App\Product\Domain\ValueObject\ProductPrice;
 use Doctrine\ODM\MongoDB\Types\Type;
+use InvalidArgumentException;
 
 /**
  * Maps the ProductPrice value object to a float field (Doctrine ODM / MongoDB).
@@ -29,6 +30,10 @@ final class ProductPriceType extends Type
     {
         if ($value === null || $value instanceof ProductPrice) {
             return $value;
+        }
+
+        if (!is_numeric($value)) {
+            throw new InvalidArgumentException(sprintf('%s expects numeric, got %s', self::NAME, get_debug_type($value)));
         }
 
         return ProductPrice::fromStorage((float) $value);
