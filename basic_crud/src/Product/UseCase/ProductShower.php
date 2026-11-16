@@ -6,6 +6,7 @@ namespace App\Product\UseCase;
 use App\Product\Entity\Product;
 use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Repository\ProductRepositoryInterface;
+use App\Product\UseCase\Response\ProductResponse;
 
 class ProductShower
 {
@@ -16,10 +17,10 @@ class ProductShower
         $this->repository = $repository;
     }
 
-    public function __invoke(string $id): ?Product
+    public function __invoke(string $id): ?ProductResponse
     {
         $product = $this->repository->find(ProductId::fromStorage($id));
 
-        return $product instanceof Product ? $product : null;
+        return $product instanceof Product ? ProductResponse::fromProduct($product) : null;
     }
 }

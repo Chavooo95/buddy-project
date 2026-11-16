@@ -6,6 +6,7 @@ namespace Test\Product\UseCase;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\Request\CreateProductRequest;
 use App\Product\UseCase\ProductCreator;
+use App\Product\UseCase\Response\ProductResponse;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Test\Data\Product\Infrastructure\Repository\InMemoryProductRepository;
@@ -17,11 +18,12 @@ final class ProductCreatorTest extends TestCase
         $repository = new InMemoryProductRepository();
         $useCase = new ProductCreator($repository);
 
-        $product = $useCase(CreateProductRequest::fromArray(['name' => 'Keyboard', 'price' => 12.34]));
+        $response = $useCase(CreateProductRequest::fromArray(['name' => 'Keyboard', 'price' => 12.34]));
 
-        $this->assertSame($product, $repository->findByName('Keyboard')[0]);
-        $this->assertEquals('Keyboard', $product->name()->value);
-        $this->assertEquals(12.34, $product->price()->value);
+        $saved = $repository->findByName('Keyboard')[0];
+        $this->assertEquals(ProductResponse::fromProduct($saved), $response);
+        $this->assertSame('Keyboard', $response->name);
+        $this->assertSame(12.34, $response->price);
     }
 
     public function test_it_rejects_a_negative_price(): void

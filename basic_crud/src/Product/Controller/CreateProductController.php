@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
-use App\Product\Controller\Presenter\ProductPresenter;
+use App\Product\Controller\Presenter\CreateProductPresenter;
 use App\Product\Request\Constraint\CreateProductConstraints;
 use App\Product\Request\CreateProductRequest;
 use App\Product\UseCase\ProductCreator;
@@ -45,8 +45,8 @@ final class CreateProductController
             $product = ($this->createProduct)(CreateProductRequest::fromArray($data));
 
             return ApiResponse::created(
-                ProductPresenter::present($product),
-                '/api/products/' . $product->id()->value,
+                CreateProductPresenter::present($product),
+                '/api/products/' . $product->id,
             );
         } catch (InvalidArgumentException $e) {
             return ApiResponse::validationError($e->getMessage());

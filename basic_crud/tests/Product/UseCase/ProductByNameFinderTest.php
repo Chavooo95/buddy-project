@@ -3,16 +3,17 @@ declare(strict_types=1);
 
 namespace Test\Product\UseCase;
 
-use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ProductByNameFinder;
+use App\Product\UseCase\Response\ProductsResponse;
 use PHPUnit\Framework\TestCase;
+use Test\Data\Product\Domain\ProductBuilder;
 
 final class ProductByNameFinderTest extends TestCase
 {
     public function test_it_returns_products_matching_the_exact_name(): void
     {
-        $product = $this->createStub(Product::class);
+        $product = (new ProductBuilder())->build();
 
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
@@ -22,7 +23,7 @@ final class ProductByNameFinderTest extends TestCase
 
         $useCase = new ProductByNameFinder($repository);
 
-        $this->assertSame([$product], $useCase('Keyboard'));
+        $this->assertEquals(ProductsResponse::fromProducts([$product]), $useCase('Keyboard'));
     }
 
     public function test_it_returns_an_empty_array_when_no_product_matches(): void
@@ -35,6 +36,6 @@ final class ProductByNameFinderTest extends TestCase
 
         $useCase = new ProductByNameFinder($repository);
 
-        $this->assertSame([], $useCase('NonExistent'));
+        $this->assertEquals(ProductsResponse::fromProducts([]), $useCase('NonExistent'));
     }
 }

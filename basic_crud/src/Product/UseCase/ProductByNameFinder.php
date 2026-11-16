@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Product\UseCase;
 
-use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
+use App\Product\UseCase\Response\ProductsResponse;
 
 class ProductByNameFinder
 {
@@ -16,9 +16,8 @@ class ProductByNameFinder
         $this->repository = $repository;
     }
 
-    /** @return list<Product> */
-    public function __invoke(string $name): array
+    public function __invoke(string $name): ProductsResponse
     {
-        return $this->repository->findByName($name);
+        return ProductsResponse::fromProducts($this->repository->findByName($name));
     }
 }
