@@ -16,7 +16,8 @@ The Symfony app lives in [`basic_crud/`](./basic_crud). All commands below assum
 | An entity that speaks the domain language (`Product::create()`, `rename()`, `changePrice()`) | `src/Product/Entity/Product.php` |
 | Repository port + two adapters (ORM / ODM) and custom Doctrine types for the VOs | `src/Product/Repository/`, `src/Product/Infrastructure/Repository/` |
 | Payload validation with Symfony constraints, separated from the request DTOs | `src/Product/Request/` |
-| A presenter that owns the HTTP shape of a product, so the entity stays free of JSON concerns | `src/Product/Controller/Presenter/` |
+| Use cases return an application DTO (`ProductResponse`, `ProductsResponse`), so the entity never leaves the application layer | `src/Product/UseCase/Response/` |
+| One presenter per use case that owns its endpoint's HTTP shape, built only from the DTO | `src/Product/Controller/Presenter/` |
 | A single JSON envelope for every response | `src/Shared/Http/ApiResponse.php` |
 | Test builders and an in-memory repository | `tests/Data/` |
 | Talks / slides written along the way | `docs/` |
@@ -185,10 +186,10 @@ basic_crud/
 ├── src/
 │   ├── Product/
 │   │   ├── Controller/              # One invokable controller per endpoint
-│   │   │   └── Presenter/           # Product → JSON shape (same for every endpoint)
+│   │   │   └── Presenter/           # One per use case: DTO → JSON shape
 │   │   ├── Entity/                  # Product + ValueObjects/
 │   │   ├── Request/                 # Request DTOs + Constraint/ (payload validation)
-│   │   ├── UseCase/                 # ProductCreator, ProductUpdater, ...
+│   │   ├── UseCase/                 # ProductCreator, ProductUpdater, ... + Response/ (application DTOs)
 │   │   ├── Repository/              # ProductRepositoryInterface (the port)
 │   │   └── Infrastructure/Repository/
 │   │       ├── ProductORMRepository.php   # PostgreSQL adapter

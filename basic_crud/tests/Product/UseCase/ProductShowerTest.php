@@ -6,6 +6,7 @@ namespace Test\Product\UseCase;
 use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ProductShower;
+use App\Product\UseCase\Response\ProductResponse;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Ulid;
 use Test\Data\Product\Domain\ProductBuilder;
@@ -39,6 +40,6 @@ final class ProductShowerTest extends TestCase
 
         $useCase = new ProductShower($repository);
 
-        $this->assertSame($product, $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ'));
+        $this->assertEquals(ProductResponse::fromProduct($product), $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ'));
     }
 }

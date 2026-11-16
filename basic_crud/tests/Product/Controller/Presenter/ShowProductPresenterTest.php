@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace Test\Product\Controller\Presenter;
 
-use App\Product\Controller\Presenter\ProductPresenter;
+use App\Product\Controller\Presenter\ShowProductPresenter;
 use App\Product\Entity\ValueObjects\ProductName;
+use App\Product\UseCase\Response\ProductResponse;
 use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Test\Data\Product\Domain\ProductBuilder;
 
-final class ProductPresenterTest extends TestCase
+final class ShowProductPresenterTest extends TestCase
 {
     public function test_it_presents_a_product_with_the_public_api_shape(): void
     {
@@ -23,7 +24,7 @@ final class ProductPresenterTest extends TestCase
                 'createdAt' => $product->createdAt()->format(DateTimeInterface::ATOM),
                 'updatedAt' => null,
             ],
-            ProductPresenter::present($product),
+            ShowProductPresenter::present(ProductResponse::fromProduct($product)),
         );
     }
 
@@ -32,26 +33,8 @@ final class ProductPresenterTest extends TestCase
         $product = (new ProductBuilder())->build();
         $product->rename(ProductName::fromStorage('Renamed'));
 
-        $presented = ProductPresenter::present($product);
+        $presented = ShowProductPresenter::present(ProductResponse::fromProduct($product));
 
-        $this->assertSame($product->updatedAt()->format(DateTimeInterface::ATOM), $presented['updatedAt']);
-    }
-
-    public function test_it_presents_every_product_of_a_collection_in_order(): void
-    {
-        $first = (new ProductBuilder())->withName('First')->build();
-        $second = (new ProductBuilder())->withName('Second')->build();
-
-        $presented = ProductPresenter::presentCollection([$first, $second]);
-
-        $this->assertSame(
-            [ProductPresenter::present($first), ProductPresenter::present($second)],
-            $presented,
-        );
-    }
-
-    public function test_it_presents_an_empty_collection_as_an_empty_list(): void
-    {
-        $this->assertSame([], ProductPresenter::presentCollection([]));
+        $this->assertSame($product->updatedAt()?->format(DateTimeInterface::ATOM), $presented['updatedAt']);
     }
 }
