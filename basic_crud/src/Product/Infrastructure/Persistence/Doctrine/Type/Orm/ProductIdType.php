@@ -5,6 +5,7 @@ namespace App\Product\Infrastructure\Persistence\Doctrine\Type\Orm;
 
 use App\Product\Domain\ValueObject\ProductId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 
 /**
@@ -34,7 +35,11 @@ final class ProductIdType extends Type
             return $value->value;
         }
 
-        return (string) $value;
+        if (!is_string($value)) {
+            throw ConversionException::conversionFailedInvalidType($value, self::NAME, ['null', 'string', ProductId::class]);
+        }
+
+        return $value;
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?ProductId
@@ -43,6 +48,10 @@ final class ProductIdType extends Type
             return $value;
         }
 
-        return ProductId::fromStorage((string) $value);
+        if (!is_string($value)) {
+            throw ConversionException::conversionFailedInvalidType($value, self::NAME, ['null', 'string']);
+        }
+
+        return ProductId::fromStorage($value);
     }
 }

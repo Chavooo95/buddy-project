@@ -6,6 +6,8 @@ namespace App\Product\Infrastructure\Persistence\Doctrine;
 use App\Product\Domain\Product;
 use App\Product\Domain\Repository\ProductRepositoryInterface;
 use App\Product\Domain\ValueObject\ProductId;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ProductORMRepository implements ProductRepositoryInterface
@@ -15,11 +17,7 @@ class ProductORMRepository implements ProductRepositoryInterface
     ) {}
 
     public function findAll(): array {
-        return $this->entityManager->createQueryBuilder()
-            ->select('p')
-            ->from(Product::class, 'p')
-            ->getQuery()
-            ->getResult();
+        return $this->entityManager->getRepository(Product::class)->findAll();
     }
 
     /**
@@ -39,25 +37,16 @@ class ProductORMRepository implements ProductRepositoryInterface
 
     public function findByName(string $name): array
     {
-        return $this->entityManager->createQueryBuilder()
-            ->select('p')
-            ->from(Product::class, 'p')
-            ->andWhere('p.name = :name')
-            ->setParameter('name', $name)
-            ->getQuery()
-            ->getResult();
+        return $this->entityManager->getRepository(Product::class)->findBy(['name' => $name]);
     }
 
     public function findByPartialName(string $name): array
     {
-        return $this->entityManager->createQueryBuilder()
-            ->select('p')
-            ->from(Product::class, 'p')
-            ->andWhere('p.name LIKE :name')
-            ->setParameter('name', '%' . $name . '%')
-            ->orderBy('p.name', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->contains('name', $name))
+            ->orderBy(['name' => Order::Ascending]);
+
+        return array_values($this->entityManager->getRepository(Product::class)->matching($criteria)->toArray());
     }
 
     public function find(ProductId $id): ?Product
