@@ -5,6 +5,7 @@ namespace App\Product\Infrastructure\Persistence\Doctrine\Type\Orm;
 
 use App\Product\Domain\ValueObject\ProductPrice;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 
 /**
@@ -34,6 +35,10 @@ final class ProductPriceType extends Type
             return $value->value;
         }
 
+        if (!is_numeric($value)) {
+            throw ConversionException::conversionFailedInvalidType($value, self::NAME, ['null', 'numeric', ProductPrice::class]);
+        }
+
         return (float) $value;
     }
 
@@ -41,6 +46,10 @@ final class ProductPriceType extends Type
     {
         if ($value === null || $value instanceof ProductPrice) {
             return $value;
+        }
+
+        if (!is_numeric($value)) {
+            throw ConversionException::conversionFailedInvalidType($value, self::NAME, ['null', 'numeric']);
         }
 
         return ProductPrice::fromStorage((float) $value);
