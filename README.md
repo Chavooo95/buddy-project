@@ -175,7 +175,7 @@ The suite is organised by type:
 - `tests/Integration/Product/Repository/` — repositories against a real PostgreSQL / MongoDB.
 - `tests/E2E/Product/` — HTTP-level tests against the kernel.
 
-Static analysis runs with [PHPStan](https://phpstan.org/) at the level set in `basic_crud/phpstan.neon` (currently 9), over `src`.
+Static analysis runs with [PHPStan](https://phpstan.org/) at the level set in `basic_crud/phpstan.neon` (currently 10), over `src`.
 
 CI runs PHPStan and then the same suite on every pull request, whatever its base branch, so stacked PRs are checked too, and on every push to `main` (`.github/workflows/tests.yml`).
 
