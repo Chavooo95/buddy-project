@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Product\Infrastructure\Http\Controller;
 
 use App\Product\Application\ProductShower\ProductShower;
-use App\Product\Infrastructure\Http\Presenter\ShowProductPresenter;
 use App\Shared\Infrastructure\Http\ApiResponse;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +29,7 @@ final class ShowProductController
                 return ApiResponse::notFound('Product not found');
             }
 
-            return ApiResponse::ok(ShowProductPresenter::present($product));
+            return ApiResponse::ok($product->toArray());
         } catch (InvalidArgumentException $e) {
             return ApiResponse::validationError($e->getMessage());
         } catch (Throwable $e) {

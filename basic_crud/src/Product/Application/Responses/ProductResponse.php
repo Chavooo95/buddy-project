@@ -27,4 +27,16 @@ final readonly class ProductResponse
             $product->updatedAt(),
         );
     }
+
+    /** @return array{id: string, name: string, price: float, createdAt: string, updatedAt: string|null} */
+    public function toArray(): array
+    {
+        return [
+            'id'        => $this->id,
+            'name'      => $this->name,
+            'price'     => $this->price,
+            'createdAt' => $this->createdAt->format(DateTimeInterface::ATOM),
+            'updatedAt' => $this->updatedAt?->format(DateTimeInterface::ATOM),
+        ];
+    }
 }
