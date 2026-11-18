@@ -11,13 +11,13 @@ The Symfony app lives in [`basic_crud/`](./basic_crud). All commands below assum
 
 | Concept | Where to look |
 |---|---|
-| Use cases (one class per action, `__invoke`) | `src/Product/UseCase/` |
-| Value objects with private constructors and named constructors (`ProductId::generate()`, `ProductId::fromString()`, `ProductName::fromString()`, `ProductPrice::fromFloat()`) | `src/Product/Entity/ValueObjects/` |
-| An entity that speaks the domain language (`Product::create()`, `rename()`, `changePrice()`) | `src/Product/Entity/Product.php` |
-| Repository port + two adapters (ORM / ODM) and custom Doctrine types for the VOs | `src/Product/Repository/`, `src/Product/Infrastructure/Repository/` |
-| Payload validation with Symfony constraints, separated from the request DTOs | `src/Product/Request/` |
-| A presenter that owns the HTTP shape of a product, so the entity stays free of JSON concerns | `src/Product/Controller/Presenter/` |
-| A single JSON envelope for every response | `src/Shared/Http/ApiResponse.php` |
+| Use cases (one class per action, `__invoke`, each in its own folder) | `src/Product/Application/` |
+| Value objects with private constructors and named constructors (`ProductId::generate()`, `ProductId::fromString()`, `ProductName::fromString()`, `ProductPrice::fromFloat()`) | `src/Product/Domain/ValueObject/` |
+| An entity that speaks the domain language (`Product::create()`, `rename()`, `changePrice()`) | `src/Product/Domain/Product.php` |
+| Repository port + two adapters (ORM / ODM) and custom Doctrine types for the VOs | `src/Product/Domain/Repository/`, `src/Product/Infrastructure/Persistence/Doctrine/` |
+| Payload validation with Symfony constraints, separated from the request DTOs | `src/Product/Infrastructure/Http/Request/` |
+| Use cases return an application DTO (`ProductResponse`, `ProductsResponse`), so the entity never leaves the application layer; each DTO serialises itself to the JSON shape with `toArray()` | `src/Product/Application/Responses/` |
+| A single JSON envelope for every response | `src/Shared/Infrastructure/Http/ApiResponse.php` |
 | Test builders and an in-memory repository | `tests/Data/` |
 | Talks / slides written along the way | `docs/` |
 
@@ -153,9 +153,9 @@ Validation happens in two layers: Symfony constraints check the *shape* of the p
 The repository implementation used at runtime is chosen by an alias in [`config/services.yaml`](./basic_crud/config/services.yaml):
 
 ```yaml
-App\Product\Repository\ProductRepositoryInterface:
-  alias: App\Product\Infrastructure\Repository\ProductORMRepository   # PostgreSQL
-# alias: App\Product\Infrastructure\Repository\ProductODMRepository   # MongoDB
+App\Product\Domain\Repository\ProductRepositoryInterface:
+  alias: App\Product\Infrastructure\Persistence\Doctrine\ProductORMRepository   # PostgreSQL
+# alias: App\Product\Infrastructure\Persistence\Doctrine\ProductODMRepository   # MongoDB
 ```
 
 Change the alias and run `docker compose restart php`. Controllers, use cases, the `Product` entity and the JSON responses stay exactly the same; that's the point of the abstraction.
@@ -170,11 +170,11 @@ make analyze                       # only PHPStan
 
 The suite is organised by type:
 
-- `tests/Product/` — unit tests for value objects and use cases (in-memory repository, no DB).
+- `tests/Product/` — unit tests mirroring `src/Product/` (value objects, use cases, responses; in-memory repository, no DB).
 - `tests/Integration/Product/Repository/` — repositories against a real PostgreSQL / MongoDB.
 - `tests/E2E/Product/` — HTTP-level tests against the kernel.
 
-Static analysis runs with [PHPStan](https://phpstan.org/) at the level set in `basic_crud/phpstan.neon` (currently 6), over `src` and `tests`.
+Static analysis runs with [PHPStan](https://phpstan.org/) at the level set in `basic_crud/phpstan.neon` (currently 10), over `src`.
 
 CI runs PHPStan and then the same suite on every pull request, whatever its base branch, so stacked PRs are checked too, and on every push to `main` (`.github/workflows/tests.yml`).
 
@@ -184,17 +184,24 @@ CI runs PHPStan and then the same suite on every pull request, whatever its base
 basic_crud/
 ├── src/
 │   ├── Product/
-│   │   ├── Controller/              # One invokable controller per endpoint
-│   │   │   └── Presenter/           # Product → JSON shape (same for every endpoint)
-│   │   ├── Entity/                  # Product + ValueObjects/
-│   │   ├── Request/                 # Request DTOs + Constraint/ (payload validation)
-│   │   ├── UseCase/                 # ProductCreator, ProductUpdater, ...
-│   │   ├── Repository/              # ProductRepositoryInterface (the port)
-│   │   └── Infrastructure/Repository/
-│   │       ├── ProductORMRepository.php   # PostgreSQL adapter
-│   │       ├── ProductODMRepository.php   # MongoDB adapter
-│   │       └── Doctrine/            # XML mappings + custom types for the VOs
-│   └── Shared/Http/ApiResponse.php  # JSON envelope
+│   │   ├── Domain/                  # No external dependencies
+│   │   │   ├── Product.php
+│   │   │   ├── Exception/           # ProductNotFoundException
+│   │   │   ├── Repository/          # ProductRepositoryInterface (the port)
+│   │   │   └── ValueObject/         # ProductId, ProductName, ProductPrice + Exception/
+│   │   ├── Application/
+│   │   │   ├── ProductCreator/      # One folder per use case (ProductUpdater/, ProductLister/, ...)
+│   │   │   └── Responses/           # Application DTOs (ProductResponse, ProductsResponse) + their JSON shape
+│   │   └── Infrastructure/
+│   │       ├── Http/
+│   │       │   ├── Controller/      # One invokable controller per endpoint
+│   │       │   └── Request/         # Request DTOs + Constraint/ (payload validation)
+│   │       └── Persistence/Doctrine/
+│   │           ├── ProductORMRepository.php   # PostgreSQL adapter
+│   │           ├── ProductODMRepository.php   # MongoDB adapter
+│   │           ├── Mapping/         # XML mappings
+│   │           └── Type/            # Custom types for the VOs (Orm/, Odm/)
+│   └── Shared/Infrastructure/Http/ApiResponse.php  # JSON envelope
 ├── tests/
 │   ├── Data/                        # Builders + in-memory repository
 │   ├── Product/                     # Unit

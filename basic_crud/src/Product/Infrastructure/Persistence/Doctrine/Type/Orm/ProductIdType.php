@@ -1,0 +1,57 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Product\Infrastructure\Persistence\Doctrine\Type\Orm;
+
+use App\Product\Domain\ValueObject\ProductId;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Type;
+
+/**
+ * Maps the ProductId value object to a plain string column (Doctrine ORM / DBAL).
+ */
+final class ProductIdType extends Type
+{
+    public const string NAME = 'product_id';
+
+    public function getName(): string
+    {
+        return self::NAME;
+    }
+
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
+    {
+        return $platform->getStringTypeDeclarationSQL($column);
+    }
+
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value instanceof ProductId) {
+            return $value->value;
+        }
+
+        if (!is_string($value)) {
+            throw ConversionException::conversionFailedInvalidType($value, self::NAME, ['null', 'string', ProductId::class]);
+        }
+
+        return $value;
+    }
+
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?ProductId
+    {
+        if ($value === null || $value instanceof ProductId) {
+            return $value;
+        }
+
+        if (!is_string($value)) {
+            throw ConversionException::conversionFailedInvalidType($value, self::NAME, ['null', 'string']);
+        }
+
+        return ProductId::fromStorage($value);
+    }
+}

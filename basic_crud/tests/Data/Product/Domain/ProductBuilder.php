@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Test\Data\Product\Domain;
 
-use App\Product\Entity\Product;
-use App\Product\Entity\ValueObjects\ProductId;
-use App\Product\Entity\ValueObjects\ProductName;
-use App\Product\Entity\ValueObjects\ProductPrice;
+use App\Product\Domain\Product;
+use App\Product\Domain\ValueObject\ProductId;
+use App\Product\Domain\ValueObject\ProductName;
+use App\Product\Domain\ValueObject\ProductPrice;
 
 final class ProductBuilder
 {
@@ -24,8 +24,8 @@ final class ProductBuilder
     {
         return Product::create(
             ProductId::generate(),
-            ProductName::fromString($this->name),
-            ProductPrice::fromFloat($this->price),
+            ProductName::fromStorage($this->name),
+            ProductPrice::fromStorage($this->price),
         );
     }
 
