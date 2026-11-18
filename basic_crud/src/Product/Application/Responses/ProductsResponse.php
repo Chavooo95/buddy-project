@@ -23,4 +23,10 @@ final readonly class ProductsResponse
 
         return new self($responses);
     }
+
+    /** @return list<array{id: string, name: string, price: float, createdAt: string, updatedAt: string|null}> */
+    public function toArray(): array
+    {
+        return array_map(static fn (ProductResponse $product): array => $product->toArray(), $this->products);
+    }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Product\Infrastructure\Http\Controller;
 
 use App\Product\Application\ProductLister\ProductLister;
-use App\Product\Infrastructure\Http\Presenter\ListProductsPresenter;
 use App\Shared\Infrastructure\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +27,7 @@ final class ListProductsController
             $search = $request->query->get('search');
             $products = ($this->listProducts)($search);
 
-            return ApiResponse::collection(ListProductsPresenter::present($products));
+            return ApiResponse::collection($products->toArray());
         } catch (Throwable $e) {
             return ApiResponse::serverError('product_retrieval_failed', $e->getMessage());
         }
