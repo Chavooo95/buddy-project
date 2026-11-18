@@ -19,7 +19,7 @@ class ProductDeleter
 
     public function __invoke(string $id): void
     {
-        $product = $this->repository->find(ProductId::fromString($id));
+        $product = $this->repository->find(ProductId::fromStorage($id));
         if (!$product instanceof Product) {
             throw ProductNotFoundException::withId($id);
         }

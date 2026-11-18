@@ -43,6 +43,6 @@ final class ProductIdType extends Type
             return $value;
         }
 
-        return ProductId::fromString((string) $value);
+        return ProductId::fromStorage((string) $value);
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
-use App\Product\Controller\Presenter\ProductPresenter;
+use App\Product\Controller\Presenter\FindProductsByNamePresenter;
 use App\Product\UseCase\ProductByNameFinder;
 use App\Shared\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +26,7 @@ final class FindProductsByNameController
         try {
             $products = ($this->findProductsByName)($name);
 
-            return ApiResponse::collection(ProductPresenter::presentCollection($products));
+            return ApiResponse::collection(FindProductsByNamePresenter::present($products));
         } catch (Throwable $e) {
             return ApiResponse::serverError('product_retrieval_failed', $e->getMessage());
         }

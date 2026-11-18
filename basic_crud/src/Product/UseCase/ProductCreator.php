@@ -9,6 +9,7 @@ use App\Product\Entity\ValueObjects\ProductName;
 use App\Product\Entity\ValueObjects\ProductPrice;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\Request\CreateProductRequest;
+use App\Product\UseCase\Response\ProductResponse;
 
 class ProductCreator
 {
@@ -19,16 +20,16 @@ class ProductCreator
         $this->repository = $repository;
     }
 
-    public function __invoke(CreateProductRequest $request): Product
+    public function __invoke(CreateProductRequest $request): ProductResponse
     {
         $product = Product::create(
             ProductId::generate(),
-            ProductName::fromString($request->name),
-            ProductPrice::fromFloat($request->price),
+            ProductName::fromStorage($request->name),
+            ProductPrice::fromStorage($request->price),
         );
 
         $this->repository->save($product);
 
-        return $product;
+        return ProductResponse::fromProduct($product);
     }
 }

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Product\UseCase;
 
-use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
+use App\Product\UseCase\Response\ProductsResponse;
 
 class ProductLister
 {
@@ -15,13 +15,12 @@ class ProductLister
         $this->repository = $repository;
     }
 
-    /** @return list<Product> */
-    public function __invoke(?string $search = null): array
+    public function __invoke(?string $search = null): ProductsResponse
     {
         if ($search !== null && trim($search) !== '') {
-            return $this->repository->findByPartialName($search);
+            return ProductsResponse::fromProducts($this->repository->findByPartialName($search));
         }
 
-        return $this->repository->findAll();
+        return ProductsResponse::fromProducts($this->repository->findAll());
     }
 }

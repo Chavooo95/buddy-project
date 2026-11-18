@@ -3,17 +3,18 @@ declare(strict_types=1);
 
 namespace Test\Product\UseCase;
 
-use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ProductLister;
+use App\Product\UseCase\Response\ProductsResponse;
 use PHPUnit\Framework\TestCase;
+use Test\Data\Product\Domain\ProductBuilder;
 
 final class ProductListerTest extends TestCase
 {
     public function test_it_lists_all_products_when_no_search_is_provided(): void
     {
-        $first = $this->createStub(Product::class);
-        $second = $this->createStub(Product::class);
+        $first = (new ProductBuilder())->build();
+        $second = (new ProductBuilder())->build();
 
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())->method('findAll')->willReturn([$first, $second]);
@@ -21,12 +22,12 @@ final class ProductListerTest extends TestCase
 
         $useCase = new ProductLister($repository);
 
-        $this->assertSame([$first, $second], $useCase(null));
+        $this->assertEquals(ProductsResponse::fromProducts([$first, $second]), $useCase(null));
     }
 
     public function test_it_searches_by_partial_name_when_a_search_term_is_provided(): void
     {
-        $match = $this->createStub(Product::class);
+        $match = (new ProductBuilder())->build();
 
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->never())->method('findAll');
@@ -37,6 +38,6 @@ final class ProductListerTest extends TestCase
 
         $useCase = new ProductLister($repository);
 
-        $this->assertSame([$match], $useCase('Test'));
+        $this->assertEquals(ProductsResponse::fromProducts([$match]), $useCase('Test'));
     }
 }

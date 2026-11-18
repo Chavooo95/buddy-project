@@ -6,6 +6,7 @@ namespace Test\Product\UseCase;
 use App\Product\Entity\ValueObjects\ProductId;
 use App\Product\Repository\ProductRepositoryInterface;
 use App\Product\UseCase\ProductShower;
+use App\Product\UseCase\Response\ProductResponse;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Ulid;
 use Test\Data\Product\Domain\ProductBuilder;
@@ -19,7 +20,7 @@ final class ProductShowerTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(ProductId::fromString($id))
+            ->with(ProductId::fromStorage($id))
             ->willReturn(null);
 
         $useCase = new ProductShower($repository);
@@ -34,11 +35,11 @@ final class ProductShowerTest extends TestCase
         $repository = $this->createMock(ProductRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('find')
-            ->with(ProductId::fromString('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
+            ->with(ProductId::fromStorage('01HZZZZZZZZZZZZZZZZZZZZZZZ'))
             ->willReturn($product);
 
         $useCase = new ProductShower($repository);
 
-        $this->assertSame($product, $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ'));
+        $this->assertEquals(ProductResponse::fromProduct($product), $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ'));
     }
 }

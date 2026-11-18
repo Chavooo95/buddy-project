@@ -11,14 +11,14 @@ final class ProductPriceTest extends TestCase {
 
     public function test_check_valueObject_has_the_same_value(): void
     {
-        $productPriceFirst = ProductPrice::fromFloat(19.99);
-        $productPriceSecond = ProductPrice::fromFloat(19.99);
+        $productPriceFirst = ProductPrice::fromStorage(19.99);
+        $productPriceSecond = ProductPrice::fromStorage(19.99);
         $this->assertEquals($productPriceFirst, $productPriceSecond);
     }
 
     public function test_that_valueObject_keeps_the_value(): void
     {
-        $productPrice = ProductPrice::fromFloat(19.99);
+        $productPrice = ProductPrice::fromStorage(19.99);
         $this->assertEquals(19.99, $productPrice->value);
     }
 
@@ -26,25 +26,25 @@ final class ProductPriceTest extends TestCase {
     {
         $this->expectException(ProductPriceException::class);
         $this->expectExceptionMessage('must be greater than zero');
-        ProductPrice::fromFloat(0);
+        ProductPrice::fromStorage(0);
     }
 
     public function test_throws_ProductPriceException_on_negative_price(): void
     {
         $this->expectException(ProductPriceException::class);
         $this->expectExceptionMessage('must be greater than zero');
-        ProductPrice::fromFloat(-5.0);
+        ProductPrice::fromStorage(-5.0);
     }
 
     public function test_that_valueObject_rounds_the_value_to_two_decimals(): void
     {
-        $productPrice = ProductPrice::fromFloat(19.994);
+        $productPrice = ProductPrice::fromStorage(19.994);
         $this->assertEquals(19.99, $productPrice->value);
     }
 
     public function test_that_valueObject_handles_floating_point_arithmetic(): void
     {
-        $productPrice = ProductPrice::fromFloat(0.1 + 0.2);
+        $productPrice = ProductPrice::fromStorage(0.1 + 0.2);
         $this->assertEquals(0.3, $productPrice->value);
     }
 }
