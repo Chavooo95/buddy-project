@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Product\Infrastructure\Http\Controller;
 
 use App\Product\Application\ProductCreator\ProductCreator;
-use App\Product\Infrastructure\Http\Presenter\CreateProductPresenter;
 use App\Product\Infrastructure\Http\Request\Constraint\CreateProductConstraints;
 use App\Product\Infrastructure\Http\Request\CreateProductRequest;
 use App\Shared\Infrastructure\Http\ApiResponse;
@@ -45,7 +44,7 @@ final class CreateProductController
             $product = ($this->createProduct)(CreateProductRequest::fromArray($data));
 
             return ApiResponse::created(
-                CreateProductPresenter::present($product),
+                $product->toArray(),
                 '/api/products/' . $product->id,
             );
         } catch (InvalidArgumentException $e) {
