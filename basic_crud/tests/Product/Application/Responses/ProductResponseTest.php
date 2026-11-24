@@ -60,4 +60,18 @@ final class ProductResponseTest extends TestCase
             ProductResponse::fromProduct($product)->toArray()['updatedAt'],
         );
     }
+
+    public function test_it_rounds_the_price_to_two_decimals(): void
+    {
+        $product = (new ProductBuilder())->withPrice(19.995)->build();
+
+        $this->assertSame(20.0, ProductResponse::fromProduct($product)->price);
+    }
+
+    public function test_it_absorbs_floating_point_noise_in_the_price(): void
+    {
+        $product = (new ProductBuilder())->withPrice(0.1 + 0.2)->build();
+
+        $this->assertSame(0.3, ProductResponse::fromProduct($product)->price);
+    }
 }

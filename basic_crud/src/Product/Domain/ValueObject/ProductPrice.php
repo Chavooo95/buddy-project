@@ -7,9 +7,7 @@ use App\Product\Domain\ValueObject\Exception\ProductPriceException;
 
 final readonly class ProductPrice
 {
-    private const int DISPLAY_DECIMALS = 2;
-
-    private float $value;
+    public float $value;
 
     private function __construct(float $value)
     {
@@ -22,15 +20,5 @@ final readonly class ProductPrice
     public static function fromStorage(float $value): self
     {
         return new self($value);
-    }
-
-    public function exact(): float
-    {
-        return $this->value;
-    }
-
-    public function rounded(): float
-    {
-        return round($this->value, self::DISPLAY_DECIMALS);
     }
 }

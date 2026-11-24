@@ -32,7 +32,7 @@ final class ProductPriceType extends Type
         }
 
         if ($value instanceof ProductPrice) {
-            return $value->exact();
+            return $value->value;
         }
 
         if (!is_numeric($value)) {

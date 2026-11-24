@@ -20,7 +20,7 @@ final class ProductPriceType extends Type
     public function convertToDatabaseValue($value)
     {
         if ($value instanceof ProductPrice) {
-            return $value->exact();
+            return $value->value;
         }
 
         return $value;
@@ -41,7 +41,7 @@ final class ProductPriceType extends Type
 
     public function closureToMongo(): string
     {
-        return '$return = $value === null ? null : $value->exact();';
+        return '$return = $value === null ? null : $value->value;';
     }
 
     public function closureToPHP(): string
