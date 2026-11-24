@@ -28,7 +28,7 @@ final class ShowProductControllerTest extends WebTestCase
 
         $this->assertEquals($product->id()->value, $body['data']['id']);
         $this->assertEquals($product->name()->value, $body['data']['name']);
-        $this->assertEquals($product->price()->value, $body['data']['price']);
+        $this->assertEquals($product->price()->rounded(), $body['data']['price']);
     }
 
     public function test_it_keeps_the_zero_fraction_of_a_whole_price(): void

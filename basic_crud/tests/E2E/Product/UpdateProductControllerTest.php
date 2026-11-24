@@ -33,7 +33,7 @@ final class UpdateProductControllerTest extends WebTestCase
         $updated = $repository->find($product->id());
 
         $this->assertEquals('New Name', $updated->name()->value);
-        $this->assertEquals(99.99, $updated->price()->value);
+        $this->assertEquals(99.99, $updated->price()->exact());
     }
 
     public function test_it_returns_404_when_product_not_found(): void

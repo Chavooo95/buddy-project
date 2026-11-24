@@ -20,7 +20,7 @@ final class CreateProductControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['name' => $product->name()->value, 'price' => $product->price()->value])
+            json_encode(['name' => $product->name()->value, 'price' => $product->price()->exact()])
         );
 
         $this->assertResponseStatusCodeSame(201);
@@ -28,7 +28,7 @@ final class CreateProductControllerTest extends WebTestCase
         $body = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertEquals($product->name()->value, $body['data']['name']);
-        $this->assertEquals($product->price()->value, $body['data']['price']);
+        $this->assertEquals($product->price()->rounded(), $body['data']['price']);
         $this->assertNotEmpty($body['data']['id']);
     }
 
@@ -43,7 +43,7 @@ final class CreateProductControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['name' => $product->name()->value, 'price' => $product->price()->value])
+            json_encode(['name' => $product->name()->value, 'price' => $product->price()->exact()])
         );
 
         $this->assertResponseStatusCodeSame(201);

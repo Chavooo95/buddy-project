@@ -22,7 +22,7 @@ final readonly class ProductResponse
         return new self(
             $product->id()->value,
             $product->name()->value,
-            $product->price()->value,
+            $product->price()->rounded(),
             $product->createdAt(),
             $product->updatedAt(),
         );

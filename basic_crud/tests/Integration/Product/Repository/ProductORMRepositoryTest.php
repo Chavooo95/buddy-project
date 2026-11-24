@@ -43,7 +43,7 @@ final class ProductORMRepositoryTest extends KernelTestCase
         $this->assertNotFalse($row);
         $this->assertSame($product->id()->value, $row['id']);
         $this->assertSame($product->name()->value, $row['name']);
-        $this->assertSame($product->price()->value, (float) $row['price']);
+        $this->assertSame($product->price()->exact(), (float) $row['price']);
     }
 
     public function test_it_finds_a_product_by_id(): void
