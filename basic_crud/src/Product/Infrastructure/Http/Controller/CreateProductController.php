@@ -41,7 +41,7 @@ final class CreateProductController
                 return ApiResponse::invalidPayload($violations);
             }
 
-            $product = ($this->createProduct)(CreateProductRequest::fromArray($data));
+            $product = ($this->createProduct)(CreateProductRequest::fromArray($data)->toDto());
 
             return ApiResponse::created(
                 $product->toArray(),

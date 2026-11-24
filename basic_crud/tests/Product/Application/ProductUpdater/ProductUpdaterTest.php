@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace Test\Product\Application\ProductUpdater;
 
 use App\Product\Application\ProductUpdater\ProductUpdater;
+use App\Product\Application\ProductUpdater\UpdateProductDto;
 use App\Product\Domain\Exception\ProductNotFoundException;
 use App\Product\Domain\Product;
 use App\Product\Domain\Repository\ProductRepositoryInterface;
 use App\Product\Domain\ValueObject\ProductId;
 use App\Product\Domain\ValueObject\ProductName;
 use App\Product\Domain\ValueObject\ProductPrice;
-use App\Product\Infrastructure\Http\Request\UpdateProductRequest;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Ulid;
@@ -32,7 +32,7 @@ final class ProductUpdaterTest extends TestCase
 
         $this->expectException(ProductNotFoundException::class);
 
-        $useCase($id, UpdateProductRequest::fromArray(['name' => 'New']));
+        $useCase(new UpdateProductDto($id, name: 'New'));
     }
 
     public function test_it_updates_and_saves_the_product_when_found(): void
@@ -56,7 +56,7 @@ final class ProductUpdaterTest extends TestCase
 
         $useCase = new ProductUpdater($repository);
 
-        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', UpdateProductRequest::fromArray(['name' => 'New Name', 'price' => 99.99]));
+        $useCase(new UpdateProductDto('01HZZZZZZZZZZZZZZZZZZZZZZZ', 'New Name', 99.99));
     }
 
     public function test_it_only_touches_the_fields_that_were_sent(): void
@@ -71,7 +71,7 @@ final class ProductUpdaterTest extends TestCase
 
         $useCase = new ProductUpdater($repository);
 
-        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', UpdateProductRequest::fromArray(['name' => 'New Name']));
+        $useCase(new UpdateProductDto('01HZZZZZZZZZZZZZZZZZZZZZZZ', name: 'New Name'));
     }
 
     public function test_it_rejects_an_empty_name(): void
@@ -85,6 +85,6 @@ final class ProductUpdaterTest extends TestCase
         $useCase = new ProductUpdater($repository);
 
         $this->expectException(InvalidArgumentException::class);
-        $useCase('01HZZZZZZZZZZZZZZZZZZZZZZZ', UpdateProductRequest::fromArray(['name' => '   ']));
+        $useCase(new UpdateProductDto('01HZZZZZZZZZZZZZZZZZZZZZZZ', name: '   '));
     }
 }

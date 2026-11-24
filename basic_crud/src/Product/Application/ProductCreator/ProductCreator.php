@@ -9,7 +9,6 @@ use App\Product\Domain\Repository\ProductRepositoryInterface;
 use App\Product\Domain\ValueObject\ProductId;
 use App\Product\Domain\ValueObject\ProductName;
 use App\Product\Domain\ValueObject\ProductPrice;
-use App\Product\Infrastructure\Http\Request\CreateProductRequest;
 
 class ProductCreator
 {
@@ -20,12 +19,12 @@ class ProductCreator
         $this->repository = $repository;
     }
 
-    public function __invoke(CreateProductRequest $request): ProductResponse
+    public function __invoke(CreateProductDto $dto): ProductResponse
     {
         $product = Product::create(
             ProductId::generate(),
-            ProductName::fromStorage($request->name),
-            ProductPrice::fromStorage($request->price),
+            ProductName::fromStorage($dto->name),
+            ProductPrice::fromStorage($dto->price),
         );
 
         $this->repository->save($product);
