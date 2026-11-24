@@ -9,7 +9,6 @@ use App\Product\Domain\Repository\ProductRepositoryInterface;
 use App\Product\Domain\ValueObject\ProductId;
 use App\Product\Domain\ValueObject\ProductName;
 use App\Product\Domain\ValueObject\ProductPrice;
-use App\Product\Infrastructure\Http\Request\UpdateProductRequest;
 
 class ProductUpdater
 {
@@ -20,19 +19,19 @@ class ProductUpdater
         $this->repository = $repository;
     }
 
-    public function __invoke(string $id, UpdateProductRequest $request): void
+    public function __invoke(UpdateProductDto $dto): void
     {
-        $product = $this->repository->find(ProductId::fromStorage($id));
+        $product = $this->repository->find(ProductId::fromStorage($dto->id));
         if (!$product instanceof Product) {
-            throw ProductNotFoundException::withId($id);
+            throw ProductNotFoundException::withId($dto->id);
         }
 
-        if ($request->name !== null) {
-            $product->rename(ProductName::fromStorage($request->name));
+        if ($dto->name !== null) {
+            $product->rename(ProductName::fromStorage($dto->name));
         }
 
-        if ($request->price !== null) {
-            $product->changePrice(ProductPrice::fromStorage($request->price));
+        if ($dto->price !== null) {
+            $product->changePrice(ProductPrice::fromStorage($dto->price));
         }
 
         $this->repository->save($product);

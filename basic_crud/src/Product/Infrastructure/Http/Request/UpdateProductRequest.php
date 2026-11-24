@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Infrastructure\Http\Request;
 
+use App\Product\Application\ProductUpdater\UpdateProductDto;
 use InvalidArgumentException;
 
 final readonly class UpdateProductRequest
@@ -28,5 +29,10 @@ final readonly class UpdateProductRequest
         }
 
         return new self($name, $price === null ? null : (float) $price);
+    }
+
+    public function toDto(string $id): UpdateProductDto
+    {
+        return new UpdateProductDto($id, $this->name, $this->price);
     }
 }

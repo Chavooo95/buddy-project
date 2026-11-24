@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Test\Product\Application\ProductCreator;
 
+use App\Product\Application\ProductCreator\CreateProductDto;
 use App\Product\Application\ProductCreator\ProductCreator;
 use App\Product\Application\Responses\ProductResponse;
 use App\Product\Domain\Repository\ProductRepositoryInterface;
-use App\Product\Infrastructure\Http\Request\CreateProductRequest;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Test\Data\Product\Infrastructure\Repository\InMemoryProductRepository;
@@ -18,7 +18,7 @@ final class ProductCreatorTest extends TestCase
         $repository = new InMemoryProductRepository();
         $useCase = new ProductCreator($repository);
 
-        $response = $useCase(CreateProductRequest::fromArray(['name' => 'Keyboard', 'price' => 12.34]));
+        $response = $useCase(new CreateProductDto('Keyboard', 12.34));
 
         $saved = $repository->findByName('Keyboard')[0];
         $this->assertEquals(ProductResponse::fromProduct($saved), $response);
@@ -34,6 +34,6 @@ final class ProductCreatorTest extends TestCase
         $useCase = new ProductCreator($repository);
 
         $this->expectException(InvalidArgumentException::class);
-        $useCase(CreateProductRequest::fromArray(['name' => 'Keyboard', 'price' => -1.0]));
+        $useCase(new CreateProductDto('Keyboard', -1.0));
     }
 }

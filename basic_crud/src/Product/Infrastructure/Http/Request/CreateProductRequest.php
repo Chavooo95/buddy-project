@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Product\Infrastructure\Http\Request;
 
+use App\Product\Application\ProductCreator\CreateProductDto;
 use InvalidArgumentException;
 
 final readonly class CreateProductRequest
@@ -28,5 +29,10 @@ final readonly class CreateProductRequest
         }
 
         return new self($name, (float) $price);
+    }
+
+    public function toDto(): CreateProductDto
+    {
+        return new CreateProductDto($this->name, $this->price);
     }
 }

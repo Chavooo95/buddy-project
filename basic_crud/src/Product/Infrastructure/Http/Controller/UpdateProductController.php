@@ -42,7 +42,7 @@ final class UpdateProductController
                 return ApiResponse::invalidPayload($violations);
             }
 
-            ($this->updateProduct)($id, UpdateProductRequest::fromArray($data));
+            ($this->updateProduct)(UpdateProductRequest::fromArray($data)->toDto($id));
 
             return ApiResponse::noContent();
         } catch (ProductNotFoundException) {
