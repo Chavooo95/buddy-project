@@ -36,15 +36,9 @@ final class ProductPriceTest extends TestCase {
         ProductPrice::fromStorage(-5.0);
     }
 
-    public function test_that_valueObject_rounds_the_value_to_two_decimals(): void
+    public function test_that_valueObject_keeps_every_decimal(): void
     {
         $productPrice = ProductPrice::fromStorage(19.994);
-        $this->assertEquals(19.99, $productPrice->value);
-    }
-
-    public function test_that_valueObject_handles_floating_point_arithmetic(): void
-    {
-        $productPrice = ProductPrice::fromStorage(0.1 + 0.2);
-        $this->assertEquals(0.3, $productPrice->value);
+        $this->assertSame(19.994, $productPrice->value);
     }
 }

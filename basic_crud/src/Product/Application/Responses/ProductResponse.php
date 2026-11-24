@@ -8,6 +8,8 @@ use DateTimeInterface;
 
 final readonly class ProductResponse
 {
+    private const int PRICE_DECIMALS = 2;
+
     private function __construct(
         public string $id,
         public string $name,
@@ -22,7 +24,7 @@ final readonly class ProductResponse
         return new self(
             $product->id()->value,
             $product->name()->value,
-            $product->price()->value,
+            round($product->price()->value, self::PRICE_DECIMALS),
             $product->createdAt(),
             $product->updatedAt(),
         );
